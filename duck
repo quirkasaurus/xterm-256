@@ -1,0 +1,22 @@
+
+#----------------------------------------------------------------------#
+# FILE:    duck                                                        #
+# AUTHOR:  Douglas Roberts -- droberts                                 #
+# CREATED: Sun Mar 17 12:18:22 EDT 2019                                #
+# PURPOSE: barebones check for syntax, correct variable naming, etc... #
+#                                                                      #
+#----------------------------------------------------------------------#
+
+
+set -xv
+
+. more_funx
+. colors.env
+. yaps1
+
+grab_colors
+echo $fgs_pound
+yap_show_colors
+
+
+

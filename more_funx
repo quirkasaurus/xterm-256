@@ -1,0 +1,729 @@
+#!/bin/bash
+#----------------------------------------------------------------------#
+# FILE:    more_funx                                                   #
+# AUTHOR:  Douglas Roberts -- droberts                                 #
+# CREATED: Fri Jan 13 15:17:01 GMT 2017                                #
+# PURPOSE: soooo many useful functions.... just trying to manage       #
+#          the chaos... keep the gobbledy-gook syntax away from        #
+#          the primary script.                                         #
+#----------------------------------------------------------------------#
+
+DEBUG=1
+color_idx=-1
+DEBUG=0
+declare -a _fgs
+
+
+#----------------------------------------------------------------------#
+# report status in color!                                              #
+#----------------------------------------------------------------------#
+function report_status
+{
+if [[ $? -eq 0 ]]; then
+    echo 💚 PASSED $*
+else
+    echo 🔴 FAILED $*
+fi
+return
+}
+
+
+#----------------------------------------------------------------------#
+# makes for easier syntax later when requiring array lengths.          #
+# usage:                                                               #
+#     % declare -a frogs                                               #
+#     % frogs=( $( date ) )                                            #
+#     % pound frogs                                                    #
+#     % echo $frogs_pound                                              #
+#----------------------------------------------------------------------#
+function pound
+{
+eval ${1}_pound=\${\#${1}[*]}
+}
+
+
+function exec_vi
+{
+#----------------------------------------------------------------------#
+# perhaps called with nothing...                                       #
+#----------------------------------------------------------------------#
+if [[ -z $1 ]]; then
+    return
+fi
+
+local FIN
+for FIN in $1 `which $1`; do
+    if [[ -f $FIN ]]; then
+        exec /usr/bin/vi $vi_opt $FIN
+    fi
+done
+}
+
+
+function pause
+{
+stty erase 
+echo -n "Press <RETURN> to continue "
+quickread.exe
+}
+
+
+#----------------------------------------------------------------------#
+# forever prompting for stuff... genericize!                           #
+# next up: generic menues!                                             #
+#----------------------------------------------------------------------#
+function stock_read
+{
+if [[ -z $1 ]]; then
+    echo no variable name specified
+    pause
+    return 1
+fi
+
+#----------------------------------------------------------------------#
+# local variables, similar to possible input. use underscores here.    #
+#----------------------------------------------------------------------#
+local _var_name=$1
+local _answer
+local _prompt
+local _value
+shift
+
+#----------------------------------------------------------------------#
+# use provided text for prompt, if any. else show var-name.            #
+#----------------------------------------------------------------------#
+if [[ -n $* ]]; then
+    _prompt="$*:"
+else
+    _prompt="Enter value for ${_var_name//_/-}:"
+fi
+
+#----------------------------------------------------------------------#
+# extract current value of input variable name                         #
+#- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+# eval _value=\"\$${_var_name}\"                                       #
+#----------------------------------------------------------------------#
+_value=${!_var_name}
+
+#----------------------------------------------------------------------#
+# if we only need a single character, we should use "quickread.exe"    #
+#----------------------------------------------------------------------#
+if [[ $_use_quick -eq 1 ]]; then
+    _use_quick=0
+
+#----------------------------------------------------------------------#
+# grab the value                                                       #
+#----------------------------------------------------------------------#
+    echo -n "$_prompt "
+    _answer=$( quickread.exe )
+    echo $_answer
+    eval $_var_name=\""${_answer}"\"
+    return
+fi
+
+#----------------------------------------------------------------------#
+# looking for a string input. show user current value, if set.         #
+#----------------------------------------------------------------------#
+if [[ -n $_value ]]; then
+    echo "current value for: |$_prompt| is |$_value|"
+    echo "hit <ENTER> to retain"
+fi
+
+#----------------------------------------------------------------------#
+# problem with MacOS and tty settings fix...?                          #
+# this was caused by the default setting in Terminal.App,              #
+# where in the Advanced-tab, the "delete key sends CONTROL-H"          #
+# checkbox is unchecked.                                               #
+# pretty sure this does nothing, but left here for future issues.      #
+#----------------------------------------------------------------------#
+#----------------------------------------------------------------------#
+# stty erase                                                          #
+#----------------------------------------------------------------------#
+
+#----------------------------------------------------------------------#
+# grab the value                                                       #
+#----------------------------------------------------------------------#
+echo -n "$_prompt "
+
+#----------------------------------------------------------------------#
+# ... and finally, get the input from the user and prosper.            #
+#----------------------------------------------------------------------#
+read _answer
+
+#----------------------------------------------------------------------#
+# retain previous value, if given nothing.                             #
+#----------------------------------------------------------------------#
+if [[ -z $_answer ]]; then
+    echo retaining: $_var_name =\> $_value
+    return
+fi
+
+#----------------------------------------------------------------------#
+# strip double quotes from paste.                                      #
+# (very, very clever hack for quote checking.)                         #
+#----------------------------------------------------------------------#
+_answer=$( echo "$_answer" | tr \"\" .. )
+
+#----------------------------------------------------------------------#
+# set the variable value.                                              #
+#----------------------------------------------------------------------#
+eval $_var_name=\"$_answer\"
+
+return
+}
+
+
+#----------------------------------------------------------------------#
+# stock variable quickread-ing, accounting for previous settings.      #
+#----------------------------------------------------------------------#
+function stock_quickread
+{
+_use_quick=1
+stock_read $*
+vecho answer
+}
+
+
+#----------------------------------------------------------------------#
+# tired of writing this one out, too...                                #
+#----------------------------------------------------------------------#
+function status
+{
+if [[ $? -eq 0 ]]; then
+    return 0
+fi
+return 1
+}
+
+
+#----------------------------------------------------------------------#
+# random color index.                                                  #
+#----------------------------------------------------------------------#
+function start_color_idx
+{
+debug
+_fgs=( $( grep ^color-idx: ~/.ccat.log | cut -d: -f2 ) )
+color_idx=0
+}
+
+
+function incr_color
+{
+debug
+if [[ $color_idx -eq -1 ]]; then
+    start_color_idx
+    color_idx=0
+    return
+fi
+#----------------------------------------------------------------------#
+# set initial color index. I suppose I could decrement also...?        #
+#----------------------------------------------------------------------#
+(( color_idx += 1 ))
+if [[ $color_idx -ge ${#_fgs[*]} ]]; then
+    color_idx=0
+fi
+}
+
+
+#----------------------------------------------------------------------#
+# log a message. honest. not a wrapper to a log. not an interface.     #
+#- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+#       echo 🔵 INFO                                                   #
+#       echo 💚 PASS                                                   #
+#       echo 🔴 FAIL                                                   #
+#       echo 💜 INFO-2                                                 #
+#----------------------------------------------------------------------#
+function log_msg
+{
+case $1 in
+    info|INFO)   echo -n "🔵 " ; shift ;;
+    pass|PASS)   echo -n "💚 " ; shift ;;
+    fail|FAIL)   echo -n "🔴 " ; shift ;;
+    info2|INFO2) echo -n "💜 " ; shift ;;
+esac
+echo $* | tee -a ${FLOG:-/dev/stdout}
+return
+}
+
+
+#----------------------------------------------------------------------#
+# very tired of typing this particular sequence.                       #
+#----------------------------------------------------------------------#
+function zero
+{
+zero=${1:-${0:-default}}
+zero=${zero##*/}
+zero=${zero%.sh}
+zero=${zero%.py}
+export zero
+}
+
+#----------------------------------------------------------------------#
+# ... and this one . . .                                               #
+# increments the variable named in 1, by the amount in 2, if present.  #
+# otherwise, just adds 1.                                              #
+#----------------------------------------------------------------------#
+function incr
+{
+eval "(( $1 += ${2:-1} ))"
+}
+
+
+#----------------------------------------------------------------------#
+# output something right into my global buffer.                        #
+#----------------------------------------------------------------------#
+function teed
+{
+tee ~/:-D
+}
+
+#----------------------------------------------------------------------#
+# standardized results printing.                                       #
+#----------------------------------------------------------------------#
+function passed
+{
+printc -n green,black PASSED:; echo -n " "
+}
+
+function failed
+{
+printc -n red,yellow2 FAILED:; echo -n " "
+}
+
+
+#----------------------------------------------------------------------#
+# nicer array and associative-array declaration syntax.                #
+# although... neither is technically necessary, as you can simply      #
+# just start assigning values...                                       #
+#----------------------------------------------------------------------#
+function array
+{
+eval declare -a ${1:-safety_net}
+}
+
+function aarray
+{
+eval declare -A ${1:-safety_net}
+}
+
+
+#----------------------------------------------------------------------#
+# show me the current log                                              #
+#----------------------------------------------------------------------#
+function flog
+{
+METHOD=${1:-${METHOD:-safety-net}}
+#----------------------------------------------------------------------#
+# grab latest log based on numeric log number.                         #
+#----------------------------------------------------------------------#
+export flog
+flog=$(
+    /bin/ls -t ${LOGDIR}/$METHOD.log* $METHOD.log* 2>/dev/null |
+        awk -F. '{print $NF, $0}' |
+        sort -rn |
+        head -1 |
+        fields 2
+    )
+echo $flog
+return
+}
+
+
+#----------------------------------------------------------------------#
+# sends stderr to null.                                                #
+#----------------------------------------------------------------------#
+function shunt
+{
+$* 2>/dev/null
+}
+
+
+#----------------------------------------------------------------------#
+# takes the source-file-name and returns the CamelCase value.          #
+#----------------------------------------------------------------------#
+function camel
+{
+camel=$(
+    IFS=_
+    for x in ${1:-$METHOD} ; do
+        echo -n ${x^}
+    done
+    )
+}
+
+
+#----------------------------------------------------------------------#
+# put something in background inconspicuously.                         #
+#----------------------------------------------------------------------#
+uber_bg()
+{
+( eval $* & ) > /dev/null 2>&1
+return
+}
+
+
+#----------------------------------------------------------------------#
+# writes stdout to stderr.                                             #
+#----------------------------------------------------------------------#
+function stderr
+{
+echo "$@" 1>&2
+}
+
+
+function debug
+{
+#----------------------------------------------------------------------#
+# turn off debugging upon entry                                        #
+#----------------------------------------------------------------------#
+set +xv
+
+#----------------------------------------------------------------------#
+# set the environ DEBUG=on or DEBUG=1 or DEBUG=color                   #
+# to turn on noisy shell execution.                                    #
+#----------------------------------------------------------------------#
+case ${DEBUG:-off} in
+
+    on|1)
+        CLEAR=
+        PS4='+ FILE: $BASH_SOURCE FUNCTION: $FUNCNAME LINE: ${LINENO}: '
+        set -xv
+        ;;
+
+    color)
+        CLEAR=
+        PS4='+ [32m $BASH_SOURCE [33m $FUNCNAME [34m ${LINENO}: [m'
+        set -xv
+        ;;
+
+    off|0)
+        set +xv
+        CLEAR=clear
+        PS4='PS4 -> '
+        ;;
+
+esac
+}
+
+
+#----------------------------------------------------------------------#
+# execute arguments if in debug mode.                                  #
+#----------------------------------------------------------------------#
+function ex_debug
+{
+if [[ ${DEBUG:-0} -eq 1 ]]; then
+    eval $*
+fi
+}
+
+
+function random_color
+{
+local shade idx r g b offset
+export _color
+
+shade=${1:-light}
+
+case $shade in
+    dark)
+        offset=0
+        ;;
+    *)
+        offset=3
+        ;;
+esac
+
+(( idx = ( RANDOM % 3 ) + offset ))
+(( r = 36 * idx ))
+
+(( idx = ( RANDOM % 3 ) + offset ))
+(( g = 6 * idx ))
+
+(( b = ( RANDOM % 3 ) + offset ))
+
+
+(( _color = r + g + b + 16 ))
+
+return $_color
+}
+
+
+function print_highlight
+{
+local which_way fg bg args
+(( which_way = RANDOM % 2 ))
+
+args=
+if [[ $1 = -* ]]; then
+   args=$1
+   shift
+fi
+
+case $which_way in
+    0)
+        random_color dark ; bg=$_color
+        random_color light ; fg=$_color
+        ;;
+    *)
+        random_color dark ; fg=$_color
+        random_color light ; bg=$_color
+        ;;
+esac
+
+echo $args "[48;5;${bg}m[38;5;${fg}m${*}[m"
+}
+
+
+#----------------------------------------------------------------------#
+# test_highlight                                                       #
+#----------------------------------------------------------------------#
+function test_highlight
+{
+for y in 1 2 3 ; do
+for x in 1 2 3 4 5 6 7 8 9 10 11 12 ; do
+    print_highlight `date; date`
+    print_highlight -n `date` ; date
+done
+done
+}
+
+
+#----------------------------------------------------------------------#
+# aurghle that MacOS shell does not support ${var,,} and ${var^^}      #
+# nor: typeset -L or typeset -U                                        #
+# it is a travesty that we have to fork, not 1, but 2 processes        #
+# to overcome this deficiency in MacOS shell support.                  #
+#----------------------------------------------------------------------#
+function lower
+{
+local __x
+eval __x=\$$1
+
+local __y
+__y=$( echo $__x | tr '[:upper:]' '[:lower:]' )
+eval ${1}=$__y
+}
+
+
+function upper
+{
+local __x
+eval __x=\$$1
+
+local __y
+__y=$( echo $__x | tr '[:lower:]' '[:upper:]' )
+eval ${1}=$__y
+}
+
+
+function display_boilerplate_options
+{
+echo "    x) vi this script and exec"
+echo "    @) vi @ buffer"
+echo "    m) git.menu"
+echo "    n) notes"
+echo "    u) urls"
+echo "    y) yoga-schedule"
+echo "    r) return"
+echo "    q) quit"
+echo "    =) quit"
+echo "    /) help"
+echo "    !) bash"
+return
+}
+
+
+#----------------------------------------------------------------------#
+# boilerplate menu options method.                                     #
+#----------------------------------------------------------------------#
+function boilerplate
+{
+debug
+case $* in
+#----------------------------------------------------------------------#
+# store something in the memory buffer real quick.                     #
+#----------------------------------------------------------------------#
+    @) vi ~/Dropbox/:-D ;;
+
+#----------------------------------------------------------------------#
+# edit and continue. which in order to follow links.                   #
+#----------------------------------------------------------------------#
+    x) FIN=$( which $0 ) ; vi $FIN ; exec $FIN ;;
+
+#----------------------------------------------------------------------#
+# omnipresent options.                                                 #
+#----------------------------------------------------------------------#
+    m) git.menu ;;
+    n) notes $TOPIC ;;
+    u) urls $TOPIC ;;
+    y) yoga ;;
+    r) return ;;
+    q|=) # exit
+        echo ; echo complete ; echo ; exit 0 ;;
+    !) bash ;;
+    /) display_boilerplate_options
+        pause
+        ;;
+    *) # invalid option
+        err="\
+[31m[3mInvalid selection[m"
+       ;;
+
+esac
+return
+}
+
+
+#----------------------------------------------------------------------#
+# random selection from stdin.                                         #
+#----------------------------------------------------------------------#
+function random_selection
+{
+while read line ; do
+    echo $RANDOM $line
+done | sort -run | head -1 | cut -d' ' -f2-
+}
+
+#----------------------------------------------------------------------#
+# returns bright random ANSI standard color index.                     #
+#----------------------------------------------------------------------#
+function random_color_simple
+{
+(( color_idx = (RANDOM % ((6*6*6)-2)) + 18 ))
+}
+
+
+#----------------------------------------------------------------------#
+# abrupt ending to JIC.                                                #
+#----------------------------------------------------------------------#
+function noimp
+{
+echo not-implemented
+exit
+}
+
+RB_fgs=(
+     46  47  48  49  50
+     51  45  39  33  27
+     21  57  93 129 165
+    201 200 199 198 197
+    196 202 208 214 220
+    226 190 154 118  82
+    )
+
+function rainbow_me
+{
+DEBUG=color
+debug
+local x fg
+for x in x x ; do
+for fg in ${RB_fgs[*]}; do
+    echo -n "[48;5;${fg}m" # bg only
+    echo -n "[38;5;${fg}m•" # fg only
+#----------------------------------------------------------------------#
+#     echo -n "[48;5;${fg};38;5;${fg}m•" # both                     #
+#----------------------------------------------------------------------#
+done
+done
+echo "[m"
+}
+
+
+#----------------------------------------------------------------------#
+# create a variable named <INPUT-VARIABLE-NAME>_pound                  #
+# whose value is the number of elements in the parameter variable.     #
+# this is to avoid the nasty syntax shown below.                       #
+# so . . . the use case is this. say you have a bash array:            #
+#                                                                      #
+# % ant=( bat cat dog emu )                                            #
+#                                                                      #
+# the number of elements in $ant is 4; which can be accessed via:      #
+#                                                                      #
+# % echo ${#ant[*]}                                                    #
+#   4                                                                  #
+#                                                                      #
+# ... which is definitively the worst syntax in the history            #
+#    of programming.                                                   #
+#                                                                      #
+# this method changes that to:                                         #
+#                                                                      #
+# % create_pound ant                                                   #
+#                                                                      #
+# ... and creates the variable:                                        #
+#                                                                      #
+# % echo $ant_pound                                                    #
+#   4                                                                  #
+#                                                                      #
+#----------------------------------------------------------------------#
+function create_pound
+{
+local _x=$1
+eval ${1}_pound='${#'${_x}'[*]}'
+}
+
+
+function same
+{
+$* 2>&1
+}
+
+function devnull
+{
+$* > /dev/null 2>&1
+}
+
+function shunt
+{
+$* 2>/dev/null
+}
+
+#----------------------------------------------------------------------#
+# show the value of a variable, bypassing the dollar braces syntax.    #
+#----------------------------------------------------------------------#
+function vecho
+{
+local _upper;
+local _lower;
+local _x;
+#----------------------------------------------------------------------#
+# create upper and lower case versions of the variable name input,     #
+# also converting hyphens to underscores, in order to keep the         #
+# user from having to hit the shift key.                               #
+#----------------------------------------------------------------------#
+_x=${1:-PATH}
+_lower=$( echo $1 | tr '[:upper:]-' '[:lower:]_' );
+_upper=$( echo $1 | tr '[:lower:]-' '[:upper:]_' );
+
+#----------------------------------------------------------------------#
+# just print the value.                                                #
+#----------------------------------------------------------------------#
+#----------------------------------------------------------------------#
+# eval echo \${_x:-\${${_upper}:-\${${_lower}}}};                      #
+# return                                                               #
+#----------------------------------------------------------------------#
+
+#----------------------------------------------------------------------#
+# make it look like a declaration.                                     #
+#----------------------------------------------------------------------#
+eval echo ${_x} ==\\\> \${$_x:-\${${_upper}:-\${${_lower}}}};
+return
+}
+
+
+function echopath
+{
+vecho ${1:-PATH} |
+  /usr/bin/tr '=: ' '\012\012\012' |
+  grep . |
+  nl -ba |
+  more -E
+}
+
+
+#----------------------------------------------------------------------#
+# very useful, so just call if given the parameter.                    #
+#----------------------------------------------------------------------#
+if [[ -n $1 ]]; then
+    zero $1
+fi
+
