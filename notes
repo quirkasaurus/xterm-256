@@ -3,14 +3,14 @@
 hence begins a complete consolidation of all the color changes
 and screen manipulations of interest.
 
-this will be the consolidation of my greatest color/cursor challenges
+this will be the consolidation of my color/cursor/unicode works.
 
 ------------------------------------------------------------------------
 
 problems:
 
-  * add the top to bottom line by line and/or column by column color fade
-
-  * make sure that 4 spaces E or W is really working...
-
+  ∆ what are those occasional flashes?
+      probably screen size adjustments mangled the original grid.
+  √ add the north to south by line color fade
+  ∆ add the east to west by column color fade
 
