@@ -25,3 +25,18 @@
 # etc ... .. .                                                         #
 #                                                                      #
 #----------------------------------------------------------------------#
+# in order to use the yaps scripts to change either your FG or BG      #
+# colors, dependent upon dark or lightness of your terminal setting.   #
+# % source yaps1                                                       #
+#                                                                      #
+# if you suddenly can't see anything, type:                            #
+# % yap_toggle_ground                                                  #
+#                                                                      #
+# Next, to see what options are available:                             #
+# % yap_show                                                           #
+#                                                                      #
+# They're pretty self-explanatory. To stop the color madness,          #
+# % yap_off                                                            #
+#                                                                      #
+# Other functions are just differently named color sets.               #
+#----------------------------------------------------------------------#

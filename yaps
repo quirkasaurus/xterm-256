@@ -1,0 +1,155 @@
+#!/bin/bash -i
+#----------------------------------------------------------------------#
+# FILE:    yaps                                                        #
+# AUTHOR:  Douglas Roberts -- droberts                                 #
+# CREATED: Tue Feb 12 10:16:20 EST 2019                                #
+# PURPOSE: yet another prompt setting script.                          #
+#          cycle through list of background colors.                    #
+#----------------------------------------------------------------------#
+
+#----------------------------------------------------------------------#
+# TODO: avoid staircase effect                                         #
+# TODO: toggle background / foreground color change.                   #
+#----------------------------------------------------------------------#
+
+. colors.env
+
+_idx=0
+_g=48 # default foreground/background indicator to background
+
+
+function yap_toggle_ground
+{
+case $_g in
+    38) _g=48 ; echo '[38;5;0m' ;;
+    48) _g=38 ; echo '[48;5;0m' ;;
+esac
+}
+
+
+#----------------------------------------------------------------------#
+# DEBUGGING FUNCTIONS                                                  #
+#----------------------------------------------------------------------#
+
+#----------------------------------------------------------------------#
+# show me available methods.                                           #
+#----------------------------------------------------------------------#
+function yap_show
+{
+grep ^function.yap `which yaps` |
+    awk '{print $2}' |
+    sort
+echo ========================================================================
+echo ORDER=$_yap_order
+echo COLORS=${fgs[*]}
+echo ========================================================================
+yap_show_colors
+echo ========================================================================
+}
+
+
+#----------------------------------------------------------------------#
+# show me current color scheme.                                        #
+#----------------------------------------------------------------------#
+function yap_show_colors
+{
+for idx in ${fgs[*]}; do
+    echo -n "[${_g};5;${idx}m $idx "
+done
+echo
+}
+
+
+function yap_demo
+{
+echo "[${_g};5;`$_yap_order`m" ; /bin/ls -l | head
+echo "[${_g};5;`$_yap_order`m" ; /bin/ls -l | head
+echo "[${_g};5;`$_yap_order`m" ; /bin/ls -l | head
+echo "[${_g};5;`$_yap_order`m" ; /bin/ls -l | head
+}
+
+#----------------------------------------------------------------------#
+# DETERMINE NEXT COLOR; RANDOM OR SEQUENTIAL                           #
+#----------------------------------------------------------------------#
+function yap_random
+{
+_yap_order=_yap_random
+}
+
+
+function _yap_random
+{
+(( _idx = RANDOM % fgs_pound ))
+echo ${fgs[$_idx]}
+}
+
+#- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+
+function yap_sequential
+{
+_yap_order=_yap_sequential
+}
+
+
+function _yap_sequential
+{
+. $FPS1
+(( _idx += 1 ))
+if [[ $_idx -ge $fgs_pound ]]; then
+    _idx=0
+fi
+echo _idx=$_idx > $FPS1
+echo ${fgs[$_idx]}
+}
+
+
+#----------------------------------------------------------------------#
+# MAIN                                                                 #
+#----------------------------------------------------------------------#
+
+#----------------------------------------------------------------------#
+# change the command prompt, PS1, to cycle through background colors.  #
+#----------------------------------------------------------------------#
+HOSTNAME=$( hostname )
+
+function yap_on
+{
+export YAP=on
+export PS1='[${_g};5;`$_yap_order`m${HOSTNAME} \! -> '
+#----------------------------------------------------------------------#
+# export PS1='[${_g};5;`$_yap_order`m${HOSTNAME} \! -> [m '          #
+#----------------------------------------------------------------------#
+}
+
+
+function yap_off
+{
+export YAP=off
+export PS1='${HOSTNAME} \! -> '
+echo "[m"
+clear
+}
+
+
+#----------------------------------------------------------------------#
+# initialize state, only if not done yet.                              #
+#----------------------------------------------------------------------#
+FPS1=~/.ps1
+if [[ ! -f $FPS1 ]]; then
+    echo _idx=0 > $FPS1 2>/dev/null
+fi
+
+#----------------------------------------------------------------------#
+# set default color ordering.                                          #
+# last entry wins.                                                     #
+#----------------------------------------------------------------------#
+_yap_order=_yap_random
+_yap_order=_yap_sequential
+
+
+
+#----------------------------------------------------------------------#
+# finally... set the new PS1 environ.                                  #
+#----------------------------------------------------------------------#
+yap_on
+

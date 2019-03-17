@@ -1,0 +1,327 @@
+#!/bin/bash -i
+#----------------------------------------------------------------------#
+# FILE:    yaps1                                                       #
+# AUTHOR:  Douglas Roberts -- droberts                                 #
+# CREATED: Tue Feb 12 10:16:20 EST 2019                                #
+# PURPOSE: yet another prompt setting script.                          #
+#          cycle through list of background colors.                    #
+#----------------------------------------------------------------------#
+
+#----------------------------------------------------------------------#
+# TODO: avoid staircase effect                                         #
+# TODO: toggle background / foreground color change.                   #
+#----------------------------------------------------------------------#
+
+#----------------------------------------------------------------------#
+# default foreground/background indicator to background                #
+# param >>> previous-setting >>> default-value                         #
+#----------------------------------------------------------------------#
+case ${1:-${_g:-bg}} in
+    bg) _g=48 ;;
+    *) _g=38 ; echo "[40m" ;;
+esac
+_idx=0
+
+
+function yap_toggle_ground
+{
+case $_g in
+    38) _g=48 ; echo '[38;5;0m' ;;
+    48) _g=38 ; echo '[48;5;0m' ;;
+esac
+}
+
+
+function yap_greens
+{
+apastels=( 43 44 49 50 79 80 85 86 115 116 121 122 )
+_yap_pound ; pastels=$FUNCNAME
+}
+
+
+function yap_bright_rainbow
+{
+apastels=(
+     46  47  48  49  50
+     51  45  39  33  27
+     21  57  93 129 165
+    201 200 199 198 197
+    196 202 208 214 220
+    226 190 154 118  82
+    )
+_yap_pound ; pastels=$FUNCNAME
+}
+
+
+#----------------------------------------------------------------------#
+# set the upper bound which is dynamic based on colors list            #
+#----------------------------------------------------------------------#
+function _yap_pound
+{
+pound_pastels=${#apastels[*]}
+}
+
+
+#----------------------------------------------------------------------#
+# list of lists of colors, pegged to a descriptive function name.      #
+#----------------------------------------------------------------------#
+function yap_2_colors
+{
+local r g b idx
+apastels=( 231 188 ) # white grey
+apastels=( 231 194 ) # white green
+#----------------------------------------------------------------------#
+# select random color                                                  #
+#----------------------------------------------------------------------#
+(( r = RANDOM % 3 + 3 ))
+(( g = RANDOM % 3 + 3 ))
+(( b = RANDOM % 3 + 3 ))
+(( idx = (36 * r) + (6 * g) + b + 16 ))
+apastels=( 231 $idx ) # white random-pastel
+_yap_pound ; pastels=$FUNCNAME
+}
+
+
+function yap_pastels1
+{
+apastels=(
+     45  49  50  51  80
+     81  86  87 116 117
+    121 122 123 156 157
+    158 159 219 223 224
+    225 229 251 252 253
+    ) 
+_yap_pound ; pastels=$FUNCNAME
+}
+
+function yap_pastels2
+{
+apastels=(
+      44  45  50  51  80
+      81  86  87 116 117
+     122 123 152 153 158
+     159 177 182 183 187
+     188 189 193 194 195
+     218 219 223 224 225
+     229 230 231
+     )
+_yap_pound ; pastels=$FUNCNAME
+}
+
+
+function yap_greens_purples
+{
+apastels=(
+    120 121 122 123
+    156 157 158 159
+
+    165 171 177 183
+    189 207 213 219
+    225 
+    )
+_yap_pound ; pastels=$FUNCNAME
+}
+
+
+function yap_pastels3
+{
+apastels=(
+     44  45  50  51  80
+     81  86  87 111 116
+    117 122 123 147 152
+    153 158 159 177 182
+    183 187 188 189 193
+    194 195 218 219 223
+    224 225 229 230 231
+    )
+_yap_pound ; pastels=$FUNCNAME
+}
+
+function yap_blues
+{
+apastels=( 81  117  159  123  87  51  45 )
+_yap_pound ; pastels=$FUNCNAME
+}
+
+function yap_pastels4
+{
+#----------------------------------------------------------------------#
+#      50  86 122 158 81 117 159 123  87  51 45  81                    #
+#----------------------------------------------------------------------#
+#----------------------------------------------------------------------#
+#     159 123 87 51 50 86 122 158 121 85 49                            #
+#----------------------------------------------------------------------#
+apastels=(
+    159 123 87 51 50 86 122 158 121 85 49
+    )
+_yap_pound ; pastels=$FUNCNAME
+}
+
+
+#----------------------------------------------------------------------#
+# pastel rainbow.                                                      #
+#----------------------------------------------------------------------#
+function yap_rainbow
+{
+apastels=( 219 183 147 153 159 158 157 193 229 223 217 )
+_yap_pound ; pastels=$FUNCNAME
+}
+
+
+function yap_rainbow_bright
+{
+apastels=( 201 93 21 33 51 48 46 118 226 208 196 198 )
+_yap_pound ; pastels=$FUNCNAME
+}
+
+function yap_greens2
+{
+apastels=(
+          38 39
+    42 43 44 45
+    48 49 50 51
+    78 79 80 81
+    84 85 86 87
+    120 121 122 123 
+    )
+_yap_pound ; pastels=$FUNCNAME
+}
+
+
+#----------------------------------------------------------------------#
+# DEBUGGING FUNCTIONS                                                  #
+#----------------------------------------------------------------------#
+
+#----------------------------------------------------------------------#
+# show me available methods.                                           #
+#----------------------------------------------------------------------#
+function yap_show
+{
+grep ^function.yap `which yaps1` |
+    awk '{print $2}' |
+    sort
+echo ========================================================================
+echo ORDER=$_yap_order
+echo COLORS=$pastels
+echo ========================================================================
+echo $FUNCNAME ::
+yap_show_colors
+echo ========================================================================
+}
+
+
+#----------------------------------------------------------------------#
+# show me current color scheme.                                        #
+#----------------------------------------------------------------------#
+function yap_show_colors
+{
+for idx in ${apastels[*]}; do
+    echo -n "[${_g};5;${idx}m $idx "
+done
+echo
+}
+
+
+function yap_demo
+{
+echo "[${_g};5;`$_yap_order`m" ; /bin/ls -l | head
+echo "[${_g};5;`$_yap_order`m" ; /bin/ls -l | head
+echo "[${_g};5;`$_yap_order`m" ; /bin/ls -l | head
+echo "[${_g};5;`$_yap_order`m" ; /bin/ls -l | head
+}
+
+#----------------------------------------------------------------------#
+# DETERMINE NEXT COLOR; RANDOM OR SEQUENTIAL                           #
+#----------------------------------------------------------------------#
+function yap_random
+{
+_yap_order=_yap_random
+}
+
+
+function _yap_random
+{
+(( _idx = RANDOM % pound_pastels ))
+echo ${apastels[$_idx]}
+}
+
+#- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+
+function yap_sequential
+{
+_yap_order=_yap_sequential
+}
+
+
+function _yap_sequential
+{
+. $FPS1
+(( _idx += 1 ))
+if [[ $_idx -ge $pound_pastels ]]; then
+    _idx=0
+fi
+echo _idx=$_idx > $FPS1
+echo ${apastels[$_idx]}
+}
+
+
+#----------------------------------------------------------------------#
+# MAIN                                                                 #
+#----------------------------------------------------------------------#
+
+#----------------------------------------------------------------------#
+# change the command prompt, PS1, to cycle through background colors.  #
+#----------------------------------------------------------------------#
+HOSTNAME=$( hostname )
+
+function yap_on
+{
+export YAP=on
+export PS1='[${_g};5;`$_yap_order`m${HOSTNAME} \! -> '
+#----------------------------------------------------------------------#
+# export PS1='[${_g};5;`$_yap_order`m${HOSTNAME} \! -> [m '          #
+#----------------------------------------------------------------------#
+}
+
+
+function yap_off
+{
+export YAP=off
+export PS1='${HOSTNAME} \! -> '
+echo "[m"
+clear
+}
+
+
+#----------------------------------------------------------------------#
+# initialize state, only if not done yet.                              #
+#----------------------------------------------------------------------#
+FPS1=~/.ps1
+if [[ ! -f $FPS1 ]]; then
+    echo _idx=0 > $FPS1 2>/dev/null
+fi
+
+#----------------------------------------------------------------------#
+# set default color scheme.                                            #
+# last entry wins.                                                     #
+#----------------------------------------------------------------------#
+yap_greens_purples
+yap_pastels1
+yap_pastels2
+yap_pastels3
+yap_rainbow_bright
+yap_2_colors
+yap_rainbow
+
+#----------------------------------------------------------------------#
+# set default color ordering.                                          #
+# last entry wins.                                                     #
+#----------------------------------------------------------------------#
+_yap_order=_yap_random
+_yap_order=_yap_sequential
+
+#----------------------------------------------------------------------#
+# finally... set the new PS1 environ.                                  #
+#----------------------------------------------------------------------#
+yap_on
+
