@@ -15,6 +15,15 @@ declare -a _fgs
 
 
 #----------------------------------------------------------------------#
+# meh. syntax improvement for counters.                                #
+#----------------------------------------------------------------------#
+function init
+{
+eval ${1:-_nothing}=0
+}
+
+
+#----------------------------------------------------------------------#
 # report status in color!                                              #
 #----------------------------------------------------------------------#
 function report_status
@@ -25,20 +34,6 @@ else
     echo 🔴 FAILED $*
 fi
 return
-}
-
-
-#----------------------------------------------------------------------#
-# makes for easier syntax later when requiring array lengths.          #
-# usage:                                                               #
-#     % declare -a frogs                                               #
-#     % frogs=( $( date ) )                                            #
-#     % pound frogs                                                    #
-#     % echo $frogs_pound                                              #
-#----------------------------------------------------------------------#
-function pound
-{
-eval ${1}_pound=\${\#${1}[*]}
 }
 
 
@@ -626,6 +621,14 @@ for fg in ${RB_fgs[*]}; do
 done
 done
 echo "[m"
+}
+
+
+function pound
+{
+local _nothing
+local var=${1:-_nothing}
+eval pound_${var:-_nothing}=\${\#${var}'[*]}'
 }
 
 

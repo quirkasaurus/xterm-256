@@ -31,8 +31,8 @@ return
 function print_char
 {
 tput cup $ypos $xpos
-if [[ $ypos -ge $fgs_pound ]]; then
-    (( idx = ypos % fgs_pound ))
+if [[ $ypos -ge $pound_fgs ]]; then
+    (( idx = ypos % pound_fgs ))
 else
     idx=$ypos
 fi
