@@ -7,7 +7,12 @@
 # i've tried to do whatever in both black and white backgrounds,       #
 # but all scripts don't support that.                                  #
 #                                                                      #
-# i'll update things when i can.                                       #
+# the clam* scripts all just draw pictures.                            #
+# rather than keep making one script with dozens of command line       #
+# options and forcing lots of stupid regression tests, i'm just        #
+# copying a script, tweaking it, and saving it as another one.         #
+# the theory is that the scripts evolve, but so far, the early         #
+# clams still draw the coolest, imho.                                  #
 #                                                                      #
 # once you download one of these scripts,                              #
 # just run it from within an xterm app window:                         #

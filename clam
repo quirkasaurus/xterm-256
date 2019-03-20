@@ -31,8 +31,8 @@ return
 function print_char
 {
 tput cup $ypos $xpos
-if [[ $ypos -ge $fgs_pound ]]; then
-    (( idx = ypos % fgs_pound ))
+if [[ $ypos -ge $pound_fgs ]]; then
+    (( idx = ypos % pound_fgs ))
 else
     idx=$ypos
 fi
@@ -60,7 +60,7 @@ if [[ $ypos -lt 0 ]]; then
     ypos=1
 fi
 
-if [[ $ypos -gt $LINES ]]; then
+if [[ $ypos -ge $LINES ]]; then
     (( ypos -= 2 ))
 fi
 
@@ -68,7 +68,7 @@ if [[ $xpos -lt 0 ]]; then
     xpos=1
 fi
 
-if [[ $xpos -gt $COLUMNS ]]; then
+if [[ $xpos -ge $COLUMNS ]]; then
     (( xpos -= 2 ))
 fi
 
@@ -123,6 +123,8 @@ return
 function main_loop
 {
 local num=0
+local max
+
 #----------------------------------------------------------------------#
 # center the cursor                                                    #
 #----------------------------------------------------------------------#
@@ -134,7 +136,8 @@ tput cup $ypos $xpos
 #----------------------------------------------------------------------#
 # MAIN WHILE LOOP                                                      #
 #----------------------------------------------------------------------#
-while [[ $num -lt 99 ]]; do
+(( max = ( LINES * COLUMNS ) / 8 ))
+while [[ $num -lt $max ]]; do
     wander
     (( num += 1 ))
 done
@@ -159,9 +162,9 @@ function loopty_loop
 local num=0
 
 while [[ $num -lt 22 ]]; do
-    grab_colors
+    grab_colors_reduced_set
     main_loop
-    sleep 1
+    sleep 2
 done
 }
 
@@ -178,7 +181,7 @@ _g=38 # for dark terminals
 #----------------------------------------------------------------------#
 # pick a random color scheme . . .                                     #
 #----------------------------------------------------------------------#
-grab_colors
+grab_colors_reduced_set
 loopty_loop
 
 
