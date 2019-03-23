@@ -15,10 +15,13 @@ function print_char
 {
 char=${1:-@}
 tput cup $ypos $xpos
-if [[ $xpos -ge $pound_fgs ]]; then
-    (( idx = xpos % pound_fgs ))
+#----------------------------------------------------------------------#
+# next color based on horizontal row.                                  #
+#----------------------------------------------------------------------#
+if [[ $ypos -ge $pound_fgs ]]; then
+    (( idx = ypos % pound_fgs ))
 else
-    idx=$xpos
+    idx=$ypos
 fi
 cval=${fgs[$idx]}
 echo -n "[${_g};5;${cval}m${char} "
@@ -72,10 +75,9 @@ _x=0
 _y=0
 
 while [[ $_x -eq 0 && $_y -eq 0 ]]; do
-        (( _x = ( RANDOM % 3 ) - 1 ))
-        (( _y = ( RANDOM % 3 ) - 1 ))
+    (( _x = ( RANDOM % 3 ) - 1 ))
+    (( _y = ( RANDOM % 3 ) - 1 ))
 done
-
 
 #----------------------------------------------------------------------#
 # if not going N or S, go 2 squares left or right and                  #
@@ -84,9 +86,9 @@ done
 if [[ $_y -eq 0 ]]; then
     (( _x = _x * 2 ))
     boundary_check
-    print_char -
+    print_char .
     boundary_check
-    print_char =
+    print_char .
 fi
 
 boundary_check
@@ -102,10 +104,11 @@ function main_loop
 local num=0
 local max=150 # seems to look best.
 
+tput clear
+
 #----------------------------------------------------------------------#
 # center the cursor                                                    #
 #----------------------------------------------------------------------#
-tput clear
 (( xpos = COLUMNS / 2 ))
 (( ypos = LINES / 2 ))
 tput cup $ypos $xpos
@@ -130,10 +133,13 @@ function loopty_loop
 {
 local num=0
 
-while [[ $num -lt 22 ]]; do
+while [[ $num -lt 2 ]]; do
     grab_colors
     main_loop
     sleep 2
+#----------------------------------------------------------------------#
+#     (( num += 1 )) # comment for forever...                          #
+#----------------------------------------------------------------------#
 done
 }
 
