@@ -43,36 +43,50 @@ They're pretty self-explanatory. To stop the color madness,
 
 # All functions
 
-``` yap_off ``` -- turn off the coloration.
-``` yap_on ``` -- turn on the coloration.
+``` yap_off ``` turn off the coloration.
 
-``` yap_demo ``` -- simple demo of how it looks. the pastel shades
+``` yap_on ``` turn on the coloration.
+
+``` yap_demo ``` simple demo of how it looks. the pastel shades
     are recommended for light backgrounds because
     its makes each command look like a post-it note
     of a different color.
 
-``` yap_toggle_ground ``` -- switch from coloration of
+``` yap_toggle_ground ``` switch from coloration of
     foreground to background and vice versa
 
 # set the color pattern to comething else.
 # currently available color patterns:
 
-``` yap_bright_rainbow ``` -- good for dark backgrounds
-``` yap_rainbow ``` -- done in light pastel shades
-``` yap_2_colors -- white and a random color
+``` yap_bright_rainbow ``` good for dark backgrounds
+
+``` yap_rainbow ``` done in light pastel shades
+
+``` yap_2_colors ``` white and a random color
+
 ``` yap_blues ```
+
 ``` yap_greens ```
+
 ``` yap_greens2 ```
+
 ``` yap_greens_purple ```
+
 ``` yap_pastels1 ```
+
 ``` yap_pastels2 ```
+
 ``` yap_pastels3 ```
+
 ``` yap_pastels4 ```
+
 ``` yap_show ```
+
 ``` yap_show_colors ```
 
 change the next color selection
 
-``` yap_random ``` -- select colors randomly from the list.
-``` yap_sequential ``` -- select colors sequentially from the list.
+``` yap_random ``` select colors randomly from the list.
+
+``` yap_sequential ``` select colors sequentially from the list.
 
