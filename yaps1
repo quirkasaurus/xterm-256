@@ -18,8 +18,15 @@
 #----------------------------------------------------------------------#
 case ${1:-${_g:-bg}} in
     bg) _g=48 ;;
-    *) _g=38 ; echo "[40m" ;;
+    fg) _g=38 ;;
+    *) _g=${_g:-48} ;;
 esac
+
+case $_g in
+    38) echo -n "[40m" ;;
+    48) echo -n "[30m" ;;
+esac
+
 _idx=0
 
 
@@ -34,14 +41,14 @@ esac
 
 function yap_greens
 {
-fgs=( 43 44 49 50 79 80 85 86 115 116 121 122 )
+apastels=( 43 44 49 50 79 80 85 86 115 116 121 122 )
 _yap_pound ; pastels=$FUNCNAME
 }
 
 
 function yap_bright_rainbow
 {
-fgs=(
+apastels=(
      46  47  48  49  50
      51  45  39  33  27
      21  57  93 129 165
@@ -58,7 +65,7 @@ _yap_pound ; pastels=$FUNCNAME
 #----------------------------------------------------------------------#
 function _yap_pound
 {
-pound_pastels=${#fgs[*]}
+pound_pastels=${#apastels[*]}
 }
 
 
@@ -68,8 +75,8 @@ pound_pastels=${#fgs[*]}
 function yap_2_colors
 {
 local r g b idx
-fgs=( 231 188 ) # white grey
-fgs=( 231 194 ) # white green
+apastels=( 231 188 ) # white grey
+apastels=( 231 194 ) # white green
 #----------------------------------------------------------------------#
 # select random color                                                  #
 #----------------------------------------------------------------------#
@@ -77,14 +84,14 @@ fgs=( 231 194 ) # white green
 (( g = RANDOM % 3 + 3 ))
 (( b = RANDOM % 3 + 3 ))
 (( idx = (36 * r) + (6 * g) + b + 16 ))
-fgs=( 231 $idx ) # white random-pastel
+apastels=( 231 $idx ) # white random-pastel
 _yap_pound ; pastels=$FUNCNAME
 }
 
 
 function yap_pastels1
 {
-fgs=(
+apastels=(
      45  49  50  51  80
      81  86  87 116 117
     121 122 123 156 157
@@ -96,7 +103,7 @@ _yap_pound ; pastels=$FUNCNAME
 
 function yap_pastels2
 {
-fgs=(
+apastels=(
       44  45  50  51  80
       81  86  87 116 117
      122 123 152 153 158
@@ -111,7 +118,7 @@ _yap_pound ; pastels=$FUNCNAME
 
 function yap_greens_purples
 {
-fgs=(
+apastels=(
     120 121 122 123
     156 157 158 159
 
@@ -125,7 +132,7 @@ _yap_pound ; pastels=$FUNCNAME
 
 function yap_pastels3
 {
-fgs=(
+apastels=(
      44  45  50  51  80
      81  86  87 111 116
     117 122 123 147 152
@@ -139,7 +146,7 @@ _yap_pound ; pastels=$FUNCNAME
 
 function yap_blues
 {
-fgs=( 81  117  159  123  87  51  45 )
+apastels=( 81  117  159  123  87  51  45 )
 _yap_pound ; pastels=$FUNCNAME
 }
 
@@ -151,7 +158,7 @@ function yap_pastels4
 #----------------------------------------------------------------------#
 #     159 123 87 51 50 86 122 158 121 85 49                            #
 #----------------------------------------------------------------------#
-fgs=(
+apastels=(
     159 123 87 51 50 86 122 158 121 85 49
     )
 _yap_pound ; pastels=$FUNCNAME
@@ -163,20 +170,20 @@ _yap_pound ; pastels=$FUNCNAME
 #----------------------------------------------------------------------#
 function yap_rainbow
 {
-fgs=( 219 183 147 153 159 158 157 193 229 223 217 )
+apastels=( 219 183 147 153 159 158 157 193 229 223 217 )
 _yap_pound ; pastels=$FUNCNAME
 }
 
 
 function yap_rainbow_bright
 {
-fgs=( 201 93 21 33 51 48 46 118 226 208 196 198 )
+apastels=( 201 93 21 33 51 48 46 118 226 208 196 198 )
 _yap_pound ; pastels=$FUNCNAME
 }
 
 function yap_greens2
 {
-fgs=(
+apastels=(
           38 39
     42 43 44 45
     48 49 50 51
@@ -215,7 +222,7 @@ echo ========================================================================
 #----------------------------------------------------------------------#
 function yap_show_colors
 {
-for idx in ${fgs[*]}; do
+for idx in ${apastels[*]}; do
     echo -n "[${_g};5;${idx}m $idx "
 done
 echo
@@ -242,7 +249,7 @@ _yap_order=_yap_random
 function _yap_random
 {
 (( _idx = RANDOM % pound_pastels ))
-echo ${fgs[$_idx]}
+echo ${apastels[$_idx]}
 }
 
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
@@ -261,7 +268,7 @@ if [[ $_idx -ge $pound_pastels ]]; then
     _idx=0
 fi
 echo _idx=$_idx > $FPS1
-echo ${fgs[$_idx]}
+echo ${apastels[$_idx]}
 }
 
 
