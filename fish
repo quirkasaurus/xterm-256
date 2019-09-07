@@ -5,6 +5,7 @@
 
 function compute_next_random
 {
+set -xv
 while :; do
     (( red   = RANDOM % 6 ))
     (( green = RANDOM % 6 ))
@@ -21,6 +22,7 @@ return
 function compute_random
 {
 local num=0
+set -xv
 while [[ $num -lt 100 ]]; do
     compute_next_random
     fgs[num]=$next_color_idx

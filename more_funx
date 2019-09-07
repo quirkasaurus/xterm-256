@@ -713,6 +713,21 @@ return
 }
 
 
+#----------------------------------------------------------------------#
+# echo known array                                                     #
+#----------------------------------------------------------------------#
+function vacho
+{
+local x _x
+declare -a x
+x=( unknown-environ )
+_x=${1:-x}
+eval echo ${_x}'=\( ${'$_x'[*]} \)'
+}
+
+
+
+
 function echopath
 {
 vecho ${1:-PATH} |
