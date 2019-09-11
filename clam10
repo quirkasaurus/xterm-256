@@ -92,11 +92,15 @@ tput clear
 (( xpos = COLUMNS / 2 ))
 (( ypos = LINES / 2 ))
 tput cup $ypos $xpos
+if [[ -z $perma_color ]]; then
+    grab_colors
+fi
 
 #----------------------------------------------------------------------#
 # MAIN WHILE LOOP                                                      #
 #----------------------------------------------------------------------#
-while [[ $num -lt 99 ]]; do
+compute_char_max
+while [[ $num -lt ${char_max:-199} ]]; do
     wander
     (( num += 1 ))
 done
@@ -115,14 +119,13 @@ return
 
 
 
-
 function loopty_loop
 {
 local num=0
 
 while [[ $num -lt 22 ]]; do
     main_loop
-    sleep 1
+    sleep 3
 done
 }
 
@@ -130,19 +133,20 @@ done
 #----------------------------------------------------------------------#
 # MAIN                                                                 #
 #----------------------------------------------------------------------#
-. colors.env
-. yaps1
-_g=48 # for light terminals
-_g=38 # for dark terminals
-
-#----------------------------------------------------------------------#
+# initialize color palette.
 # pick a color scheme or not . . .                                     #
 #----------------------------------------------------------------------#
-grab_colors ${1:-rainbow}
+. colors.env ${1:-rainbow}
+perma_color=$1
+. yaps1
+
+_g=48 # for light terminals
+_g=38 # for dark terminals
+_g=${2:-$_g}
+
 vacho fgs
-echo sleeping 3
-sleep 3
+echo sleeping 2
+sleep 2
 
 loopty_loop
-
 
