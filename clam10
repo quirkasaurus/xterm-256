@@ -123,7 +123,7 @@ local num=0
 
 while [[ $num -lt 22 ]]; do
     main_loop
-    sleep 2
+    sleep 3
 done
 }
 
