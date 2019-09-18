@@ -1,0 +1,181 @@
+
+
+
+#----------------------------------------------------------------------#
+# FILE:    printc                                                      #
+# AUTHOR:  Douglas Roberts -- droberts                                 #
+# CREATED: Mon Aug 30 14:26:09 EDT 2010                                #
+# PURPOSE: print colors before display.                                #
+#                                                                      #
+#----------------------------------------------------------------------#
+
+. more_funx
+
+#----------------------------------------------------------------------#
+# 4 different main scenarios                                           #
+#                                                                      #
+# 4 4 -- 4 3      dark  on dark                                        #
+# 4 9 -- 4 9      light on dark                                        #
+# 9 4 -- 4 9 7    dark  on light                                       #
+# 9 9 -- 4 3 1 6  light on light                                       #
+#----------------------------------------------------------------------#
+BEGIN=
+fgcolor=
+bgcolor=
+FG=
+BG=
+_BG=0
+_FG=0
+n=
+u2=
+terminus='[m'
+ECHO=echo
+
+for arg in $* ; do
+
+  case $arg in
+    -e)  ECHO=stderr ; shift ;;
+    -n)  n=-n   ; shift ;;
+    -u2) u2=-u2 ; shift ;;
+    -k)  terminus= ; shift ;;
+    -h*) echo usage: bg,fg\|fg text ; exit 1 ;;
+
+    *)
+         colors=$arg
+         case $colors in
+           *,*) fgcolor=${colors#*,}
+                bgcolor=${colors%,*} ;;
+
+             *) fgcolor=${colors} ;;
+         esac
+         shift
+         break
+         ;;
+  esac
+done
+
+case $fgcolor in
+
+  black)      FG=0 ;;
+  red)        FG=1 ;;
+  green)      FG=2 ;;
+  lime)       FG=2 ;;
+  yellow)     FG=3 ;;
+  blue)       FG=4 ;;
+  magenta)    FG=5 ;;
+  purple)     FG=5 ;;
+  cyan)       FG=6 ;;
+  white)      FG=7 ;;
+  light_gray) FG=7 ;;
+  
+  black2)     FG=0 ;  _FG=1 ;;
+  dark_gray)  FG=0 ;  _FG=1 ;;
+  gray)       FG=0 ;  _FG=1 ;;
+  red2)       FG=1 ;  _FG=1 ;;
+  pink)       FG=1 ;  _FG=1 ;;
+  green2)     FG=2 ;  _FG=1 ;;
+  lime2)      FG=2 ;  _FG=1 ;;
+  yellow2)    FG=3 ;  _FG=1 ;;
+  blue2)      FG=4 ;  _FG=1 ;;
+  magenta2)   FG=5 ;  _FG=1 ;;
+  purple2)    FG=5 ;  _FG=1 ;;
+  cyan2)      FG=6 ;  _FG=1 ;;
+  white2)     FG=7 ;  _FG=1 ;;
+
+  [0-9]*)     FG="8;5;$fgcolor"
+esac
+
+case $bgcolor in
+
+  black)      BG=0 ;;
+  red)        BG=1 ;;
+  green)      BG=2 ;;
+  lime)       BG=2 ;;
+  yellow)     BG=3 ;;
+  blue)       BG=4 ;;
+  magenta)    BG=5 ;;
+  purple)     BG=5 ;;
+  cyan)       BG=6 ;;
+  white)      BG=7 ;;
+  light_gray) FG=7 ;;
+  
+  black2)     BG=0 ;  _BG=1 ;;
+  dark_gray)  BG=0 ;  _BG=1 ;;
+  gray)       BG=0 ;  _BG=1 ;;
+  red2)       BG=1 ;  _BG=1 ;;
+  pink)       BG=1 ;  _BG=1 ;;
+  green2)     BG=2 ;  _BG=1 ;;
+  lime2)      BG=2 ;  _BG=1 ;;
+  yellow2)    BG=3 ;  _BG=1 ;;
+  blue2)      BG=4 ;  _BG=1 ;;
+  magenta2)   BG=5 ;  _BG=1 ;;
+  purple2)    BG=5 ;  _BG=1 ;;
+  cyan2)      BG=6 ;  _BG=1 ;;
+  white2)     BG=7 ;  _BG=1 ;;
+
+  [0-9]*)     BG="8;5;$bgcolor"
+esac
+
+#----------------------------------------------------------------------#
+# Dark background, dark foreground.                                    #
+#----------------------------------------------------------------------#
+__BG=4
+__FG=3
+
+#----------------------------------------------------------------------#
+# Light background, Dark foreground...                                 #
+#----------------------------------------------------------------------#
+if [[ $_BG -eq 1 && $_FG -eq 0 ]]; then
+
+#----------------------------------------------------------------------#
+# Need reverse video and the colors are opposite.                      #
+#----------------------------------------------------------------------#
+  BEGIN='[7m'
+  __BG=4
+  __FG=9
+  x=$BG
+  BG=$FG
+  FG=$x
+  
+#----------------------------------------------------------------------#
+# Light background, Light foreground...                                #
+#----------------------------------------------------------------------#
+elif [[ $_BG -eq 1 && $_FG -eq 1 ]]; then
+
+  BEGIN='[7m[2m'
+  __FG=9
+  x=$BG
+  BG=$FG
+  FG=$x
+  
+
+#----------------------------------------------------------------------#
+# Dark background, Light foreground...                                 #
+#----------------------------------------------------------------------#
+elif [[ $_BG -eq 0 && $_FG -eq 1 ]]; then
+
+#----------------------------------------------------------------------#
+# Use brightness and light number.                                     #
+#----------------------------------------------------------------------#
+  BEGIN='[1m'
+  __FG=9
+
+fi
+
+
+
+#----------------------------------------------------------------------#
+# ... and print                                                        #
+#----------------------------------------------------------------------#
+$ECHO -n "${BEGIN}"
+
+if [[ ! -z "$bgcolor" ]]; then
+  $ECHO -n "[${__BG}${BG}m"
+fi
+
+if [[ ! -z "$fgcolor" ]]; then
+  $ECHO -n "[${__FG}${FG}m"
+fi
+
+$ECHO $n $u2 "${*}${terminus}"
+

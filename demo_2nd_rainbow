@@ -1,0 +1,75 @@
+
+#----------------------------------------------------------------------#
+# FILE:    fish                                                        #
+# AUTHOR:  Douglas Roberts -- droberts                                 #
+# CREATED: Wed Sep 18 19:20:19 EDT 2019                                #
+# PURPOSE: secondary rainbow demo.                                     #
+#                                                                      #
+#----------------------------------------------------------------------#
+
+for r in 5 0 ; do
+for g in 5 0 ; do
+for b in 5 0 ; do
+    (( color_idx = ( 36 * r ) + ( 6 * g ) + ( 1 * b ) + 16 ))
+    printc -n $color_idx,244 " $color_idx $r $g $b "
+    echo -n " "
+done
+done
+done
+echo ; echo
+
+for r in 5 0 ; do
+for b in 5 0 ; do
+for g in 5 0 ; do
+    (( color_idx = ( 36 * r ) + ( 6 * g ) + ( 1 * b ) + 16 ))
+    printc -n $color_idx,244 " $color_idx $r $g $b "
+    echo -n " "
+done
+done
+done
+echo ; echo
+
+for g in 5 0 ; do
+for r in 5 0 ; do
+for b in 5 0 ; do
+    (( color_idx = ( 36 * r ) + ( 6 * g ) + ( 1 * b ) + 16 ))
+    printc -n $color_idx,244 " $color_idx $r $g $b "
+    echo -n " "
+done
+done
+done
+echo ; echo
+
+for g in 5 0 ; do
+for b in 5 0 ; do
+for r in 5 0 ; do
+    (( color_idx = ( 36 * r ) + ( 6 * g ) + ( 1 * b ) + 16 ))
+    printc -n $color_idx,244 " $color_idx $r $g $b "
+    echo -n " "
+done
+done
+done
+echo ; echo
+
+for b in 5 0 ; do
+for r in 5 0 ; do
+for g in 5 0 ; do
+    (( color_idx = ( 36 * r ) + ( 6 * g ) + ( 1 * b ) + 16 ))
+    printc -n $color_idx,244 " $color_idx $r $g $b "
+    echo -n " "
+done
+done
+done
+echo ; echo
+
+for b in 5 0 ; do
+for g in 5 0 ; do
+for r in 5 0 ; do
+    (( color_idx = ( 36 * r ) + ( 6 * g ) + ( 1 * b ) + 16 ))
+    printc -n $color_idx,244 " $color_idx $r $g $b "
+    echo -n " "
+done
+done
+done
+echo ; echo
+
