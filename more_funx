@@ -688,6 +688,11 @@ function vecho
 local _upper;
 local _lower;
 local _x;
+local n;
+if [[ $1 == -n ]]; then
+    n=-n
+    shift
+fi
 #----------------------------------------------------------------------#
 # create upper and lower case versions of the variable name input,     #
 # also converting hyphens to underscores, in order to keep the         #
@@ -708,7 +713,7 @@ _upper=$( echo $1 | tr '[:lower:]-' '[:upper:]_' );
 #----------------------------------------------------------------------#
 # make it look like a declaration.                                     #
 #----------------------------------------------------------------------#
-eval echo ${_x} ==\\\> \${$_x:-\${${_upper}:-\${${_lower}}}};
+eval echo $n ${_x} ==\\\> \${$_x:-\${${_upper}:-\${${_lower}}}};
 return
 }
 
@@ -720,12 +725,15 @@ function vacho
 {
 local x _x
 declare -a x
+local n;
+if [[ $1 == -n ]]; then
+    n=-n
+    shift
+fi
 x=( unknown-environ )
 _x=${1:-x}
 eval echo ${_x}'=\( ${'$_x'[*]} \)'
 }
-
-
 
 
 function echopath

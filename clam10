@@ -1,17 +1,11 @@
 
-
-
-
-function clean_exit
-{
-tput cup $LINES $COLUMNS
-echo "[m" done
-exit
-}
-
-
-trap clean_exit 1 2 3
-
+#----------------------------------------------------------------------#
+# FILE:    clam10                                                      #
+# AUTHOR:  Douglas Roberts -- droberts                                 #
+# CREATED: Sun Sep 15 09:51:05 EDT 2019                                #
+# PURPOSE: perfect drawer.                                             #
+#                                                                      #
+#----------------------------------------------------------------------#
 
 
 function wander

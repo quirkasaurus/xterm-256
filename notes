@@ -1,9 +1,4 @@
 
-color declaration in colors.env
-tags file working with these files.
-------------------------------------------------------------------------
-
-
 hence begins a complete consolidation of all the color changes
 and screen manipulations of interest.
 
@@ -21,3 +16,14 @@ problems:
 ------------------------------------------------------------------------
 reduced set colors pattern 11 looks 2-tone. fix.
 ------------------------------------------------------------------------
+#----------------------------------------------------------------------#
+# palette    begin end total running-total                             #
+# system        0   15   16       16                                   #
+# colors       16  231  216      232                                   #
+# grayscale   232  255   24      256                                   #
+#----------------------------------------------------------------------#
+
+color declaration in colors.env
+tags file working with these files.
+------------------------------------------------------------------------
+
