@@ -30,5 +30,10 @@ TODO:
 
 document the 2nd rainbows!!
 
+the 6 color rainbows need to be added to the extended color-sets.
+2ndly, the grayscale needs to modified into the clam11.
 
+the issue is that that clam11 algorithm works based on the 
+previous rgb values. with grayscale, it's simpler:
+just +/- 1, within bounds.
 

@@ -122,8 +122,12 @@ done
 }
 
 
+
 #----------------------------------------------------------------------#
 # MAIN                                                                 #
+#----------------------------------------------------------------------#
+. colors.env
+
 #----------------------------------------------------------------------#
 # initialize color palette.
 # pick a color scheme or not . . .                                     #
@@ -139,18 +143,15 @@ esac
 # deal with foreground/background coloring                             #
 #----------------------------------------------------------------------#
 case ${2:-not-set} in
-    48|f|fg|fore*) _g=48 ;; # for light terminals
-    38|b|bg|back*) _g=38 ;; # for dark terminals
+    38|f|fg|fore*) _g=38 ;; # for light terminals
+    48|b|bg|back*) _g=48 ;; # for dark terminals
     *) _g=38 ;; # guess
 esac
     
 perma_color=$1
-. colors.env
-. yaps1
-
-_g=48 # for light terminals
-_g=38 # for dark terminals
-_g=${2:-$_g}
+#----------------------------------------------------------------------#
+# . yaps1                                                              #
+#----------------------------------------------------------------------#
 
 loopty_loop
 
