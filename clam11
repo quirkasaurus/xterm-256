@@ -1,5 +1,4 @@
 
-
 . colors.env
 
 #----------------------------------------------------------------------#
@@ -79,6 +78,11 @@ decode_color_idx
 #----------------------------------------------------------------------#
 # select random RGB value to fade.                                     #
 # if going to force a movement, here is the spot. QQQ                  #
+#----------------------------------------------------------------------#
+# cute. the problem is: there are only 3 colors, but                   #
+# 8 possible directions. so we cannot directly match colors to directions. #
+# hm. HOWEVER - there are 8 values that can be equivocally faded to as #
+# endpoints: black-red-green-.....-white. clam13. :)                   #
 #----------------------------------------------------------------------#
 (( rgb_idx = RANDOM % 3 ))
 case $rgb_idx in
@@ -203,7 +207,10 @@ bump_fade
 # go to next spot and print the character                              #
 #----------------------------------------------------------------------#
 tput cup $ypos $xpos
-echo -n "[${_g};5;${color_idx}m@ [m"
+#----------------------------------------------------------------------#
+# echo -n "[${_g};5;${color_idx}m@ [m"                               #
+#----------------------------------------------------------------------#
+echo -n "[${_g};5;${color_idx}m${_ball} [m"
 
 if [[ $color_idx -gt 231 || $color_idx -lt 16 ]]; then
     tput cup 0 $COLUMNS
@@ -281,6 +288,19 @@ done
 case $1 in
     -h|--help)
         echo $0 '[color_idx|color_pattern_name] [bg|fg|38|48]'
+	cat << EOF
+FEATURES IN THIS VERSION:
+• stop and print all color-idx/pattern information
+	upon out-of-bounds color_idx value.
+• bouncing-ball character variable usage
+• "bump-fade" algorithm invented. :)
+	•• this fades one color at a time based on direction.
+	•• that is, up is red, left is green, down is blue
+• "bump-fade" algorithm test: run with
+	•• $0 -t
+	•• $0 -T
+EOF
+
 	exit
 	;;
 
