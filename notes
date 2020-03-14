@@ -37,3 +37,27 @@ the issue is that that clam11 algorithm works based on the
 previous rgb values. with grayscale, it's simpler:
 just +/- 1, within bounds.
 
+------------------------------------------------------------------------
+
+thoughts on the bump-fade pattern:
+
+the 2nd rainbow:
+
+ K
+R G B
+ Y C M 
+  W
+
+has 8 valid colors.
+a screen cursor has 8 valid directions in which to go.
+
+assign colors to directions like so:
+
+C B Y
+W * K
+M G R
+
+... but who knows what may look good?
+keep old patterns.
+
+

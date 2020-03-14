@@ -14,6 +14,49 @@ DEBUG=0
 declare -a _fgs
 
 
+trap clean_exit 1 2 3
+
+
+function clean_exit
+{
+tput cup $LINES $COLUMNS
+echo "[m" done
+exit
+}
+
+
+function nanosleep
+{
+# for nano-second sleeps
+# on the at home mac,
+# tests results:
+#----------------------------------------------------------------------#
+# testing nanosleep with 10                                            #
+# real	0.001s                                                         #
+# -------------------------------------------------------------------- #
+# testing nanosleep with 100                                           #
+# real	0.002s                                                         #
+# -------------------------------------------------------------------- #
+# testing nanosleep with 1000                                          #
+# real	0.016s                                                         #
+# -------------------------------------------------------------------- #
+# testing nanosleep with 10000                                         #
+# real	0.157s                                                         #
+# -------------------------------------------------------------------- #
+# testing nanosleep with 100000                                        #
+# real	2.160s                                                         #
+# -------------------------------------------------------------------- #
+#----------------------------------------------------------------------#
+
+iteration=${1:-1000}
+
+while [[ $num -lt $iteration ]]; do
+    (( num += 1 ))
+    :
+done
+}
+
+
 #----------------------------------------------------------------------#
 # meh. syntax improvement for counters.                                #
 #----------------------------------------------------------------------#
@@ -261,6 +304,11 @@ export zero
 function incr
 {
 eval "(( ${1:-num} += ${2:-1} ))"
+}
+
+function decr
+{
+eval "(( ${1:-num} -= ${2:-1} ))"
 }
 
 

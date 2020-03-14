@@ -332,5 +332,6 @@ _g=38 # for dark terminals
 _g=${2:-$_g}
 
 (( color_idx = ( RANDOM % 232 ) + 16 ))
+_ball=⬤
 loopty_loop
 

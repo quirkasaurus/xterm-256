@@ -1,108 +1,15 @@
 
-#----------------------------------------------------------------------#
-# FILE:    duck                                                        #
-# AUTHOR:  Douglas Roberts -- droberts                                 #
-# CREATED: Sun Mar 17 12:18:22 EDT 2019                                #
-# PURPOSE: barebones check for syntax, correct variable naming, etc... #
-#                                                                      #
-#----------------------------------------------------------------------#
 
-#----------------------------------------------------------------------#
-# palette    begin end total running-total                             #
-# system        0   15   16       16                                   #
-# colors       16  231  216      232                                   #
-# grayscale   232  255   24      256                                   #
-#----------------------------------------------------------------------#
 
-#----------------------------------------------------------------------#
-# for provided variable name,                                          #
-# increment or decrement based on fade-direction value.                #
-# check for bounds: 0 - 5                                              #
-#----------------------------------------------------------------------#
-function bump_fade_direction
-{
-local rgb
-eval rgb=\$$1
-(( rgb += fade_direction ))
-if [[ $rgb -gt 5 ]]; then
-    rgb=5
-elif [[ $rgb -lt 0 ]]; then
-    rgb=0
-fi
-eval ${1}=$rgb
-return
-}
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -#
-
-function test_bump_fade_direction
-{
-for r in -1 0 1 2 3 4 5 6 ; do
-    for fade_direction in -1 0 1 ; do
-        RR=$r
-        bump_fade_direction r
-        echo was: $RR FAD-DIR $fade_direction =\> is: $r
-    done
-done
-}
-
-#----------------------------------------------------------------------#
-# bump only 1 RGB value up or down. check bounds.                      #
-# XXX: if we reach bounds, do we switch colors or punt? for now, punt. #
-#----------------------------------------------------------------------#
-function bump_fade
-{
-local r g b
-#----------------------------------------------------------------------#
-# decode again the current color index                                 #
-#----------------------------------------------------------------------#
-(( r = ( color_idx - 16 ) / 36 ))
-(( g = ( ( color_idx - 16 ) % 36 ) / 6 ))
-(( b = ( color_idx - 16 ) % 6 ))
-
-#----------------------------------------------------------------------#
-# echo -n " $r $g $b "                                                 #
-#----------------------------------------------------------------------#
-
-#----------------------------------------------------------------------#
-# select random RGB value to fade.                                     #
-# if going to force a movement, here is the spot. QQQ                  #
-#----------------------------------------------------------------------#
-(( rgb_idx = RANDOM % 3 ))
-case $rgb_idx in
-    0) bump_fade_direction r ;;
-    1) bump_fade_direction g ;;
-    2) bump_fade_direction b ;;
-esac
-
-#----------------------------------------------------------------------#
-# recalculate the color index                                          #
-#----------------------------------------------------------------------#
-(( color_idx = ( r * 36 ) + ( g * 6 ) + b + 16 ))
-#----------------------------------------------------------------------#
-# printf "[38;5;${color_idx}m %3d [m" $color_idx                     #
-#----------------------------------------------------------------------#
-return
-}
+. more_funx
 
 
 
-function test_bump_fading
-{
-num=0
-while [[ $num -lt 33 ]]; do
-    (( num += 1 ))
+for x in 10 100 1000 10000 100000 ; do
 
-    (( color_idx = ( RANDOM % 216 ) + 16 ))
-
-    printf "[38;5;${color_idx}m %3d [m" $color_idx
-    bump_fade
-    printf "[38;5;${color_idx}m %3d [m" $color_idx
-    echo
-
-done
-}
-
-color_idx=${1:-201}
-test_bump_fading
+    echo testing nanosleep with $x
+    time nanosleep $x
+    print_sep
+done 2>&1 |
+    tee $0.log
 
