@@ -1,0 +1,16 @@
+
+
+. more_funx
+
+color_idx=${1:-22}
+
+(( cidx = color_idx - 16 ))
+(( r = cidx / 36 ))
+(( g = ( cidx % 36 ) / 6 ))
+(( b = cidx % 6 ))
+
+vecho color_idx
+vecho r
+vecho g
+vecho b
+

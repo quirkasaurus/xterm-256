@@ -1,0 +1,57 @@
+
+#----------------------------------------------------------------------#
+# FILE:    mink                                                        #
+# AUTHOR:  Douglas Roberts -- droberts                                 #
+# CREATED: Sun Sep  8 12:08:24 EDT 2019                                #
+# PURPOSE: print out all available color patterns.                     #
+#                                                                      #
+#----------------------------------------------------------------------#
+
+
+function determine_width
+{
+boxes_per_line=$( float -d "sqrt($pound_fgs) + 1 " )
+(( max_boxes = COLUMNS / 8 ))
+if [[ $boxes_per_line -ge $max_boxes ]]; then
+    boxes_per_line=$max_boxes
+fi
+}
+
+
+. colors.env
+vecho _max
+
+_g=38
+vecho width
+anum=0
+bnum=0
+cnum=0
+while [[ $cnum -lt $_max ]]; do
+    (( cnum += 1 ))
+    grab_colors $cnum
+    determine_width
+    _g=38
+    echo COLOR-SET $cnum ; vacho fgs | nfold
+    echo
+
+    anum=0
+    bnum=0
+    while [[ $anum -lt $pound_fgs ]]; do
+        color_idx=${fgs[$anum]}
+        printf "[${_g};5;${color_idx}m %3.3s [m " $color_idx
+    #----------------------------------------------------------------------#
+    #     printf "[${_g};5;${color_idx}m %3.3s [m " $color_idx             #
+    #----------------------------------------------------------------------#
+        incr anum
+        incr bnum
+        if [[ $bnum -eq $boxes_per_line ]]; then
+            bnum=0
+            echo "|"
+	    echo
+        fi
+    done
+    echo
+    print_sep
+    sleep 2
+done
+

@@ -1,0 +1,312 @@
+
+csc_x=0
+csc_y=0
+csc_cloopty=2
+
+#----------------------------------------------------------------------#
+# ✦ ✧ ✩ ✫ ✬ ✭                                              #
+# ✮ ✯ ✰ ✱ ✲ ✳                                              #
+# ✴ ✶ ✷ ✸ ✹ ✺                                              #
+# ✻ ✼ ✽ ✿ ❃ ❇                                              #
+# ❈ ❉ ❊ ❋ ❍ ❨                                              #
+#----------------------------------------------------------------------#
+balls=(
+❩ ❪ ❫ ⚈ • ⚬
+☀ ☁ ★ ☆ ☼ ☽
+☾ ♦ 
+)
+balls_pound=${#balls[*]}
+
+
+function random_ball
+{
+local idx
+(( idx = RANDOM % balls_pound ))
+_ball=${balls[idx]}
+}
+
+
+
+#----------------------------------------------------------------------#
+# bump only 1 RGB value up or down. check bounds.                      #
+# XXX: if we reach bounds, do we switch colors or punt? for now, punt. #
+# Thu Nov 21 21:51:26 EST 2019 -- "punting" seems fine.                #
+#----------------------------------------------------------------------#
+function bump_fade
+{
+local r g b
+decode_color_idx
+
+#----------------------------------------------------------------------#
+# select random RGB value to fade.                                     #
+# if going to force a movement, here is the spot. QQQ                  #
+#----------------------------------------------------------------------#
+(( rgb_idx = RANDOM % 3 ))
+case $rgb_idx in
+    0) bump_fade_direction r ;;
+    1) bump_fade_direction g ;;
+    2) bump_fade_direction b ;;
+esac
+
+#----------------------------------------------------------------------#
+# recalculate the color index                                          #
+#----------------------------------------------------------------------#
+(( color_idx = ( r * 36 ) + ( g * 6 ) + b + 16 ))
+
+return
+}
+
+
+
+function set_csc_x
+{
+# keep it to just 2 columns on the right
+case $csc_cloopty in
+    1) csc_cloopty=2 ;;
+    2) csc_cloopty=1 ;;
+esac
+csc_cloopty=1 ### QQQ - for 1 column only
+(( csc_x = COLUMNS - ( csc_cloopty * 12 ) ))
+}
+# (gets set to 1)
+set_csc_x
+
+
+function clam14_show_color
+{
+debug
+
+tput cup $csc_y $csc_x
+line=$( printf " %4.4s " $color_idx )
+printc -n black,$color_idx "$line"
+printc -n $color_idx,black "$line"
+(( csc_y += 1 ))
+if [[ $csc_y -ge $LINES ]]; then
+    csc_y=0
+    set_csc_x
+fi
+}
+
+
+#----------------------------------------------------------------------#
+# for provided color, r, g or b...                                     #
+# increment or decrement based on fade_direction value.                #
+# check for bounds: 0 - 5                                              #
+#----------------------------------------------------------------------#
+function bump_fade_direction
+{
+local rgb
+eval rgb=\$$1
+(( rgb += fade_direction ))
+if [[ $rgb -gt 5 ]]; then
+    rgb=5
+elif [[ $rgb -lt 0 ]]; then
+    rgb=0
+fi
+eval ${1}=$rgb
+#----------------------------------------------------------------------#
+# echo $rgb $fade_direction                                            #
+#----------------------------------------------------------------------#
+return
+}
+
+
+#----------------------------------------------------------------------#
+# this function draw the next character.                               #
+# it selects direction randomly and then calculates the new color      #
+# based upon the direction the drawing is headed.                      #
+#----------------------------------------------------------------------#
+function wander
+{
+local _x _y
+local prev_color_idx=$color_idx
+
+#----------------------------------------------------------------------#
+# select new direction: N E W S NE NW SE SW                            #
+#----------------------------------------------------------------------#
+_x=0
+_y=0
+
+while [[ $_x -eq 0 && $_y -eq 0 ]]; do
+    (( _x = ( RANDOM % 3 ) - 1 ))
+    (( _y = ( RANDOM % 3 ) - 1 ))
+done
+
+
+#----------------------------------------------------------------------#
+# if not going N or S, go 2 squares left or right.                     #
+#----------------------------------------------------------------------#
+if [[ $_y -eq 0 ]]; then
+    (( _x = _x * 2 ))
+fi
+
+#----------------------------------------------------------------------#
+# determine direction for color fade.                                  #
+#----------------------------------------------------------------------#
+if [[ $_x -lt 0 ]]; then
+    # get brighter
+    fade_direction=1
+elif [[ $_x -eq 0 && $_y -eq 1 ]]; then
+    fade_direction=1
+else
+    # get darker
+    fade_direction=-1
+fi
+
+#----------------------------------------------------------------------#
+# calculate new position                                               #
+#----------------------------------------------------------------------#
+(( xpos += _x ))
+(( ypos += _y ))
+
+#----------------------------------------------------------------------#
+# boundary checking.                                                   #
+# if we bump up against the sides, go the other way.                   #
+#----------------------------------------------------------------------#
+if [[ $ypos -lt 0 ]]; then
+    ypos=1
+fi
+
+if [[ $ypos -ge $LINES ]]; then
+    (( ypos -= 2 ))
+fi
+
+if [[ $xpos -lt 0 ]]; then
+    xpos=1
+fi
+
+if [[ $xpos -ge $COLUMNS ]]; then
+    (( xpos -= 2 ))
+fi
+
+previous_color_idx=$color_idx
+bump_fade
+
+#----------------------------------------------------------------------#
+# go to next spot and print the character                              #
+#----------------------------------------------------------------------#
+tput cup $ypos $xpos
+#----------------------------------------------------------------------#
+# echo -n "[${_g};5;${color_idx}m@ [m"                               #
+# echo -n "[${_g};5;${color_idx}m [m"                               #
+#----------------------------------------------------------------------#
+echo -n "[${_g};5;${color_idx}m${_ball} [m"
+clam14_show_color
+
+if [[ $color_idx -gt 231 || $color_idx -lt 16 ]]; then
+    tput cup 0 $COLUMNS
+    echo
+    echo algorithm problems:
+    echo current color_idx:
+    print_color_info
+    color_idx=$previous_color_idx
+    echo previous color_idx:
+    print_color_info
+    print_sep =
+    exit 9
+fi
+
+return
+}
+
+
+
+function main_loop
+{
+local num=0
+#----------------------------------------------------------------------#
+# center the cursor                                                    #
+#----------------------------------------------------------------------#
+tput clear
+(( xpos = COLUMNS / 2 ))
+(( ypos = LINES / 2 ))
+csc_y=0 ### y-axis-for-color-chart-to-start-at must be reset.
+#----------------------------------------------------------------------#
+# tput cup $ypos $xpos                                                 #
+#----------------------------------------------------------------------#
+tput cup 0 0
+compute_char_max
+#----------------------------------------------------------------------#
+# grab_colors_reduced_set $perma_color                                 #
+#----------------------------------------------------------------------#
+
+#----------------------------------------------------------------------#
+# MAIN WHILE LOOP                                                      #
+#----------------------------------------------------------------------#
+random_ball
+while [[ $num -lt ${char_max:-199} ]]; do
+    wander
+    (( num += 1 ))
+done
+
+#----------------------------------------------------------------------#
+# fini and place the cursor at a good spot.                            #
+#----------------------------------------------------------------------#
+tput cup 0 0
+return
+}
+
+
+function loopty_loop
+{
+local num=0
+
+while [[ $num -lt 22 ]]; do
+    main_loop
+    csc_cloopty=2
+    set_csc_x
+    sleep 3
+done
+}
+
+
+#----------------------------------------------------------------------#
+# MAIN                                                                 #
+#----------------------------------------------------------------------#
+# initialize color palette.
+# pick a color scheme or not . . .                                     #
+#----------------------------------------------------------------------#
+. clam14_test
+
+case $1 in
+    -h|--help)
+        echo $0 '[color_idx|color_pattern_name] [bg|fg|38|48]'
+        exit
+        ;;
+
+#----------------------------------------------------------------------#
+# test color fading                                                    #
+#----------------------------------------------------------------------#
+    -t)
+        color_idx=${1:-201}
+        test_bump_fading
+        exit
+        ;;
+
+    -T)
+        . clam14_test
+        test_bump_fade_direction
+        exit
+        ;;
+esac
+
+#----------------------------------------------------------------------#
+# deal with foreground/background coloring                             #
+#----------------------------------------------------------------------#
+case ${2:-not-set} in
+    48|f|fg|fore*) _g=48 ;; # for light terminals
+    38|b|bg|back*) _g=38 ;; # for dark terminals
+    *) _g=38 ;; # guess
+esac
+    
+perma_color=$1
+. colors.env
+. yaps1
+
+_g=48 # for light terminals
+_g=38 # for dark terminals
+_g=${2:-$_g}
+
+(( color_idx = ( RANDOM % (256 - 232 )) + 16 ))
+loopty_loop
+

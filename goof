@@ -1,0 +1,13 @@
+
+
+
+seconds=${1:-11}
+date_seconds=-1
+
+while [[ $date_seconds != $seconds ]]; do
+    sleep 1
+    date_seconds=$( date +%S )
+    vecho date_seconds
+
+done
+

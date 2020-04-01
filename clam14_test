@@ -1,0 +1,75 @@
+
+function test_bump_fade_direction
+{
+local color rgb
+
+#----------------------------------------------------------------------#
+# for all valid and 2 incorrect values. . .                            #
+#----------------------------------------------------------------------#
+for r in -1 0 1 2 3 4 5 6 ; do
+#----------------------------------------------------------------------#
+# fade once in each direction.                                         #
+#----------------------------------------------------------------------#
+    for fade_direction in -1 0 1 ; do
+        for color in r g b ; do
+            eval rgb=\$$color
+            bump_fade_direction $color
+            echo was: $rgb FAD-DIR $fade_direction =\> is: $r
+	done
+    done
+done
+}
+
+
+#----------------------------------------------------------------------#
+# print index and rgb values with no newline                           #
+#----------------------------------------------------------------------#
+function print_color_info
+{
+local line
+decode_color_idx
+line=$( printf " %3.3s %s %s %s" $color_idx $r $g $b )
+printc -n $color_idx "$line"
+}
+
+
+function decode_color_idx
+{
+(( cidx = color_idx - 16 ))
+(( r = cidx / 36 ))
+(( g = ( cidx % 36 ) / 6 ))
+(( b = cidx % 6 ))
+}
+
+
+#----------------------------------------------------------------------#
+# confusing enough to need its own tests...                            #
+#----------------------------------------------------------------------#
+function test_bump_fading
+{
+num=0
+while [[ $num -lt 33 ]]; do
+    (( num += 1 ))
+#----------------------------------------------------------------------#
+# grab random color_index                                              #
+#----------------------------------------------------------------------#
+    (( color_idx = ( RANDOM % 216 ) + 16 ))
+    (( fade_direction = ( RANDOM % 3 ) - 1 ))
+    print_color_info
+    echo -n " => "
+
+#----------------------------------------------------------------------#
+# fade it...                                                           #
+#----------------------------------------------------------------------#
+    bump_fade
+
+#----------------------------------------------------------------------#
+# and compare visually. 8-D                                            #
+#----------------------------------------------------------------------#
+    print_color_info
+    echo
+
+done
+}
+
+
