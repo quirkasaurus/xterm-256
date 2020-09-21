@@ -327,8 +327,8 @@ _ball=☾
 _ball=♦
 _ball=' '
 _ball=⚈
-_ball=@
 _ball=⬤ 
+_ball=@
 
 (( color_idx = ( RANDOM % (256 - 232 )) + 16 ))
 loopty_loop
