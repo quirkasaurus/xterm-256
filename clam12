@@ -315,7 +315,6 @@ perma_color=$1
 _g=48 # for light terminals
 _g=38 # for dark terminals
 _g=${2:-$_g}
-_ball=•
 _ball=⚬
 _ball=☀
 _ball=☁
@@ -326,9 +325,10 @@ _ball=☽
 _ball=☾
 _ball=♦
 _ball=' '
+_ball=@
+_ball=•
 _ball=⚈
 _ball=⬤ 
-_ball=@
 
 (( color_idx = ( RANDOM % (256 - 232 )) + 16 ))
 loopty_loop

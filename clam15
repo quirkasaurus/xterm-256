@@ -209,15 +209,18 @@ tput cup $ypos $xpos
 echo -n "[${_g};5;${color_idx}m${_ball} [m"
 clam14_show_color # uses color_idx
 
-if [[ $color_idx -gt 231 || $color_idx -lt 16 ]]; then
+#----------------------------------------------------------------------#
+# if [[ $color_idx -gt 231 || $color_idx -lt 16 ]]; then               #
+#----------------------------------------------------------------------#
+if [[ 1 == 1 ]]; then
     tput cup 0 $COLUMNS
     echo
     echo algorithm problems:
     echo current color_idx:
-    print_color_info
+    print_color_info ; echo
     color_idx=$previous_color_idx
     echo previous color_idx:
-    print_color_info
+    print_color_info ; echo
     print_sep =
     exit 9
 fi
@@ -268,6 +271,7 @@ local num=0
 
 while [[ $num -lt 22 ]]; do
     main_loop
+    exit
     csc_cloopty=2
     set_csc_x
     sleep 3

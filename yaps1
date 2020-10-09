@@ -247,6 +247,24 @@ pound_pastels=${#acidx[*]}
 }
 
 
+function yap_random_colors
+{
+#----------------------------------------------------------------------#
+# give me a nice round prime numbers worth                             #
+#----------------------------------------------------------------------#
+acidx=( $(
+num=0
+while [[ $num -lt 97 ]]; do
+    (( num += 1 ))
+    (( x = RANDOM % 97 ))
+    echo -n " $x"
+done
+) )
+
+_yap_pound
+}
+
+
 #----------------------------------------------------------------------#
 # list of lists of colors, pegged to a descriptive function name.      #
 #----------------------------------------------------------------------#
@@ -347,7 +365,12 @@ _yap_pound ; pastels=$FUNCNAME
 
 function yap_full_rainbow
 {
+# this first on is the pure full rainbow
 acidx=( 46 47 48 49 50 51 45 39 33 27 21 57 93 129 165 201 200 199 198 197 196 202 208 214 220 226 190 154 118 82 )
+
+# this one adds a few more colors so that clocky.sh
+acidx=( 46 47 48 49 50 51 45 39 33 27 21 56 57 63 62 93 92 129 165 201 207 206 200 199 198 197 196 202 208 214 220 226 190 154 118 82 )
+
 _yap_pound ; pastels=$FUNCNAME
 }
 
@@ -491,7 +514,8 @@ HOSTNAME='salp-shark'
 function yap_on
 {
 export YAP=on
-export PS1='[${_g};5;`$_yap_order`m.•°\!°•. -> '
+# export PS1='[${_g};5;`$_yap_order`m${HOSTNAME}✴ • ✭ . ✦ °\!. ✴ ° ✭ • ✦ -> '
+export PS1='[${_g};5;`$_yap_order`m${HOSTNAME} ✴✭✦•- \! -•✦✭✴ -> '
 #----------------------------------------------------------------------#
 # export PS1='[${_g};5;`$_yap_order`m${HOSTNAME} \! -> [m '          #
 #----------------------------------------------------------------------#
@@ -509,7 +533,7 @@ function yap_off
 export YAP=off
 export PS1='${HOSTNAME} \! -> '
 export PS1='${HOSTNAME} ${PWD} `date "+%Y-%m-%d %H:%M:%S"` \! -> '
-export PS1='.•°\!°•. -> '
+export PS1='${HOSTNAME} ✴ ✭ ✦ .•°\!°•✴ ✭ ✦. -> '
 clear
 }
 
