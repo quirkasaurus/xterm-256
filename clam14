@@ -1,4 +1,19 @@
 
+#----------------------------------------------------------------------#
+# FILE:    clam14 - drawing perfect color patterns                     #
+# AUTHOR:  Douglas Roberts -- droberts                                 #
+# CREATED: Sun Sep 15 09:51:05 EDT 2019                                #
+# PURPOSE: color changes in sync with N E W S directions. kinda.       #
+#          which RGB is randomized, but the brightness rises or        #
+#          falls in concert with the direction.                        #
+#          the glyph can go in 8 directions,                           #
+#          which doesn't lend itself well to a 3 color scheme.         #
+#          there's only 2 directions for overlap, but, if you          #
+#          fade 2 colors at once, you hit black or white too often.    #
+#          no information appears on the screen.                       #
+# STATUS:  ★ ★ ★ ★ ★  my current favorite.                             #
+#----------------------------------------------------------------------#
+
 csc_x=0
 csc_y=0
 csc_cloopty=2

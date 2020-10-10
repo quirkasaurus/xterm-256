@@ -1,4 +1,21 @@
 
+#----------------------------------------------------------------------#
+# FILE:    clam15 - drawing perfect color patterns                     #
+#                   color indexes displayed                            #
+#                                                                      #
+# AUTHOR:  Douglas Roberts -- droberts                                 #
+# CREATED: Sun Sep 15 09:51:05 EDT 2019                                #
+# PURPOSE: color changes in sync with N E W S directions. kinda.       #
+#          which RGB is randomized, but the brightness rises or        #
+#          falls in concert with the direction.                        #
+#          the glyph can go in 8 directions,                           #
+#          which doesn't lend itself well to a 3 color scheme.         #
+#          there's only 2 directions for overlap, but, if you          #
+#          fade 2 colors at once, you hit black or white too often.    #
+#          no information appears on the screen.                       #
+#                                                                      #
+#----------------------------------------------------------------------#
+
 csc_x=0
 csc_y=0
 csc_cloopty=2
@@ -209,10 +226,7 @@ tput cup $ypos $xpos
 echo -n "[${_g};5;${color_idx}m${_ball} [m"
 clam14_show_color # uses color_idx
 
-#----------------------------------------------------------------------#
-# if [[ $color_idx -gt 231 || $color_idx -lt 16 ]]; then               #
-#----------------------------------------------------------------------#
-if [[ 1 == 1 ]]; then
+if [[ $color_idx -gt 231 || $color_idx -lt 16 ]]; then
     tput cup 0 $COLUMNS
     echo
     echo algorithm problems:
@@ -271,7 +285,6 @@ local num=0
 
 while [[ $num -lt 22 ]]; do
     main_loop
-    exit
     csc_cloopty=2
     set_csc_x
     sleep 3
