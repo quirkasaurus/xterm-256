@@ -10,33 +10,69 @@
 #          it takes to actually print the time, so that,               #
 #          when the time is done printing, it is closer to accurate.   #
 # NOTES:   height of all characters is 14.                             #
+#                                                                      #
+# - a sa sa - s s                                                      #
+#   8 8  )                                                             #
+# . • °  º  o O @                                                      #
+# L M H  H  L M M                                                      #
 #----------------------------------------------------------------------#
-
 . more_funx $0
 . yaps1
 
+DEBUG=1 ; CLEAR=
+CLEAR=
+CLEAR=
+DEBUG=  ; CLEAR=clear
 
-function _yap_next
+#----------------------------------------------------------------------#
+# click over the time precisely at X:00                                #
+#----------------------------------------------------------------------#
+function sleep_magic
 {
-(( _idx += 1 ))
-if [[ $_idx -ge $pound_pastels ]]; then
-    _idx=0
+tput cup 0 0
+seconds=$( date +%S | sed -e 's/^0//' )
+(( sleep_for = 60 - seconds )) # takes ~3 seconds to draw HH:MM
+
+#----------------------------------------------------------------------#
+# avoid flashing around 55-05 minutes                                  #
+#----------------------------------------------------------------------#
+if [[ $sleep_for -le 4 ]]; then
+    (( sleep_for += 60 ))
 fi
+#----------------------------------------------------------------------#
+# echo sleeping for: $sleep_for `date`                                 #
+#----------------------------------------------------------------------#
 }
 
 
+#----------------------------------------------------------------------#
+# print a single line of our big font characters.                      #
+#----------------------------------------------------------------------#
 function clocky_printc
 {
+#----------------------------------------------------------------------#
+# echo draws things much faster                                        #
+# i prefer slow. printc forks a new shell                              #
+# which slows things down just enough to look nice.                    #
+# however, we could always just source printc...                       #
+# source-ing works fine for the short display                          #
+#----------------------------------------------------------------------#
+case $sleep_magic in
+    (magic)
+        echo -n "[38;5;${acidx[$_idx]}m${@}[m"
+        ;;
+    (*)
+        printc -n "${acidx[$_idx]}" "${@}"
+        ;;
+esac
+# echo -n "[7m[38;5;${acidx[$_idx]}m${@}[m"
 _yap_next
-
-# echo draws things much faster
-# i prefer slow
-
-# echo -n "[38;5;${acidx[$_idx]}m${@}[m"
-printc -n "${acidx[$_idx]}" "${@}"
 }
 
 
+#----------------------------------------------------------------------#
+# historical first effort.                                             #
+#----------------------------------------------------------------------#
 function render_clock_1
 {
 init
@@ -46,8 +82,9 @@ init y 3
 if [[ $DEMO -eq 1 ]]; then
     numbers=( 1 2 3 4 5 : 6 7 8 9 0 )
 else
+    seconds=$( date +%S )
     numbers=( $(
-    date -v+3S +%I:%M:%S |
+    date -v+3S "+${date_format}" |
     sed -e 's/./& /g'
     ) )
 fi
@@ -57,7 +94,9 @@ for number in ${numbers[*]} ; do
     incr
     incr x 7
 
-    # if zero, do not print 1st number.
+#----------------------------------------------------------------------#
+# if zero, do not print 1st number.                                    #
+#----------------------------------------------------------------------#
     if [[ $num -eq 1 ]]; then
         if [[ $number == "0" ]]; then
             continue
@@ -78,7 +117,6 @@ for number in ${numbers[*]} ; do
                 incr y
             done
             ;;
-
         (2)
             for line in \
                 "#####" \
@@ -92,7 +130,6 @@ for number in ${numbers[*]} ; do
                 incr y
             done
             ;;
-
         (3)
             for line in \
                 "#####" \
@@ -106,7 +143,6 @@ for number in ${numbers[*]} ; do
                 incr y
             done
             ;;
-
         (4)
             for line in \
                 "  ###" \
@@ -120,7 +156,6 @@ for number in ${numbers[*]} ; do
                 incr y
             done
             ;;
-
         (5)
             for line in \
                 "#####" \
@@ -134,7 +169,6 @@ for number in ${numbers[*]} ; do
                 incr y
             done
             ;;
-
         (6)
             for line in \
                 "#####" \
@@ -148,7 +182,6 @@ for number in ${numbers[*]} ; do
                 incr y
             done
             ;;
-
         (7)
             for line in \
                 "#####" \
@@ -162,7 +195,6 @@ for number in ${numbers[*]} ; do
                 incr y
             done
             ;;
-
         (8)
             for line in \
                 "#####" \
@@ -176,7 +208,6 @@ for number in ${numbers[*]} ; do
                 incr y
             done
             ;;
-
         (9)
             for line in \
                 "#####" \
@@ -190,7 +221,6 @@ for number in ${numbers[*]} ; do
                 incr y
             done
             ;;
-
         (0)
             for line in \
                 "#####" \
@@ -204,7 +234,6 @@ for number in ${numbers[*]} ; do
                 incr y
             done
             ;;
-
         (:)
             for line in \
                 "   " \
@@ -225,710 +254,9 @@ tput cup 0 0
 }
 
 
-function render_clock_2
-{
-init
-init x
-init y 3
-
-if [[ $DEMO -eq 1 ]]; then
-    numbers=( 1 2 3 4 5 : 6 7 8 9 0 )
-else
-    numbers=( $(
-    date -v+3S +%I:%M:%S |
-    sed -e 's/./& /g'
-    ) )
-fi
-
-for number in ${numbers[*]} ; do
-    init y 3
-    incr
-
-    # if zero, do not print 1st number.
-    if [[ $num -eq 1 ]]; then
-        if [[ $number -eq 0 ]]; then
-            continue
-        fi
-    fi
-
-    case $number in
-        (0)
-            for line in \
-                "" \
-                "           ..•••.           " \
-                "        .•oO@@@@Oo•..       " \
-                "     .•o@@Oo•°  °.oo•.      " \
-                "   .•o@@@Oo•°     °.oo•.    " \
-                "  •o@@@@Oo••       °•oo•.   " \
-                " •o@@@@@Oo••        ••oo•.  " \
-                " •o@@@@@Oo••        .•oo••  " \
-                " •o@@@@@@o••        .•oOo•° " \
-                " °o@@@@@@Oo•.      .•o@Oo•° " \
-                "  °o@@@@@@Oo•.    .•o@Oo•°  " \
-                "   °o@@@@@@Oo•..•oO@Oo•°    " \
-                "    °o@@@@@@@@@@@@@Oo•°     " \
-                "       °o@@@@@@@Oo•°        " \
-                ; do
-                tput cup $y $x
-                clocky_printc "$line"
-                incr y
-            done
-            incr x 28
-            ;;
-
-        (1)
-            for line in \
-                "      .•o@o•.  " \
-                "     .•o@@o•°  " \
-                "    .•o@@@o:°  " \
-                "   .•oO@@Oo:°  " \
-                "     °•o@Oo•°  " \
-                "     °•o@Oo•°  " \
-                "     °•o@Oo•°  " \
-                "     °•o@Oo•°  " \
-                "     °•@@o•°   " \
-                "    °•o@Oo•°   " \
-                "    °•o@Oo•°   " \
-                "   °•o@@Oo•°   " \
-                "  ••oO@@Ooo•°  " \
-                " .••oO@@Oooo•° " \
-                ; do
-                tput cup $y $x
-                clocky_printc "$line"
-                incr y
-            done
-            incr x 15
-            ;;
-
-        (2)
-            for line in \
-                "      °•oOO@@@@@o•°       " \
-                "    °•oOOoooO@@@@@@o•°    " \
-                "   °oO•.      .•oO@@@o•°  " \
-                "  •oO•°        .•oO@@Oo•° " \
-                "   o°           •oOO@@o•• " \
-                "               .•oO@@o••  " \
-                "           ...•oO@@Oo•.   " \
-                "      °•ooOO@Ooo••°°°     " \
-                "     °•oO@o•°             " \
-                "   °•oO@o•°               " \
-                "  °•oO@o•°                " \
-                "  •ooOOoo.          .o.   " \
-                " °•oooOOO@oooooooooooo•   " \
-                "  °•o@@@@@OOOOO@@@@@O@°   " \
-                ; do
-                tput cup $y $x
-                clocky_printc "$line"
-                incr y
-            done
-            incr x 26
-            ;;
-
-        (3)
-            for line in \
-                "       .•••.            " \
-                "    ••oOO@@@o•          " \
-                "  •oOOO•••oO@@@o•       " \
-                " °o•°     •.oO@@@o•     " \
-                "           .•oO@@@o•    " \
-                "           .•oO@@o•°    " \
-                "      ...•oO@@@o••      " \
-                "    ••ooOOOOO@@@@@o•    " \
-                "     °°°••oOO@@@@@Ooo•  " \
-                "           •oOO@@@@@Oo• " \
-                "            .•oO@@@@Oo• " \
-                " °ooo•.....•oO@@@@@Oo•° " \
-                "  °•oOOooooO@@@@@@Oo•°  " \
-                "    °•oOOO@@@@@@o•°     " \
-                ; do
-                tput cup $y $x
-                clocky_printc "$line"
-                incr y
-            done
-            incr x 24
-            ;;
-
-        (4)
-            for line in \
-                "               ...      " \
-                "            .•o@Oo•.    " \
-                "          .•oO@@Oo•     " \
-                "         .•oO@@•Oo•     " \
-                "       .•oO@@Oo•@o•     " \
-                "     .•oO@@Oo:° @O:     " \
-                "   .•oO@@Oo:°   @O:     " \
-                "  •oO@@Oo:•.....oOo•..  " \
-                " °•ooOOO@@@@@OOOOOoooo. " \
-                "              °oOOo°    " \
-                "              •o@Oo•    " \
-                "              •o@Oo•    " \
-                "            ••oO@@Oo•.  " \
-                "          .••oO@@@Oo••. " \
-                ; do
-                tput cup $y $x
-                clocky_printc "$line"
-                incr y
-            done
-            incr x 24
-            ;;
-
-        (5)
-            for line in \
-                "    .•ooooooooooooooo•.    " \
-                "   °•oooOOO@@@@@@@OOOo•    " \
-                "   °•oO@o•°          °°    " \
-                "   °•oO@o•°                " \
-                "    °•ooOO@@OOoo.          " \
-                "      °•oooOOO@@@@o•.      " \
-                "             °•oO@@o•.     " \
-                "     .•.      .•oOO@@@o••  " \
-                "   .•oo•.      .•oOO@@@o•• " \
-                "  •oO••°       •oOO@@@@o•• " \
-                " °oO•°        .•oO@@@@o•°  " \
-                "  °oO•.      .•oO@@@@o•°   " \
-                "   °•oOOooooO@@@@@@o•°     " \
-                "     °•oOOO@@@@@o•°        " \
-                ; do
-                tput cup $y $x
-                clocky_printc "$line"
-                incr y
-            done
-            incr x 27
-            ;;
-
-        (6)
-            for line in \
-                "           ..•••..        " \
-                "        .•oO@@@@Ooo•.     " \
-                "     .•o@Oo•°             " \
-                "   .•o@@Oo•°              " \
-                "  .•o@@Oo•°               " \
-                " ••o@@@Oo•                " \
-                " ••o@@@@OOo•.•ooOOOoo•.   " \
-                " ••o@@@@@OOooo•°°°°•ooo•  " \
-                " °•o@@@@@Oo•.       °°oo• " \
-                " °•o@@@@@Oo•.       °°oo• " \
-                "  °•o@@@@@Oo•.      °•oo° " \
-                "   °•o@@@@@Oo•.    .•oo°  " \
-                "    °•o@@@@@@OooooOOo•°   " \
-                "       °•o@@@@@@OOOo•°    " \
-                ; do
-                tput cup $y $x
-                clocky_printc "$line"
-                incr y
-            done
-            incr x 26
-            ;;
-
-        (7)
-            for line in \
-                " .@OoooooOOO@@@OOOoo•• " \
-                " .ooOOO@@@@@@@OOOooo•° " \
-                " °°        °•o@@Oo•°   " \
-                "          °•o@@Oo•°    " \
-                "         °•o@@Oo•°     " \
-                "        °•o@Oo•°       " \
-                "        °•o@Oo•°       " \
-                "       °•o@Oo•°        " \
-                "       °•o@Oo•°        " \
-                "       °•o@Oo•°        " \
-                "       •o@@Oo•         " \
-                "       •o@@Oo•.        " \
-                "      .•oO@Oo•.        " \
-                "     .•oO@@@Oo•.       " \
-                ; do
-                tput cup $y $x
-                clocky_printc "$line"
-                incr y
-            done
-            incr x 23
-            ;;
-
-        (8)
-            for line in \
-                "         .•••..        " \
-                "       •o@@@OOoo•.     " \
-                "     •o@@Ooo•••oOo•.   " \
-                "    •o@@Oo.•   °•oo•.  " \
-                "   •o@@Oo•.      °oo•  " \
-                "   °•o@@Oo•.    .•oo°  " \
-                "     ••o@@@Oo•..•oo•°  " \
-                "   •o@@@OOOooooOOo•.   " \
-                " •ooO@@@Oo••°°°°•oo•   " \
-                " •oO@@@OOo•     °•oo•  " \
-                " •oO@@@Oo•.      .•oo° " \
-                " °•oO@@@@Oo•.....•ooo° " \
-                "  °•oO@@@@@OooooOOo•°  " \
-                "     °•o@@@@@OOOo•°    " \
-                ; do
-                tput cup $y $x
-                clocky_printc "$line"
-                incr y
-            done
-            incr x 23
-            ;;
-
-        (9)
-            for line in \
-                "        .•••..           " \
-                "    .•°oOOO@@@@o•.       " \
-                "   .•oOOooooO@@@@@o•.    " \
-                "  .ooo•°   °••oO@@@o•.   " \
-                " .oo••      .•oO@@@@o•.  " \
-                " •ooo•.    ..•ooO@@@Oo•. " \
-                "  •ooooooooooooOO@@@Oo•• " \
-                "   °•ooOOOoo• •oOO@@Oo•• " \
-                "      °°°°°    •oO@@o••  " \
-                "               .•oO@o•°  " \
-                "              .•oO@o•°   " \
-                "   .         .•oO@o•°    " \
-                "   °oooo....•ooO@o•°     " \
-                "    °ooooO@@@Oo•°        " \
-                ; do
-                tput cup $y $x
-                clocky_printc "$line"
-                incr y
-            done
-            incr x 24
-            ;;
-
-        (:)
-            for line in \
-                "x" \
-                "x" \
-                "   .•ooo•.  " \
-                "  .•oO@Oo•° " \
-                "  °•o@@@o•° " \
-                "   °•o@o•°  " \
-                "            " \
-                "  .•o@o•.   " \
-                " •oO@@@Oo•  " \
-                " •oO@@@Oo°  " \
-                " °•o@Oo•°   " \
-                "x" \
-                "x" \
-                "x" \
-                ; do
-                tput cup $y $x
-                clocky_printc "$line"
-                incr y
-            done
-            incr x 12
-            ;;
-    esac
-done
-tput cup 0 0
-}
-
-
-function render_clock_3
-{
-init
-local _x_init=3
-init x $_x_init
-
-local _y_init=3
-init y $_y_init
-
-if [[ $DEMO -eq 1 ]]; then
-    numbers=(
-        $(
-        for number in B A M P 1 2 3 4 5 : 6 7 8 9 0 : ; do
-            echo $RANDOM $number
-        done |
-        fields 2
-        )
-    )
-else
-    numbers=(
-        $(
-        date -v+3S +%I:%M:%S:%p |
-        sed -e 's/./& /g'
-        ) )
-fi
-
-for number in ${numbers[*]} ; do
-    init y $_y_init
-    incr
-
-    # if zero, do not print 1st number.
-    if [[ $num == 1 ]]; then
-        if [[ $number == 0 ]]; then
-            continue
-        fi
-    fi
-
-    case $number in
-        (A|a)
-            for line in \
-                "              ...           " \
-                "            .oO@Oo•         " \
-                "          .•oO@@@Oo•.       " \
-                "        .•oO@@@@OO@Oo•.     " \
-                "      .•oO@Oo.°  °.oOOo.    " \
-                "     .•oO@Oo•     .•oOo•.   " \
-                "   .•oO@@Ooo••....•oOOOo•.  " \
-                "  .•oOO@@@OOOoooooO@@@OOo•  " \
-                " .•oOO@@@@@@@@@@@@@@@@@Oo•. " \
-                " .•oOO@@@Oo•°°°°••oO@@@Oo•. " \
-                " .•oOO@@@Oo      °•oO@@Oo•. " \
-                "  .•oOO@@Oo       •oO@@oo•. " \
-                "  .•oOO@@Oo•     .°oO@Oo•.  " \
-                "   .•oO@@Oo•.    •oO@Oo•°   " \
-                ; do
-                tput cup $y $x
-                clocky_printc "$line"
-                incr y
-            done
-            incr x 28
-            ;;
-
-        (B|b)
-            for line in \
-                "          ....            " \
-                "       .oOO@@OOo•         " \
-                "     .•oOOO@@@@OOo•.      " \
-                "   .•oOO@OO•°°°•oOOo•.    " \
-                "  .•oO@Oo.°     •oOOo•.   " \
-                "  .•oO@Oo•      •oO@Oo•   " \
-                " .•ooO@Ooo••...°oO@Oo•°   " \
-                " .•oOO@@@OOOooooO@@Oo•    " \
-                " .•oOO@@@@@@@@@@@@Oo•.    " \
-                " .•oO@@OO•°°°°•oO@@@Oo•.  " \
-                " .•oO@@O•      °•oO@@Oo•. " \
-                "  .•OO@O•       •oO@@oo•. " \
-                "  .•oO@OOo....•oOO@@Oo•.  " \
-                "  .•oO@@@OOoooooO@OOo•    " \
-                " ..•OO@@@@@@@@@@Oo•.      " \
-                ; do
-                tput cup $y $x
-                clocky_printc "$line"
-                incr y
-            done
-            incr x 26
-            ;;
-
-        (M|m)
-            for line in \
-                "              .                         " \
-                "            .oOo•           .o•         " \
-                "          .•oO@Oo•.       .•OOo•.       " \
-                "        .•oO@@OO@Oo•.   .•oO@O@Oo•.     " \
-                "      .•oO@Oo.°°.oOOo• •oO@O•°•oOOo.    " \
-                "     .•oO@Oo•   •oO@O°OO@o•    •oO@o.   " \
-                "   .•oO@@Ooo•     •OO@@@Oo•     •oO@o.  " \
-                "  .•oOO@@@Oo       oOO@Oo•      °oO@Oo. " \
-                " .•oOO@@@@Oo       °•O@O•°      •oO@@O. " \
-                " .•oOO@@@Ooo         °o°        •oOO@@. " \
-                " .•oOO@@@Ooo•         °         oO@@Oo. " \
-                "  .•oOO@@Ooo•                  •oO@@Oo• " \
-                "  .•oOO@@OOoo•                •oO@@Oo•  " \
-                "   .•oO@@OOoo•.             .•oO@@Oo•.  " \
-                ; do
-                tput cup $y $x
-                clocky_printc "$line"
-                incr y
-            done
-            incr x 40
-            ;;
-
-        (P|p)
-            for line in \
-                "          .....          " \
-                "       .oO@O@@OOo•.      " \
-                "     .•oOO@@@@@OOOo•.    " \
-                "    .•oOO@@@••O@@OOO•.   " \
-                "   .•oO@Oo.°  °.oOO@Oo.  " \
-                "  .•oO@Oo•     .•oO@Oo•. " \
-                "  .•oO@@Oo••...•oOO@OOo• " \
-                " .•oOO@@@OOOoooooO@@@OO• " \
-                " .•oOO@@@@@@@@@@@@@@OO°  " \
-                " .•oOO@@@Oo•°°°°°°       " \
-                " .•oOO@@@Oo              " \
-                "  .•oOO@@Oo              " \
-                "  .•oOO@@Oo•             " \
-                "   .•oO@@Oo•.            " \
-                ; do
-                tput cup $y $x
-                clocky_printc "$line"
-                incr y
-            done
-            incr x 28
-            ;;
-
-        (0)
-            for line in \
-                "                            " \
-                "           ..•••.           " \
-                "        .•oO@@@@Oo•.        " \
-                "     .•o@@OOo•° °•Oo°•      " \
-                "   .•o@@@Oo•°     °•Oo°.    " \
-                "  •o@@@@Oo•°       °•Oo•.   " \
-                " •o@@@@@Oo•         ••Oo•.  " \
-                " •o@@@@@Oo•         .•oO••  " \
-                " •o@@@@@@Oo•        .•oOo•° " \
-                " °o@@@@@@@Oo••....•°oo@Oo•° " \
-                "  °o@@@@@@@OOOOOOOOOO@Oo•°  " \
-                "   °o@@@@@@@@OOOO@@@Oo•°    " \
-                "    °o@@@@@@@@@@@@@Oo•°     " \
-                "       °o@@@@@@@Oo•°        " \
-                ; do
-                tput cup $y $x
-                clocky_printc "$line"
-                incr y
-            done
-            incr x 28
-            ;;
-
-        (1)
-            for line in \
-                "       .°O.        " \
-                "      .•O@•        " \
-                "    .•oO@@•        " \
-                "  .•ooO@@@•        " \
-                "     °•o@o.        " \
-                "     °•o@o         " \
-                "     °•o@•         " \
-                "     °•o@•         " \
-                "     °•@@•         " \
-                "     °•@o•         " \
-                "     °•o@•         " \
-                "     °•o@o•        " \
-                "    .•o@@Oo•.      " \
-                " .•ooO@@Ooooo•..   " \
-                ; do
-                tput cup $y $x
-                clocky_printc "$line"
-                incr y
-            done
-            incr x 15
-            ;;
-
-        (2)
-            for line in \
-                "      °•oOO@@@@@o•°       " \
-                "    °•oOOoooO@@@@@@o•°    " \
-                "   °oO•.      .•oO@@@o•°  " \
-                "  •oO•°        .•oO@@Oo•° " \
-                "   o°           •oOO@@o•• " \
-                "               .•oO@@o••  " \
-                "           ...•oO@@Oo•.   " \
-                "      .•ooOO@Ooo••°°°     " \
-                "     .•oO@o•°             " \
-                "   .•oO@o•°               " \
-                "  .•oO@o•°                " \
-                " .•ooOOoo.          .o.   " \
-                " °•oooOOO@oooooooooooo•   " \
-                "  °•o@@@@@OOOOO@@@@@O@°   " \
-                ; do
-                tput cup $y $x
-                clocky_printc "$line"
-                incr y
-            done
-            incr x 26
-            ;;
-
-        (3)
-            for line in \
-                "       .•••.            " \
-                "    ••oOO@@@o•          " \
-                "  •oOO•°°°•O@@@o•       " \
-                " °o•°      •oO@@@o•     " \
-                "           .•oO@@@o•    " \
-                "           .•oO@@o•°    " \
-                "      ...•oO@@@o••      " \
-                "    ••ooOOOOO@@@@@o•    " \
-                "     °°°••oOO@@@@@Ooo•  " \
-                "           •oOO@@@@@Oo• " \
-                "            •oOO@@@@Oo• " \
-                " °ooo•.....•oOO@@@@Oo•° " \
-                "  °•oOOooooOO@@@@@Oo•°  " \
-                "    °•oOOO@@@@@@o•°     " \
-                ; do
-                tput cup $y $x
-                clocky_printc "$line"
-                incr y
-            done
-            incr x 24
-            ;;
-
-        (4)
-            for line in \
-                "               .•o°     " \
-                "             .•o@o•     " \
-                "            .•o@@o•     " \
-                "           .•o@O@o•     " \
-                "         .•oO@o•@o•     " \
-                "       .•oO@o:° @O      " \
-                "     .•oOO@o:°  @O      " \
-                "   .•ooO@o:•....oOo•..• " \
-                " °•ooOOO@@@@@OOOOOoooo. " \
-                "              °oOOo°    " \
-                "              •o@Oo•    " \
-                "              •o@Oo•    " \
-                "            ••oO@@Oo•.  " \
-                "         .••ooO@@@Ooo•. " \
-                ; do
-                tput cup $y $x
-                clocky_printc "$line"
-                incr y
-            done
-            incr x 24
-            ;;
-
-        (5)
-            for line in \
-                "  °•@@OOoooooooooooO@•°  " \
-                "  °•oooOOO@@@@@@@OOOo•   " \
-                "   °•o@•°          °••   " \
-                "   •oO@•°            °   " \
-                "   °•ooOO@@OOoo.         " \
-                "      °•oooOOO@@@o•.     " \
-                "             °•oO@@o•.   " \
-                "    .o.        •oO@@o••  " \
-                "  .•Oo•.        •oO@@@o• " \
-                " •oO••°         •oO@@@o• " \
-                " oO•°         .•oO@@@o•° " \
-                " °oO•.      .•oO@@@@o•°  " \
-                "  °•OOooooO@@@@@@Oo•°    " \
-                "    °•oOOO@@@OO•°        " \
-                ; do
-                tput cup $y $x
-                clocky_printc "$line"
-                incr y
-            done
-            incr x 26
-            ;;
-
-        (6)
-            for line in \
-                "           ..•••..        " \
-                "        .•oO@@@@Ooo.      " \
-                "     .•o@Oo•°     °••     " \
-                "    .•@Oo•°         °     " \
-                "   .•@Oo•°                " \
-                "  .•@Oo•.                 " \
-                " .•o@OOo. .ooO@@@Ooo•.    " \
-                " .•o@@Oo•oO@@@@@@@@@@o•   " \
-                " •oO@@@@Oo•°    °oO@@Oo•  " \
-                " °o@@@@Oo•      °•oO@@oo• " \
-                " °oo@@Ooo•.    ••oO@@@Oo• " \
-                "  °•oO@@OOOoooOOO@@@@Oo•  " \
-                "   °•oO@@@@@@@@@@@@Ooo•°  " \
-                "      °•oO@@@@@OOoo•°     " \
-                ; do
-                tput cup $y $x
-                clocky_printc "$line"
-                incr y
-            done
-            incr x 26
-            ;;
-
-        (7)
-            for line in \
-                "•@@OOooooooooooOO@@@• " \
-                ".@@OOO@@@@@@@OOOooo•° " \
-                "°°        °•o@@Oo•°   " \
-                "         °•o@Oo•°     " \
-                "        °•o@o•°       " \
-                "       °•o@o•°        " \
-                "       °•o@o•         " \
-                "      °•o@oo          " \
-                "      °•o@oo          " \
-                "      °•o@oo          " \
-                "      •o@@oo•         " \
-                "      •o@@Oo•.        " \
-                "     .•o@@Oo•.        " \
-                "   .•ooO@@@Ooo•.      " \
-                ; do
-                tput cup $y $x
-                clocky_printc "$line"
-                incr y
-            done
-            incr x 23
-            ;;
-
-                # " °•oO@@@@Oo•.....•ooo° " \ # line  12
-        (8)
-            for line in \
-                "         .••••.        " \
-                "       •o@@@OOoo•.     " \
-                "     •o@@Ooo•••oOo•.   " \
-                "    •o@@Oo•°   °•Oo•.  " \
-                "   •o@@Oo•.      •Oo•  " \
-                "   °•o@@Oo•.   .•oOo°  " \
-                "     ••o@@@oooooOo•°   " \
-                "   •o@@@@@@@@@@@Oo•.   " \
-                " •ooO@@@Oo••°°°°•OOo•. " \
-                " •oO@@OOo•       •OOo• " \
-                " °oO@@@@Oo.      .OOo° " \
-                " ••oO@@@@@OOooooOOOo•  " \
-                "  °•oO@@@@@@@@@@OOo•°  " \
-                "     °•o@@@@@OOOo•°    " \
-                ; do
-                tput cup $y $x
-                clocky_printc "$line"
-                incr y
-            done
-            incr x 23
-            ;;
-
-        (9)
-            for line in \
-                "         .••••.          " \
-                "     ..oOOO@@@Oo•.       " \
-                "   .•oOOOOOOO@@@@Oo.     " \
-                "  .oOo•°    °•oO@@Oo.    " \
-                " .oOo••       .•oO@@Oo.  " \
-                " •oOo°•......•°oO@@@@Oo• " \
-                " •oOOO@@@@OOOOOOO@@@@Oo• " \
-                "  °•oOOO@@@@OOOO@@@@@OO• " \
-                "             °•oOO@@@OO• " \
-                "  .•.         •oO@@@OOo° " \
-                " •oOO°.      .•oO@@@Oo°  " \
-                " °•oO@o°•...•oO@@@@Oo°   " \
-                "   °•oOO@@@@@@@@OOo•°    " \
-                "      °•OO@@@@OO•°       " \
-                ; do
-                tput cup $y $x
-                clocky_printc "$line"
-                incr y
-            done
-            incr x 24
-            ;;
-
-        (:)
-            for line in \
-                "" \
-                "" \
-                "   .•ooo•.  " \
-                "  .•oO@Oo•° " \
-                "  °•o@@@o•° " \
-                "   °•o@o•°  " \
-                "            " \
-                "  .•o@o•.   " \
-                " •oO@@@Oo•  " \
-                " •oO@@@Oo°  " \
-                " °•o@Oo•°   " \
-                "" \
-                "" \
-                "" \
-                ; do
-                tput cup $y $x
-                clocky_printc "$line"
-                incr y
-            done
-            incr x 12
-            ;;
-    esac
-    if [[ $x -gt $COLUMNS ]]; then
-        x=3
-        (( _y_init += 16 ))
-    fi
-done
-}
-
-
+#----------------------------------------------------------------------#
+# more dynamic font sizing character rendering.                        #
+#----------------------------------------------------------------------#
 function render_character
 {
 local x_check
@@ -940,16 +268,20 @@ local x_check
 if [[ $x_check -gt $_cols ]]; then
     x=3
     incr _close_to_the_edge
+#----------------------------------------------------------------------#
+# debugging info jic.                                                  #
+#----------------------------------------------------------------------#
 #     tput cup 0 0
 #     echo -n _close_to_the_edge=$_close_to_the_edge \
-#         _xy_init=$_xy_init \
 #         x=$x \
 #         x_check=$x_check \
 #         y=$y
+#----------------------------------------------------------------------#
 fi
-(( y = ( _close_to_the_edge * 16 ) + _xy_init ))
+
+(( y = ( _close_to_the_edge * 16 ) + _y_init ))
 for line in "${lines[@]}" ; do
-    # tput cup 0 0 ; echo -n y=$y x=$x
+    ### tput cup 0 0 ; echo -n y=$y x=$x ### debugging status line
     tput cup $y $x
     clocky_printc "$line"
     incr y
@@ -961,47 +293,54 @@ incr x $width
 ### CURRENT MAIN
 function render_clock_4
 {
+debug
 init
 init _close_to_the_edge
-init _xy_init 3
-init x $_xy_init
-init y $_xy_init
+
+#----------------------------------------------------------------------#
+# compute starting point for long version                              #
+#----------------------------------------------------------------------#
+init _x_init 3
+init _y_init 3
+
+#----------------------------------------------------------------------#
+# compute middle of screen for short version.                          #
+#----------------------------------------------------------------------#
+case $sleep_magic in
+    (magic) # on average, characters are 24 characters wide. best guess.
+        _hours=$( date +%I | sed -e 's/^0//' )
+        if [[ $_hours -lt 10 ]]; then
+            (( _x_init = ( COLUMNS - 78 ) / 2 ))
+        else
+            ### for 10, 11, 12, increase by width 20, for the 1.
+            (( _x_init = ( COLUMNS - 98 ) / 2 ))
+        fi
+        (( _y_init = ( LINES   - 14 ) / 2 ))
+
+        # add some jitter for screen burn safety.
+        (( up_and_over = RANDOM % 3 ))
+        (( _x_init -= up_and_over ))
+        (( _y_init -= up_and_over ))
+        ;;
+esac
+init x $_x_init
+init y $_y_init
+
+#----------------------------------------------------------------------#
+# end centering logic.                                                 #
+#----------------------------------------------------------------------#
 
 if [[ $DEMO -eq 1 ]]; then
     numbers=( A B M P " " 1 2 3 4 5 : 6 7 8 9 0 )
 else
     numbers=( $(
-    date -v+3S '+%I:%M:%S:%p' |
+    date -v+3S "+${date_format}" |
     sed -e 's/^0//' \
         -e 's/./& /g'
     ) )
 fi
 
 for number in ${numbers[*]} ; do
-    # randomize starting color_idx
-    # to avoid repeated color patters per letter
-#----------------------------------------------------------------------#
-#     echo $_idx $pound_pastels                                        #
-#----------------------------------------------------------------------#
-    # (( _idx = RANDOM % pound_pastels ))
-#----------------------------------------------------------------------#
-#     echo $_idx $pound_pastels                                        #
-#----------------------------------------------------------------------#
-#----------------------------------------------------------------------#
-#     print_sep                                                        #
-#----------------------------------------------------------------------#
-    incr
-
-    # if first character . . .
-    if [[ $num -eq 1 ]]; then
-
-        # if it is a zero . . .
-        if [[ $number -eq 0 ]]; then
-
-            # skip it.
-            continue
-        fi
-    fi
 
     case $number in
         (" ") lines=(
@@ -1100,25 +439,73 @@ for number in ${numbers[*]} ; do
                 "  .•oOO@@Oo•             " \
                 "   .•oO@@Oo•.            " \
                 )
-            width=28
+            width=25
             ;;
 
         (0)
             lines=(
                 "" \
                 "           ..•••.           " \
-                "        .•oO@@@@Oo•..       " \
+                "        .•oO@@@@Oo•.        " \
                 "     .•o@@Oo••° °•oo•.      " \
                 "   .•o@@@Oo•°     °•oo•.    " \
                 "  •o@@@@Oo•°       °•oo•.   " \
                 " •o@@@@@Oo•         ••oo•.  " \
                 " •o@@@@@Oo•         .•oo••  " \
-                " •o@@@@@@o••.      ..•oOo•° " \
+                " •o@@@@@@o•.       ..•oOo•° " \
                 " °o@@@@@@Ooo••....••oo@Oo•° " \
                 "  °o@@@@@@Ooooooooooo@Oo•°  " \
                 "   °o@@@@@@@@OOOO@@@Oo•°    " \
                 "    °o@@@@@@@@@@@@@Oo•°     " \
                 "       °o@@@@@@@Oo•°        " \
+                )
+            lines=(
+                "" \
+                "           ..•••.           " \
+                "        .•oO@@@@Oo•.        " \
+                "     .•o@@OOo•° °•oo•.      " \
+                "   .•o@@@Oo•°     °•oo•.    " \
+                "  •o@@@@Oo•°       °•oo•.   " \
+                " •o@@@@@Oo•         ••oo•.  " \
+                " •o@@@@@Oo•         .•oo••  " \
+                " •o@@@@@@Oo.       ..•oOo•° " \
+                " °o@@@@@@OOo••....••oo@Oo•° " \
+                "  °o@@@@@@OOOOooooOO@@Oo•°  " \
+                "   °o@@@@@@@@OOOO@@@Oo•°    " \
+                "    °o@@@@@@@@@@@@@Oo•°     " \
+                "       °o@@@@@@@Oo•°        " \
+                )
+            lines=(
+                "" \
+                "           ..•••.           " \
+                "        .•oO@@@@Oo•.        " \
+                "     .•o@@OOo•° °•oo•.      " \
+                "   .•o@@@Oo•°     °•oo•.    " \
+                "  •o@@@@Oo•°       °•oo•.   " \
+                " •o@@@@@Oo•         ••oo•.  " \
+                " •o@@@@@Oo•         .•ooo•  " \
+                " •o@@@@@@Oo.        .•oOo•° " \
+                " •o@@@@@@OOo••....••oo@Oo•° " \
+                "  •O@@@@@@OOOOooooOO@@OO•°  " \
+                "   °O@@@@@@@@OOOO@@@OOOº°   " \
+                "    °O@@@@@@@@@@@@@OOº°°    " \
+                "      °ºO@@@@@@@OOOº°°      " \
+                )
+            lines=(
+                "" \
+                "           ..•••.           " \
+                "        .•oO@@@@Oo•.        " \
+                "     .•o@@OOo•° °•oo•.      " \
+                "   .•o@@@Oo•°     °•oo•.    " \
+                "  •o@@@@Oo•°       °•oo•.   " \
+                " •o@@@@@Oo•         ••oo•.  " \
+                " •o@@@@@Oo•         .•ooo•  " \
+                " •o@@@@@@Oo.        .•oOo•° " \
+                " •o@@@@@@OOo••....••oo@Oo•° " \
+                "  •O@@@@@@OOOOOOOOOO@@OO•°  " \
+                "   °O@@@@@@@@OOOO@@@OOOº°   " \
+                "    °O@@@@@@@@@@@@@OOº°°    " \
+                "      °ºO@@@@@@@OOOº°°      " \
                 )
             width=28
             ;;
@@ -1140,24 +527,73 @@ for number in ${numbers[*]} ; do
                 "    .•o@@Oo•.      " \
                 " .•ooO@@Ooooo•..   " \
                 )
-            width=20
+            width=19
             ;;
 
         (2)
             lines=(
-                "      °•oOO@@@@@o•°       " \
-                "    °•oOOoooO@@@@@@o•°    " \
-                "   °oO•.      .•oO@@@o•°  " \
-                "  •oO•°        .•oO@@Oo•° " \
+                "      .•oOO@@@@@o•.       " \
+                "    .•oOOoooO@@@@@@o•.    " \
+                "   .oO•.      .•oO@@@o•.  " \
+                "  •oO•°        .•oO@@Oo•. " \
                 "   o°           •oOO@@o•• " \
-                "               .•oO@@o••  " \
-                "           ...•oO@@Oo•.   " \
-                "      .•ooOO@Ooo••°°°     " \
+                "   °           .•oO@@o••  " \
+                "           ..•ooO@@Oo•°   " \
+                "      .•ooOO@Oooººº°°     " \
                 "     .•oO@o•°             " \
                 "   .•oO@o•°               " \
-                "  .•oO@o•°                " \
-                " .•ooOOoo.          .o.   " \
+                "  .•oO@o•°            .   " \
+                " ••ooOOoo.          .o.   " \
                 " °•oooOOO@oooooooooooo•   " \
+                "  °•o@@@@@OOOOO@@@@@O@°   " \
+                )
+            width=26
+            lines=(
+                "      .•oOO@@@@@o•.       " \
+                "    .•oOOºº°°°•O@@@o•.    " \
+                "   .oO•°       •oO@@@o•.  " \
+                "  •oO•°         •oO@@Oo•. " \
+                "   o°           •oOO@@o•• " \
+                "   °           .•oO@@o••  " \
+                "           ..•ooO@@Oo•°   " \
+                "       .•ooO@OOºººº°°     " \
+                "     .•oO@o•°             " \
+                "   .•oO@o•°               " \
+                "  .•oO@o•°            .   " \
+                " ••ooOOoo.          .o•   " \
+                " °•oooOOO@oooooooooooo•   " \
+                "  °•o@@@@@OOOOO@@@@@O@°   " \
+                )
+            lines=(
+                "      .•oOO@@@@@o•.       " \
+                "    .•oOOºº°°°ºO@@@o•.    " \
+                "   .oOº°       °oO@@@o•.  " \
+                "  •oO•°         °oO@@Oo•. " \
+                "   o°           •oOO@@o•• " \
+                "   °           .•oO@@o••  " \
+                "           ..•ooO@@Oo•°   " \
+                "       .•ooO@OOºººº°°     " \
+                "     .•oO@Oº°             " \
+                "   .•oO@o•°               " \
+                "  .•oO@o•             .   " \
+                " ••ooOOOo•.........••oo   " \
+                " °•oooOOO@ooooooooooooo   " \
+                "  °•o@@@@@OOOOO@@@@@O@°   " \
+                )
+            lines=(
+                "      .•oOO@@@@@o•.       " \
+                "    .•oOOººººººO@@@o•.    " \
+                "   .oOº°       °oO@@@o•.  " \
+                "  •oO•°         °oO@@Oo•. " \
+                "   o°           •oOO@@o•• " \
+                "   °           .•oO@@o••  " \
+                "           ..•ooO@@Oo•°   " \
+                "       .•ooO@OOºº°°       " \
+                "     .•oO@@@Oº°           " \
+                "   .•oO@@@o•°             " \
+                "  .•oO@@@o•           .   " \
+                " ••oOO@@@Oo•.......••oo   " \
+                " °•oOO@@@@OOOOOOOOOOOOO   " \
                 "  °•o@@@@@OOOOO@@@@@O@°   " \
                 )
             width=26
@@ -1167,18 +603,34 @@ for number in ${numbers[*]} ; do
             lines=(
                 "       .•••.            " \
                 "    ••oOO@@@o•          " \
-                "  •oOOO•••oO@@@o•       " \
+                "  •oOOOºººoO@@@o•       " \
                 " °o•°     °•oO@@@o•     " \
                 "           .•oO@@@o•    " \
                 "           .•oO@@o•°    " \
                 "      ...•oO@@@o••      " \
-                "    ••ooOOOOO@@@@@o•    " \
-                "     °°°••oOO@@@@@Ooo•  " \
+                "    ••ooOOOOO@@@@@o.    " \
+                "     °°°••oOO@@@@@Ooo.  " \
                 "           •oOO@@@@@Oo• " \
                 "            .•oO@@@@Oo• " \
                 " °ooo•.....•oO@@@@@Oo•° " \
                 "  °•oOOooooO@@@@@@Oo•°  " \
                 "    °•oOOO@@@@@@o•°     " \
+                )
+            lines=(
+                "        .•••.           " \
+                "    ••oOO@@@Ooo.        " \
+                "  •oOOººººoO@@@Oo.      " \
+                " °º°      °•oO@@@O.     " \
+                " °         .•oO@@@O•    " \
+                "           .•oO@@O•°    " \
+                "      ...•oO@@@o••      " \
+                "   ••ooOOOOOO@@@@Oo.    " \
+                "      °°ºººOO@@@@@OOo.  " \
+                "            °OO@@@@@Oo. " \
+                " .          .•OO@@@@OO: " \
+                " °Oo•......•oO@@@@@OO:° " \
+                "  °ºOOOOOOOO@@@@@@Oº°°  " \
+                "    °ººOOO@@@@@OOº°°    " \
                 )
             width=24
             ;;
@@ -1186,14 +638,14 @@ for number in ${numbers[*]} ; do
         (4)
             lines=(
                 "               .•o°     " \
-                "             .•o@o•     " \
-                "            .•o@@o•     " \
-                "           .•o@O@o•     " \
-                "         .•oO@o•@o•     " \
+                "             .•o@o°     " \
+                "            .•o@@o°     " \
+                "           .•o@O@o°     " \
+                "         .•oO@o•@o      " \
                 "       .•oO@o:° @O      " \
-                "     .•oOO@o:°  @O      " \
-                "   .•ooO@o:•....oOo•..• " \
-                " °•ooOOO@@@@@OOOOOoooo. " \
+                "     .•oOO@o:°  @O•     " \
+                "   .•ooO@o:•....oOo•..: " \
+                " .•ooOOO@@@@@OOOOOOooo• " \
                 "              °oOOo°    " \
                 "              •o@Oo•    " \
                 "              •o@Oo•    " \
@@ -1220,7 +672,7 @@ for number in ${numbers[*]} ; do
                 "  °•OOooooO@@@@@@Oo•°    " \
                 "    °•oOOO@@@OO•°        " \
                 )
-            width=26
+            width=25
             lines=(
                 "  °•@@OOoooooooooooO@•°  " \
                 "  °•oooOOO@@@@@@@OOOo•   " \
@@ -1232,30 +684,46 @@ for number in ${numbers[*]} ; do
                 "    .o.        •oO@@o••  " \
                 "  .•Oo•.        •oO@@@o• " \
                 " •oO••°         •oO@@@o• " \
-                " oO•°         .•oO@@@o•° " \
-                " °oO•.      .•oO@@@@o•°  " \
+                " oO••         .•oO@@@o•° " \
+                " °oO°•......••oO@@@@o•°  " \
                 "  °•OOooooO@@@@@@Oo•°    " \
                 "    °•oOOO@@@OO•°        " \
                 )
-            width=26
+            width=25
             ;;
 
         (6)
             lines=(
                 "           ..•••..        " \
                 "        .•oO@@@@Ooo.      " \
-                "     .•o@Oo•°     °••     " \
-                "    .•@Oo•°         °     " \
-                "   .•@Oo•°                " \
-                "  .•@Oo•                  " \
-                "  •o@OOo•. .oO@@@Oo•.     " \
-                "  •o@@Oo•oO@@@@@@@@@@o•   " \
-                " •oO@@@@Oo•°    °oO@@Oo•  " \
-                " °o@@@@Oo•      °•oO@@oo• " \
-                " °oo@@Ooo•.    ••oO@@@Oo• " \
-                "  °•oO@@OOOoooOOO@@@@Oo•  " \
+                "     .•o@OO•°     °ºo     " \
+                "    .•@OO•°         °     " \
+                "   .•@OO•°                " \
+                "  .•@OO•     .•••.        " \
+                "  •o@OOo.  .oO@@@Oo•.     " \
+                "  •o@@OoooO@@@@@@@@@@o•   " \
+                " •oO@@@OO•°    °oO@@@Oo•  " \
+                " °o@@@Oo•       •oO@@@oo• " \
+                " °oo@Ooo•.     .oO@@@@Oo• " \
+                "  °•oO@OOOoooOOO@@@@@@Oo• " \
                 "   °•oO@@@@@@@@@@@@Ooo•°  " \
                 "      °•oO@@@@@OOoo•°     " \
+                )
+            lines=(
+                "           ..•••..        " \
+                "        .•o@@@@@Ooo.      " \
+                "     .•o@@O•°°   °°O.     " \
+                "    .•@OO•°         º     " \
+                "   .•@OO•°                " \
+                "  .•@OOO     .••••.       " \
+                "  •o@OOO.  .oO@@@Oo•.     " \
+                " •oO@@OoooO@@@@@@@@@@o•   " \
+                " •oO@@@@@O•°     °oO@Oo•  " \
+                " °o@@@@@Oo        •oO@oo• " \
+                " °oO@@@Ooo•......•oO@@Oo• " \
+                "  °ºOO@@@OOOoooOOO@@@@Oo• " \
+                "   °ºOO@@@@@@@@@@@@@OOº°  " \
+                "      °ººO@@@@@OOOºº°     " \
                 )
             width=26
             ;;
@@ -1277,7 +745,7 @@ for number in ${numbers[*]} ; do
                 "     .•o@@Oo•.        " \
                 "   .•ooO@@@Ooo•.      " \
                 )
-            width=23
+            width=22
 
             lines=(
                 "•@@OOooooooooooOO@@@• " \
@@ -1295,21 +763,37 @@ for number in ${numbers[*]} ; do
                 "     .•o@@Oo•.        " \
                 "   .•ooO@@@Ooo•.      " \
                 )
-            width=23
+            width=22
             ;;
 
         (8)
             lines=(
                 "         .••••.        " \
                 "       •o@@@OOoo•.     " \
-                "     •o@@Ooo•••oOo•.   " \
-                "    •o@@Oo•°   °•Oo•.  " \
-                "   •o@@Oo•.      •Oo•  " \
-                "   °•o@@Oo•.   .•oOo°  " \
-                "     ••o@@@oooooOo•°   " \
+                "     •o@@@Ooo••oOo•.   " \
+                "    •o@@@Oo•°  °•Oo•.  " \
+                "   •o@@@Oo•.     •Oo•  " \
+                "   °•o@@@Oo•.  .•oOo°  " \
+                "     ••o@@@@oooooOo•°  " \
                 "   •o@@@@@@@@@@@Oo•.   " \
-                " •ooO@@@Oo••°°°°•OOo•. " \
-                " •oO@@OOo•       •OOo• " \
+                " •ooO@@@@Oo••°°°•OOo•. " \
+                " •oO@@@OOo•      •OOo• " \
+                " °oO@@@@@Oo.     .OOo° " \
+                " ••oO@@@@@OOooooOOOo•  " \
+                "  °•oO@@@@@@@@@@OOo•°  " \
+                "     °•o@@@@@OOOo•°    " \
+                )
+            lines=(
+                "         .••••.        " \
+                "       •o@@@OOoo•.     " \
+                "     •o@@@OOº°°ºOo•.   " \
+                "    •o@@@Oº°    °Oo•.  " \
+                "   •o@@@Oo•      •Oo•  " \
+                "   °•o@@@Oo•.  .•oOo°  " \
+                "     ••o@@@@oooooOo•°  " \
+                "   •o@@@@@@@@@@@Oo•.   " \
+                " •ooO@@@@OOº°°°°ºOOo•. " \
+                " •oO@@@OOo•      •OOo• " \
                 " °oO@@@@Oo.      .OOo° " \
                 " ••oO@@@@@OOooooOOOo•  " \
                 "  °•oO@@@@@@@@@@OOo•°  " \
@@ -1319,21 +803,40 @@ for number in ${numbers[*]} ; do
             ;;
 
         (9)
+            # alt-right-paren: ººººº
             lines=(
                 "         .••••.          " \
                 "     ..oOOO@@@Oo•.       " \
-                "   .•oOOooooO@@@@Oo•.    " \
-                "  .ooo•°    °•oO@@@o•.   " \
-                " .oo••       .•oO@@@o•.  " \
-                " •ooo•.      .•oO@@@Oo•. " \
-                " •ooOO@@oooOOooOO@@@@Oo• " \
-                "  °•oOO@@@@OoooOOO@@@Oo• " \
-                "             °•oOO@@@Oo• " \
-                "  .•         ••oO@@@Oo•° " \
-                "  oO°.      .•oO@@@@Oo°  " \
-                "  °oO@o••••oOO@@@@Oo•°   " \
+                "   .•oOOººººOOO@@Oo•.    " \
+                "  .ooo•°    °•oOO@@Oo•.  " \
+                " .oo••        •oOO@@@o•  " \
+                " •ooo•.       .oO@@@@Oo. " \
+                " •ooOO@@oooooOOOOO@@@Oo• " \
+                "  °ººOO@@@@@OOOOOO@@@Oo• " \
+                "              °oOO@@@Oo• " \
+                "  .o.         •oOOO@@Oo° " \
+                "  oOOo.      .oOOO@@Oo°  " \
+                "  °oO@@OooooO@@@@@Oo•°   " \
                 "   °oOO@@@@@@@@OOo•°     " \
                 "      °ooOO@@Oo•°        " \
+                )
+            width=24
+
+            lines=(
+                "         .••••.          " \
+                "     ..oOOO@@@Ooo•.      " \
+                "   .•oOOOºººOOO@@Oo•.    " \
+                "  .ooo•°    °•oOO@@Oo.   " \
+                " .oo••        •oOO@@@o.  " \
+                " •ooo••......••oO@@@@Oo. " \
+                " •ooOO@ooooooOOOOO@@@Oo: " \
+                "  °ºOOO@@@@@OOOOOO@@@Oo: " \
+                "      °°°°°°°  oOO@@@Oo• " \
+                "  .o          •oOOO@@Oº° " \
+                "  oO°.       .oOOO@@Oº°  " \
+                "  °oO@o....ooOOO@@@Oº°   " \
+                "   °oOO@@@@@@@@@OOº°     " \
+                "      °ººO@@@Oº°         " \
                 )
             width=24
             ;;
@@ -1343,14 +846,30 @@ for number in ${numbers[*]} ; do
                 "" \
                 "" \
                 "   .•ooo•.  " \
-                "  .•oO@Oo•° " \
+                "  .•oO@Oo•. " \
                 "  °•o@@@o•° " \
-                "   °•o@o•°  " \
+                "   °ºO@O•°  " \
                 "            " \
                 "  .•o@o•.   " \
                 " •oO@@@Oo•  " \
                 " •oO@@@Oo°  " \
-                " °•o@Oo•°   " \
+                " °ºo@Ooº°   " \
+                "" \
+                "" \
+                "" \
+                )
+            lines=(
+                "" \
+                "" \
+                "   .•oo•.   " \
+                "  •oO@@Oo•  " \
+                "  •oO@@Oo°  " \
+                "  °ºo@oº°   " \
+                "            " \
+                "  .•o@o•.   " \
+                " •oO@@@Oo•  " \
+                " •oO@@@Oo°  " \
+                " °ºo@Ooº°   " \
                 "" \
                 "" \
                 "" \
@@ -1360,11 +879,16 @@ for number in ${numbers[*]} ; do
     esac
     render_character
 done
+
+#----------------------------------------------------------------------#
+# if we reach the edge, start on the next line, leaving a blank line.  #
+#----------------------------------------------------------------------#
 incr _close_to_the_edge
-(( y = ( _close_to_the_edge * 16 ) + _xy_init ))
+(( y = ( _close_to_the_edge * 16 ) + _y_init ))
 (( yy = y + 2 ))
 tput cup $yy 0
-# echo -n yy=$yy y=$y x=$x
+
+### echo -n yy=$yy y=$y x=$x
 }
 
 
@@ -1378,29 +902,38 @@ function set_args
 {
 for arg in $* ; do
     case $arg in
+        (-n|--no-sleep|--noSleep) start_sleep=0 ;;
+        (random) yap_random_colors ;;
+        (-l|--long) date_format='%I:%M:%S:%p' ; sleep_magic= ;;
+        (-s|--short) sleep_magic=magic ; date_format='%I:%M' ;;
         (-h|--help)
-            clear
+            $CLEAR
             echo
             echo usage:
-            echo $zero '[clock-version] [color-palette]'
-            echo $zero '[clock-version] [--acidx=42,46,206...]'
-            echo defaults: $clocky $color_palette
+            echo $zero '[-s|--short|-l|--long]' '[clock-version] [color-palette]'
+            echo $zero '[--acidx=42,46,206...]'
+            echo defaults: $clocky $color_palette short
+            # roger
+            yap_purples
+            yap_show_colors
             echo the --acidx option allows for customized color-palettes
+            echo colors would be comma delimited
             echo using the ANSI color codes
-            echo
+            echo --short date format: HH:MM, default ${date_format}
+            print_sep '- '
 
             for palette in `
-                echo roger;
+                echo barb roger roger2 bloop blook
                 grep '(.*).*yap.*;;' $0 |
                     grep -v grep |
-                    cut -d= -f2 |
-                    fields 1
+                    fields 2
                 `; do
                 eval $palette
                 printf "%-22s => " ${palette#yap_}
                 init
                 while [[ $num -lt $pound_pastels ]]; do
-                    echo -n "[48;5;${acidx[$num]}m  "
+                    # echo -n "[48;5;${acidx[$num]}m  "
+                    printf "[48;5;${acidx[$num]}m[30m%3d " ${acidx[$num]}
                     incr
                 done
                 echo "[m"
@@ -1409,69 +942,97 @@ for arg in $* ; do
             exit
             ;;
     
+#----------------------------------------------------------------------#
+# will actually work with: --acidx=1,2,3 or "--acidx=1 2 3"            #
+# just needs to be a single parameter.                                 #
+#----------------------------------------------------------------------#
         (--acidx=*)
-            colors=${arg##--acidx=}
-            colors=${colors//,/ }
-            acidx=( ${colors} )
+            acidx=( $(
+                echo $arg | sed -e 's/[^0-9]/ /g' | trr
+                ) )
             _yap_pound
-            color_palette=: # nop the palette
+            yap_show_colors
+            sleep 2
+            : # nop the palette
             ;;
 
         (once) run_once=True ;;
         (1|render_clock_1|render_1) clocky=render_clock_1 ;;
-        (2|render_clock_2|render_2) clocky=render_clock_2 ;;
-        (3|render_clock_3|render_3) clocky=render_clock_3 ;;
         (4|render_clock_4|render_4) clocky=render_clock_4 ;;
-        (demo) DEMO=1 ;;
+        (demo) DEMO=1 ; sleep_magic=demo ;;
 
-        #====================
-        #----- COLORS  ------
-        #====================
-        (cream) color_palette=yap_cream ;;
+        #===================
+        #----- COLORS ------
+        #===================
+        (bloop)    bloop ;;
+        (blook)    blook ;;
+        (cream)    yap_cream ;;
+        (cream2)   yap_cream2 ;;
 
-        (cream2) color_palette=yap_cream2 ;;
+        (pastels1) yap_pastels1 ;;
+        (pastels2) yap_pastels2 ;;
+        (pastels3) yap_pastels3 ;;
+        (pastels4) yap_pastels4 ;;
 
-        (pastels1) color_palette=yap_pastels1 ;;
-        (pastels2) color_palette=yap_pastels2 ;;
-        (pastels3) color_palette=yap_pastels3 ;;
-        (pastels4) color_palette=yap_pastels4 ;;
+        (roger)    roger ;; ##( Dean, that is.)
+        (roger2)   roger2 ;; ##( Dean, that is.)
+        (greens3)  yap_greens3 ;;
+        (greens)   yap_greens ;;
+        (purple*)  yap_purples ;;
+        (yellow*)  yap_yellow ;;
+        (blue*)    yap_blue ;;
 
-        (roger) color_palette=roger ;; ##( Dean, that is.)
-        (green*) color_palette=yap_greens3 ;;
-        (purple*) color_palette=yap_purples ;;
-        (yellow*) color_palette=yap_yellow ;;
-        (blue*) color_palette=yap_blue ;;
-
-        (rainbow) color_palette=yap_rainbow ;;
-        (rainbow_bright|bright_rainbow) color_palette=yap_rainbow_bright ;;
-        (rainbow_spiral|spiral_rainbow) color_palette=yap_spiral_rainbow ;;
-        (rainbow_full|full_rainbow) color_palette=yap_full_rainbow ;;
+        (rainbow)                       yap_rainbow ;;
+        (rainbow_bright|bright_rainbow) yap_rainbow_bright ;;
+        (rainbow_spiral|spiral_rainbow) yap_spiral_rainbow ;;
+        (rainbow_full|full_rainbow)     yap_full_rainbow ;;
+        (barb) barb ;; # pinks and pinkish reds
     esac
 done
 return
 }
 
 
-# MAIN
-# defaults. last one wins.
-clocky=render_clock_3
+#----------------------------------------------------------------------#
+# MAIN                                                                 #
+# defaults.                                                            #
+#----------------------------------------------------------------------#
+title clocky $*
+sleep_for=7
+sleep_magic=magic
+date_format='%I:%M:%S:%p'
+date_format='%I:%M'
+color_palette=yap_purples
 clocky=render_clock_4
-
-color_palette=yap_rainbow_bright
-color_palette=yap_full_rainbow
-
-set_args "${@}"
-
-# initialize the color palette
+start_sleep=3
 $color_palette
 
-while : ; do
-    tput clear
+set_args ${@}
+
+if [[ $DEMO -eq 1 ]]; then
+    $CLEAR
     $clocky
-    if [[ $DEMO == 1 ]]; then
-        exit
-    fi
-    sleep_for=7
+    exit
+fi
+
+if [[ -n $start_sleep ]]; then
+    echo
+    echo sleeping a bit. please maximize the screen.
+    echo
+    sleep ${start_sleep}
+fi
+
+#----------------------------------------------------------------------#
+# hesitate to give time to maximize the screen.                        #
+#----------------------------------------------------------------------#
+$CLEAR
+while : ; do
+    $CLEAR
+    $clocky
+    case $sleep_magic in
+        (magic) sleep_magic ;;
+        (*) echo WHT NO LEEP MAGIS? ; exit ;;
+    esac
     sleep $sleep_for
 done
 

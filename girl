@@ -1,33 +1,19 @@
+         
+toggle_bar=3         
+#1 2 3 6 5 4 7 8 9 10
+(( toggle_bar = 5 % toggle_bar )) ; echo $toggle_bar
 
-
-
-
-
-#----------------------------------------------------------------------#
-# vi macro comment surrounder method.                                  #
-#----------------------------------------------------------------------#
-
-
-function girly
-{
-
-awk '
-
-    BEGIN{
-        printf("#----------------------------------------------------------------------#\n");
-    }
-
-    {
-        printf("\# %-68s #\n", $0)
-    }
-
-    END{
-        printf("#----------------------------------------------------------------------#\n");
-    }' $*
-
-return
-}
-
-
-girly girl
-
+(( toggle_bar = 5 % toggle_bar )) ; echo $toggle_bar
+(( toggle_bar = 5 % toggle_bar )) ; echo $toggle_bar
+(( toggle_bar = 5 % toggle_bar )) ; echo $toggle_bar
+exit
+(( toggle_bar = 5 % toggle_bar )) ; echo $toggle_bar
+(( toggle_bar = 5 % toggle_bar )) ; echo $toggle_bar
+(( toggle_bar = 5 % toggle_bar )) ; echo $toggle_bar
+(( toggle_bar = 5 % toggle_bar )) ; echo $toggle_bar
+(( toggle_bar = 5 % toggle_bar )) ; echo $toggle_bar
+(( toggle_bar = 5 % toggle_bar )) ; echo $toggle_bar
+(( toggle_bar = 5 % toggle_bar )) ; echo $toggle_bar
+(( toggle_bar = 5 % toggle_bar )) ; echo $toggle_bar
+(( toggle_bar = 5 % toggle_bar )) ; echo $toggle_bar
+(( toggle_bar = 5 % toggle_bar )) ; echo $toggle_bar

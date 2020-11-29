@@ -126,7 +126,7 @@ while [[ $_x -eq 0 && $_y -eq 0 ]]; do
     (( _y = ( RANDOM % 3 ) - 1 ))
 done
 
-(( random_loop_count = ( RANDOM % 2 ) + 1 ))
+(( random_loop_count = RANDOM % 4 ))
 
 init random_loop_counter
 while [[ $random_loop_counter < $random_loop_count ]]; do
@@ -335,7 +335,7 @@ _ball=☾
 _ball=♦
 _ball=' '
 _ball=⚈
-_ball=@
 _ball=⬤ 
+_ball=@
 loopty_loop
 
