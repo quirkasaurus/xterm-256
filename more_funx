@@ -8,52 +8,164 @@
 #          the primary script.                                         #
 #----------------------------------------------------------------------#
 
+check=$( which quickread.exe )
+if [[ -z $check ]]; then
+    cat << EOF
+
+"quickread.exe" is not in your path.
+you must:
+
+cc pause.c -o pause.exe
+cd SOME_LOCAL_DIRECTORY_IN_YOUR_PATH
+mv $OLDPWD/pause.exe .
+ln pause.exe quickread.exe
+
+otherwise, you will have to replace all references
+to stock_read, stock_quickread.exe, quickread.exe and pause.exe
+to a simple "read" method and
+remove any references to descriptions.
+
+much easier to just compile pause.exe...
+
+EOF
+    exit 9
+fi
+
+
+set -o allexport
 DEBUG=1
 color_idx=-1
 DEBUG=0
 declare -a _fgs
+shopt -s expand_aliases
+
+# greens to blues to purples
+declare -a cool_cat_fgs
+cool_cat_fgs=(
+     40  41  43  44
+     45  80 117 153
+    147 141 135 129
+     93  57  21  33
+     39  38 37
+    )
+cool_cat_idx=0
+
+#----------------------------------------------------------------------#
+# bash implementation of the C macros: __FILE__ __LINE__               #
+# must be used:                                                        #
+# eval $__line__                                                       #
+#----------------------------------------------------------------------#
+__line__='eval echo "[32m $BASH_SOURCE [33m $FUNCNAME [35m $LINENO: [m"'
 
 
-trap clean_exit 1 2 3
 
-
-function clean_exit
+function grab_state
 {
-tput cup $LINES $COLUMNS
-echo "[m" done
-exit
+. $FSTATE
 }
 
 
-function nanosleep
+function show_state
 {
-# for nano-second sleeps
-# on the at home mac,
-# tests results:
-#----------------------------------------------------------------------#
-# testing nanosleep with 10                                            #
-# real	0.001s                                                         #
-# -------------------------------------------------------------------- #
-# testing nanosleep with 100                                           #
-# real	0.002s                                                         #
-# -------------------------------------------------------------------- #
-# testing nanosleep with 1000                                          #
-# real	0.016s                                                         #
-# -------------------------------------------------------------------- #
-# testing nanosleep with 10000                                         #
-# real	0.157s                                                         #
-# -------------------------------------------------------------------- #
-# testing nanosleep with 100000                                        #
-# real	2.160s                                                         #
-# -------------------------------------------------------------------- #
-#----------------------------------------------------------------------#
+if [[ -z $FSTATE ]]; then
+    printc red no FSTATE file specified
+    pause
+    return
+fi
 
-iteration=${1:-1000}
+if [[ ! -f $FSTATE ]]; then
+    echo '[31m' `/bin/ls -ld $FSTATE` '[m'
+    pause
+    return
+fi
 
-while [[ $num -lt $iteration ]]; do
-    (( num += 1 ))
-    :
+cat $FSTATE
+pause
+return
+}
+
+
+function unsetxv
+{
+case $- in
+    (*x*v*|*v*x*)
+        set_xv=1
+        set +xv
+        ;;
+    (*) set_xv=0 ;;
+esac
+}
+
+
+function setxv
+{
+if [[ $set_xv -eq 1 ]]; then
+    set -xv
+fi
+}
+
+
+function resize
+{
+vecho lines
+vecho columns
+}
+
+
+function cool_cat
+{
+# grabs random color-idx. considers environ light/dark setting.
+local r g b idx _gg
+DEF_IFS="${IFS}"
+IFS='' # retains input spaces
+while read line ; do
+    incr cool_cat_idx
+    if [[ $cool_cat_idx -ge $pound_cool_cat_fgs ]]; then
+        cool_cat_idx=0
+    fi
+    idx=${cool_cat_fgs[cool_cat_idx]}
+
+    case ${_g:-48} in
+        48)
+            _gg=38
+#             (( r = RANDOM % 3 ))
+#             (( g = RANDOM % 3 ))
+#             (( b = RANDOM % 3 ))
+            ;;
+
+        38)
+            _gg=48
+#             (( r = ( RANDOM % 3 ) + 3 ))
+#             (( g = ( RANDOM % 3 ) + 3 ))
+#             (( b = ( RANDOM % 3 ) + 3 ))
+            ;;
+
+        *) echo "$line" ; continue ;;
+    esac
+
+    # (( idx = 16 + b + (g*6) + (r*36) ))
+    # echo "[m${idx} [${_gg};5;${idx}m${line}[m"
+    echo "[${_gg};5;${idx}m${line}[m"
+    # echo "[${_g};5;${idx}m${line}[m"
 done
+echo -n '[m'
+# return to default values
+IFS="${DEF_IFS}"
+return
+}
+
+
+function fig
+{
+_goop=$( echo "$*" | sed -e 's/[^A-Za-z][^A-Za-z]*/.*/g' )
+find . -type f -exec grep -i "$_goop" {} \; -print
+}
+
+
+function goopy
+{
+_goop=$( echo "$*" | sed -e 's/[^A-Za-z][^A-Za-z]*/.*/g' )
+grep -i "$_goop" *.py
 }
 
 
@@ -62,7 +174,7 @@ done
 #----------------------------------------------------------------------#
 function init
 {
-eval ${1:-_nothing}=${2:-0}
+eval ${1:-num}=${2:-0}
 }
 
 
@@ -82,6 +194,11 @@ return
 
 function exec_vi
 {
+local FIN
+local finput
+local vi_opt
+local _x
+
 #----------------------------------------------------------------------#
 # perhaps called with nothing...                                       #
 #----------------------------------------------------------------------#
@@ -89,10 +206,34 @@ if [[ -z $1 ]]; then
     return
 fi
 
-local FIN
-for FIN in $1 `which $1`; do
+case $# in
+    (0) echo called with nothing ; return ;;
+    (1) finput=$1 ;;
+    (2) _x=${1#+}
+        _x=${1#/}
+        _x=$( grepify "${_x}" )
+        case $_x in
+            ([0-9]*) vi_opt="+${_x}" ;;
+            (*) vi_opt="+/${_x}" ;;
+        esac
+        
+        finput=$2
+        ;;
+    (*) echo no idea what you are trying to do with $* ; return ;;
+esac
+
+#----------------------------------------------------------------------#
+# if not a good path, is it an executable?                             #
+#----------------------------------------------------------------------#
+for FIN in $finput `which $finput`; do
     if [[ -f $FIN ]]; then
-        exec /usr/bin/vi $vi_opt $FIN
+        # necessary. otherwise the blank vi_opt shows up as a file in vi
+        # :-P
+        if [[ -n $vi_opt ]]; then
+            exec /usr/bin/vi "$vi_opt" $FIN
+        else
+            exec /usr/bin/vi $FIN
+        fi
     fi
 done
 }
@@ -112,6 +253,7 @@ quickread.exe
 #----------------------------------------------------------------------#
 function stock_read
 {
+unsetxv
 if [[ -z $1 ]]; then
     echo no variable name specified
     pause
@@ -130,11 +272,12 @@ shift
 #----------------------------------------------------------------------#
 # use provided text for prompt, if any. else show var-name.            #
 #----------------------------------------------------------------------#
-if [[ -n $* ]]; then
-    _prompt="$*:"
-else
-    _prompt="Enter value for ${_var_name//_/-}:"
-fi
+_prompt="Enter value for ${_var_name//_/-}:"
+# if [[ -n $* ]]; then
+#     _prompt="$*:"
+# else
+#     _prompt="Enter value for ${_var_name//_/-}:"
+# fi
 
 #----------------------------------------------------------------------#
 # extract current value of input variable name                         #
@@ -163,8 +306,8 @@ fi
 # looking for a string input. show user current value, if set.         #
 #----------------------------------------------------------------------#
 if [[ -n $_value ]]; then
-    echo "current value for: |$_prompt| is |$_value|"
-    echo "hit <ENTER> to retain"
+    echo "current value for: |${_var_name//_/-}| is |$_value|"
+    echo "hit <ENTER> to retain. hit 'c' to clear."
 fi
 
 #----------------------------------------------------------------------#
@@ -174,9 +317,7 @@ fi
 # checkbox is unchecked.                                               #
 # pretty sure this does nothing, but left here for future issues.      #
 #----------------------------------------------------------------------#
-#----------------------------------------------------------------------#
-# stty erase                                                          #
-#----------------------------------------------------------------------#
+stty erase 
 
 #----------------------------------------------------------------------#
 # grab the value                                                       #
@@ -192,9 +333,17 @@ read _answer
 # retain previous value, if given nothing.                             #
 #----------------------------------------------------------------------#
 if [[ -z $_answer ]]; then
-    echo retaining: $_var_name =\> $_value
+    stderr retaining: $_var_name =\> $_value
     return
 fi
+
+#----------------------------------------------------------------------#
+# clear! too bad if you need c as a value. moo ah ha ha!               #
+# (probly should use stock_quickread in that case. )                   #
+#----------------------------------------------------------------------#
+case $_answer in
+    (c) _answer= ;;
+esac
 
 #----------------------------------------------------------------------#
 # strip double quotes from paste.                                      #
@@ -207,6 +356,7 @@ _answer=$( echo "$_answer" | tr \"\" .. )
 #----------------------------------------------------------------------#
 eval $_var_name=\"$_answer\"
 
+setxv
 return
 }
 
@@ -219,6 +369,22 @@ function stock_quickread
 _use_quick=1
 stock_read $*
 vecho answer
+}
+
+
+function countdown
+{
+local seconds
+seconds=${1:-10}
+echo counting down $seconds ... .. .
+while [[ $seconds -gt 0 ]]; do
+    echo -ne "\b\b\b\b$seconds "
+    decr seconds
+    sleep 1
+done
+echo -e '\b\b\b\b0 '
+echo done
+return
 }
 
 
@@ -297,7 +463,6 @@ export zero
 }
 
 #----------------------------------------------------------------------#
-# ... and this one . . .                                               #
 # increments the variable named in 1, by the amount in 2, if present.  #
 # otherwise, just adds 1.                                              #
 #----------------------------------------------------------------------#
@@ -305,7 +470,6 @@ function incr
 {
 eval "(( ${1:-num} += ${2:-1} ))"
 }
-
 function decr
 {
 eval "(( ${1:-num} -= ${2:-1} ))"
@@ -386,12 +550,7 @@ $* 2>/dev/null
 #----------------------------------------------------------------------#
 function camel
 {
-camel=$(
-    IFS=_
-    for x in ${1:-$METHOD} ; do
-        echo -n ${x^}
-    done
-    )
+export camel=$( python -c "print('$*'.title().replace('_',''))" )
 }
 
 
@@ -441,8 +600,8 @@ case ${DEBUG:-off} in
 
     off|0)
         set +xv
-        CLEAR=clear
-        PS4='PS4 -> '
+        CLEAR='tput clear'
+        # PS4='PS4 -> '
         ;;
 
 esac
@@ -487,7 +646,7 @@ esac
 
 (( _color = r + g + b + 16 ))
 
-return $_color
+echo $_color
 }
 
 
@@ -504,16 +663,17 @@ fi
 
 case $which_way in
     0)
-        random_color dark ; bg=$_color
-        random_color light ; fg=$_color
+        _bg=$( random_color dark )
+        _fg=$( random_color light )
         ;;
     *)
-        random_color dark ; fg=$_color
-        random_color light ; bg=$_color
+        _fg=$( random_color dark )
+        _bg=$( random_color light )
         ;;
 esac
 
-echo $args "[48;5;${bg}m[38;5;${fg}m${*}[m"
+printc $_bg,$_fg $*
+# echo $args "[48;5;${_bg}m[38;5;${_fg}m${*}[m"
 }
 
 
@@ -561,20 +721,19 @@ eval ${1}=$__y
 
 function display_boilerplate_options
 {
-echo "    x) vi this script and exec"
-echo "    @) vi @ buffer"
-echo "    m) git.menu"
-echo "    n) notes"
-echo "    u) urls"
-echo "    y) yoga-schedule"
-echo "    r) return"
-echo "    q) quit"
-echo "    =) quit"
-echo "    /) help"
-echo "    !) bash"
+echo "    (x) vi this script and exec"
+echo "    (@) vi @ buffer"
+echo "    (m) git.menu"
+echo "    (n) notes"
+echo "    (u) urls"
+echo "    (y) yoga-schedule"
+echo "    (r) return"
+echo "    (q) quit"
+echo "    (=) quit"
+echo "    (/) help"
+echo "    (!) bash"
 return
 }
-
 
 #----------------------------------------------------------------------#
 # boilerplate menu options method.                                     #
@@ -586,34 +745,66 @@ case $* in
 #----------------------------------------------------------------------#
 # store something in the memory buffer real quick.                     #
 #----------------------------------------------------------------------#
-    @) vi ~/Dropbox/:-D ;;
+    (@) vi ~/Dropbox/:-D ;;
+
+    (D) # toggle debug node
+        case ${DEBUG:-1} in
+            (1) DEBUG=0 ; echo debug is on ; pause ;;
+            (*) DEBUG=1 ; echo debug is off ; pause ;;
+        esac
+        ;;
 
 #----------------------------------------------------------------------#
 # edit and continue. which in order to follow links.                   #
+# if this screws up, cd somewhere else. and restart.                   #
 #----------------------------------------------------------------------#
-    x) FIN=$( which $0 ) ; vi $FIN ; exec $FIN ;;
+    (x) cd ; FIN=$( which ${0##*/} )
+        vi $FIN ; exec $FIN ;;
+
+   (blibbity)
+        if [[ $0 == ./* ]]; then
+            if [[ -f $0 ]]; then
+                FIN=$0
+            else
+                # probably chdir-ed in the script.
+                FIN=$( cd ; which $0 )
+            fi
+        else
+            FIN=$( cd ; which $0 )
+        fi
+        vi $FIN ; exec $FIN ;;
 
 #----------------------------------------------------------------------#
 # omnipresent options.                                                 #
 #----------------------------------------------------------------------#
-    m) git.menu ;;
-    n) notes $TOPIC ;;
-    u) urls $TOPIC ;;
-    y) yoga ;;
-    r) return ;;
-    q|=) # exit
+    (m) git.menu ;;
+    (n) notes ${TOPIC:-${zero}} ;;
+    (u) urls ${TOPIC:-${zero}} ;;
+    (y) yoga ;;
+    (r) return ;;
+    (q|=) # exit
         echo ; echo complete ; echo ; exit 0 ;;
-    !) bash ;;
-    /) display_boilerplate_options
+    (!) bash ;;
+    (/) display_boilerplate_options
         pause
         ;;
-    *) # invalid option
+    (*) # invalid option
         err="\
-[31m[3mInvalid selection[m"
+[31m[3mInvalid selection: $answer[m"
        ;;
 
 esac
 return
+}
+
+
+#----------------------------------------------------------------------#
+# for shell scripts working as pipes or parameters.                    #
+# this will be real valuable and sleek eventually.                     #
+#----------------------------------------------------------------------#
+function boilerplate_shargs
+{
+cat ~/Dropbox/bin/boilerplate_shargs.template
 }
 
 
@@ -669,6 +860,12 @@ for fg in ${RB_fgs[*]}; do
 done
 done
 echo "[m"
+}
+
+
+function reset_ansi
+{
+echo -n "[m"
 }
 
 
@@ -736,19 +933,14 @@ function vecho
 local _upper;
 local _lower;
 local _x;
-local n;
-if [[ $1 == -n ]]; then
-    n=-n
-    shift
-fi
 #----------------------------------------------------------------------#
 # create upper and lower case versions of the variable name input,     #
 # also converting hyphens to underscores, in order to keep the         #
 # user from having to hit the shift key.                               #
 #----------------------------------------------------------------------#
 _x=${1:-PATH}
-_lower=$( echo $1 | tr '[:upper:]-' '[:lower:]_' );
-_upper=$( echo $1 | tr '[:lower:]-' '[:upper:]_' );
+_lower=$( echo $1 | /usr/bin/tr '[:upper:]-' '[:lower:]_' );
+_upper=$( echo $1 | /usr/bin/tr '[:lower:]-' '[:upper:]_' );
 
 #----------------------------------------------------------------------#
 # just print the value.                                                #
@@ -761,26 +953,41 @@ _upper=$( echo $1 | tr '[:lower:]-' '[:upper:]_' );
 #----------------------------------------------------------------------#
 # make it look like a declaration.                                     #
 #----------------------------------------------------------------------#
-eval echo $n ${_x} ==\\\> \${$_x:-\${${_upper}:-\${${_lower}}}};
+eval echo ${_x} ==\\\> \${$_x:-\${${_upper}:-\${${_lower}}}};
 return
 }
 
 
-#----------------------------------------------------------------------#
-# echo known array                                                     #
-#----------------------------------------------------------------------#
 function vacho
 {
-local x _x
-declare -a x
-local n;
-if [[ $1 == -n ]]; then
-    n=-n
+if [[ $# -eq 2 ]]; then
     shift
+    echo -n "${1}=( "
+    eval echo -n ${1}='( ${'$1'[@]} )'
+else
+    eval echo -n '${'$1'[@]}'
 fi
-x=( unknown-environ )
-_x=${1:-x}
-eval echo ${_x}'=\( ${'$_x'[*]} \)'
+echo
+return
+}
+
+
+# this version supports changing hyphens to underscores
+# and also trying both lower and upper case variables
+# it does as much and more as the version above,
+# but with amazingly less syntactic noise.
+# does not work with MacOS because of the ^^
+# hence, that monstrosity above.
+function LINUXvecho
+{ 
+local name
+name=${1/-/_}
+eval value=\$$name
+if [[ -z $value ]]; then
+    name=${name^^}
+    eval value=\$$name
+fi
+echo $name=$value
 }
 
 
@@ -794,10 +1001,37 @@ vecho ${1:-PATH} |
 }
 
 
+function debug_pause
+{
+if [[ $DEBUG -eq 0 ]]; then
+    return
+fi
+
+echo -n "[33mdebug-pause:[m continue? y/n "
+answer=$( quickread.exe )
+echo
+echo $answer
+case $answer in
+    y) return ;;
+    *) echo quitting . . . ; exit 4 ;;
+esac
+}
+
+function pirate
+{
+echo "[38;5;200m[48;5;92m${*}[m"
+}
+
 #----------------------------------------------------------------------#
 # very useful, so just call if given the parameter.                    #
 #----------------------------------------------------------------------#
 if [[ -n $1 ]]; then
     zero $1
+    FTMP=/tmp/$zero.$LOGNAME
+    FSTATE=$HOME/.state/$zero.state
+    FOUT=./$zero.out
 fi
+
+# nece
+pound cool_cat_fgs
 
