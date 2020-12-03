@@ -44,7 +44,9 @@ fi
 #----------------------------------------------------------------------#
 }
 
-
+#~.,_,.~*"`"*~.,_,.~*"`"*~.,_,.~*"`"*~.,_,.~*"`"*~.,_,.~*"`"*~.,_,.~*"`" 
+#~.,_,.~*"`"*~.,_,.~*"`"*~.,_,.~*"`"*~.,_,.~*"`"*~.,_,.~*"`"*~.,_,.~*"`" 
+#~.,_,.~*"`"*~.,_,.~*"`"*~.,_,.~*"`"*~.,_,.~*"`"*~.,_,.~*"`"*~.,_,.~*"`" 
 #----------------------------------------------------------------------#
 # print a single line of our big font characters.                      #
 #----------------------------------------------------------------------#
@@ -113,7 +115,7 @@ for number in ${numbers[*]} ; do
                 "    #" \
                 ; do
                 tput cup $y $x
-                clocky_printc "$line"
+                echo -n "$line"
                 incr y
             done
             ;;
@@ -126,7 +128,7 @@ for number in ${numbers[*]} ; do
                 "#####" \
                 ; do
                 tput cup $y $x
-                clocky_printc "$line"
+                echo -n "$line"
                 incr y
             done
             ;;
@@ -139,7 +141,7 @@ for number in ${numbers[*]} ; do
                 "#####" \
                 ; do
                 tput cup $y $x
-                clocky_printc "$line"
+                echo -n "$line"
                 incr y
             done
             ;;
@@ -152,7 +154,7 @@ for number in ${numbers[*]} ; do
                 "    #" \
                 ; do
                 tput cup $y $x
-                clocky_printc "$line"
+                echo -n "$line"
                 incr y
             done
             ;;
@@ -165,7 +167,7 @@ for number in ${numbers[*]} ; do
                 "#####" \
                 ; do
                 tput cup $y $x
-                clocky_printc "$line"
+                echo -n "$line"
                 incr y
             done
             ;;
@@ -178,7 +180,7 @@ for number in ${numbers[*]} ; do
                 "#####" \
                 ; do
                 tput cup $y $x
-                clocky_printc "$line"
+                echo -n "$line"
                 incr y
             done
             ;;
@@ -191,7 +193,7 @@ for number in ${numbers[*]} ; do
                 "#    " \
                 ; do
                 tput cup $y $x
-                clocky_printc "$line"
+                echo -n "$line"
                 incr y
             done
             ;;
@@ -204,7 +206,7 @@ for number in ${numbers[*]} ; do
                 "#####" \
                 ; do
                 tput cup $y $x
-                clocky_printc "$line"
+                echo -n "$line"
                 incr y
             done
             ;;
@@ -217,7 +219,7 @@ for number in ${numbers[*]} ; do
                 "    #" \
                 ; do
                 tput cup $y $x
-                clocky_printc "$line"
+                echo -n "$line"
                 incr y
             done
             ;;
@@ -230,7 +232,7 @@ for number in ${numbers[*]} ; do
                 "#####" \
                 ; do
                 tput cup $y $x
-                clocky_printc "$line"
+                echo -n "$line"
                 incr y
             done
             ;;
@@ -243,7 +245,7 @@ for number in ${numbers[*]} ; do
                 "   " \
                 ; do
                 tput cup $y $x
-                clocky_printc "$line"
+                echo -n "$line"
                 incr y
             done
             decr x 2
@@ -507,6 +509,22 @@ for number in ${numbers[*]} ; do
                 "    °O@@@@@@@@@@@@@OOº°°    " \
                 "      °ºO@@@@@@@OOOº°°      " \
                 )
+            lines=(
+                "" \
+                "           ..•••.           " \
+                "        .•oO@@@@Oo•.        " \
+                "     .•o@@OOo•° °•Oo•.      " \
+                "   .•o@@@Oo•°     °•Oo•.    " \
+                "  •o@@@@Oo•°       °•Oo•.   " \
+                " •o@@@@@Oo•         ••Oo•.  " \
+                " •o@@@@@Oo•         .•oOo•. " \
+                " •o@@@@@@Oo.        .•oOo•. " \
+                " •o@@@@@@OOo••....••oO@Oo•  " \
+                "  •O@@@@@@OOOOOOOOOO@@OOº°  " \
+                "   °O@@@@@@@@OOOO@@@OOOº°   " \
+                "    °O@@@@@@@@@@@@@OOº°     " \
+                "      °ººO@@@@@@OOºº°       " \
+                )
             width=28
             ;;
 
@@ -592,8 +610,8 @@ for number in ${numbers[*]} ; do
                 "     .•oO@@@Oº°           " \
                 "   .•oO@@@o•°             " \
                 "  .•oO@@@o•           .   " \
-                " ••oOO@@@Oo•.......••oo   " \
-                " °•oOO@@@@OOOOOOOOOOOOO   " \
+                " .•oOO@@@Oo•.......••oO   " \
+                " .•oOO@@@@OOOOOOOOOOOOO   " \
                 "  °•o@@@@@OOOOO@@@@@O@°   " \
                 )
             width=26
@@ -631,6 +649,22 @@ for number in ${numbers[*]} ; do
                 " °Oo•......•oO@@@@@OO:° " \
                 "  °ºOOOOOOOO@@@@@@Oº°°  " \
                 "    °ººOOO@@@@@OOº°°    " \
+                )
+            lines=(
+                "        .•••.           " \
+                "    ••oOO@@@Ooo.        " \
+                "  •oOOººººoO@@@Oo.      " \
+                " °º°      °•oO@@@O.     " \
+                " °         .•oO@@@O•    " \
+                "           .•oO@@O•°    " \
+                "        ..•oO@@@o••     " \
+                "   ••oOOOOOOOO@@@@Oo.   " \
+                "        °°°ºOO@@@@@OO.  " \
+                "            °OO@@@@@Oo. " \
+                " :.         .OO@@@@@OO: " \
+                " °Oo•......ooO@@@@@OOº° " \
+                "  °ºOOOOOOOO@@@@@@OOº°  " \
+                "    °ººOOO@@@@@OOºº°    " \
                 )
             width=24
             ;;
@@ -673,6 +707,22 @@ for number in ${numbers[*]} ; do
                 "    °•oOOO@@@OO•°        " \
                 )
             width=25
+            lines=(
+                "  °•@@OOoooooooooooO@•°  " \
+                "  °•oooOOO@@@@@@@OOOo•   " \
+                "   °•o@•°          °••   " \
+                "   •oO@•°            °   " \
+                "   °•ooOO@@OOoo.         " \
+                "      °•oooOOO@@@o•.     " \
+                "             °•oO@@o•.   " \
+                "    .o.        •oO@@o••  " \
+                "  .•Oo•.        •oO@@@o• " \
+                " •oO••°         •oO@@@o• " \
+                " oO••         .•oO@@@o•° " \
+                " °oO°•......••oO@@@@o•°  " \
+                "  °•OOooooO@@@@@@Oo•°    " \
+                "    °•oOOO@@@OO•°        " \
+                )
             lines=(
                 "  °•@@OOoooooooooooO@•°  " \
                 "  °•oooOOO@@@@@@@OOOo•   " \
@@ -792,12 +842,12 @@ for number in ${numbers[*]} ; do
                 "   °•o@@@Oo•.  .•oOo°  " \
                 "     ••o@@@@oooooOo•°  " \
                 "   •o@@@@@@@@@@@Oo•.   " \
-                " •ooO@@@@OOº°°°°ºOOo•. " \
+                "  •oO@@@@OOº°°°°ºOOo•. " \
                 " •oO@@@OOo•      •OOo• " \
-                " °oO@@@@Oo.      .OOo° " \
-                " ••oO@@@@@OOooooOOOo•  " \
-                "  °•oO@@@@@@@@@@OOo•°  " \
-                "     °•o@@@@@OOOo•°    " \
+                " •oO@@@@Oo.      .OOo° " \
+                "  •oO@@@@@OOooooOOOo•  " \
+                "   •oO@@@@@@@@@@OOo•°  " \
+                "     °•O@@@@@OOOo•°    " \
                 )
             width=23
             ;;
