@@ -34,7 +34,7 @@ seconds=$( date +%S | sed -e 's/^0//' )
 (( sleep_for = 60 - seconds )) # takes ~3 seconds to draw HH:MM
 
 #----------------------------------------------------------------------#
-# avoid flashing around 55-05 minutes                                  #
+# avoid flashing around 55-05 seconds                                  #
 #----------------------------------------------------------------------#
 if [[ $sleep_for -le 4 ]]; then
     (( sleep_for += 60 ))
@@ -283,7 +283,12 @@ fi
 
 (( y = ( _close_to_the_edge * 16 ) + _y_init ))
 for line in "${lines[@]}" ; do
-    ### tput cup 0 0 ; echo -n y=$y x=$x ### debugging status line
+#----------------------------------------------------------------------#
+# debugging status line                                                #
+#----------------------------------------------------------------------#
+    if [[ $DEBUG -ne 0 ]]; then
+        tput cup 0 0 ; echo -n y=$y x=$x palette=$color_palette idx=$_idx pond=$pound_pastels
+    fi
     tput cup $y $x
     clocky_printc "$line"
     incr y
@@ -292,8 +297,11 @@ incr x $width
 }
 
 
-### CURRENT MAIN
-function render_clock_4
+#----------------------------------------------------------------------#
+# finds the right spot to draw the clock.                              #
+# keeps track of all the necessary counters.                           #
+#----------------------------------------------------------------------#
+function centralizationalizer
 {
 debug
 init
@@ -328,13 +336,32 @@ esac
 init x $_x_init
 init y $_y_init
 
+return
+}
 #----------------------------------------------------------------------#
 # end centering logic.                                                 #
 #----------------------------------------------------------------------#
 
+
+#----------------------------------------------------------------------#
+# MAIN                                                                 #
+#----------------------------------------------------------------------#
+function render_clock_4
+{
+debug
+centralizationalizer
+
+#----------------------------------------------------------------------#
+# for demo, print our complete set of supported characters             #
+#----------------------------------------------------------------------#
 if [[ $DEMO -eq 1 ]]; then
     numbers=( A B M P " " 1 2 3 4 5 : 6 7 8 9 0 )
 else
+#----------------------------------------------------------------------#
+# otherwise, give us the time in the prescribed format.                #
+# sed puts spaces between each number, enabling us to use it in the    #
+# for loop.                                                            #
+#----------------------------------------------------------------------#
     numbers=( $(
     date -v+3S "+${date_format}" |
     sed -e 's/^0//' \
@@ -914,12 +941,12 @@ for number in ${numbers[*]} ; do
                 "   .•oo•.   " \
                 "  •oO@@Oo•  " \
                 "  •oO@@Oo°  " \
-                "  °ºo@oº°   " \
+                "  °ºO@Oº°   " \
                 "            " \
                 "  .•o@o•.   " \
                 " •oO@@@Oo•  " \
                 " •oO@@@Oo°  " \
-                " °ºo@Ooº°   " \
+                " °ºo@@oº°   " \
                 "" \
                 "" \
                 "" \
@@ -942,6 +969,37 @@ tput cup $yy 0
 }
 
 
+#----------------------------------------------------------------------#
+# printing a dot across the bottom of the display every 10 seconds.    #
+#----------------------------------------------------------------------#
+function pulse
+{
+lines=(
+    "" \
+    "" \
+    "" \
+    "" \
+    "   .•o@o•.   " \
+    "  •oO@@@Oo•  " \
+    "  •oO@@@Oo°  " \
+    "  °ºo@@oº°   " \
+    "" \
+    "" \
+    "" \
+    )
+lines=(
+    "   .•o@o•.   " \
+    "  •oO@@@Oo•  " \
+    "  •oO@@@Oo°  " \
+    "  °ºo@@oº°   " \
+    )
+width=12
+
+render_character
+tput cup 0 0
+}
+
+
 #####
 #   #  ##
 #####  
@@ -952,6 +1010,7 @@ function set_args
 {
 for arg in $* ; do
     case $arg in
+        (-d|--debug) DEBUG=1 ;;
         (-n|--no-sleep|--noSleep) start_sleep=0 ;;
         (random) yap_random_colors ;;
         (-l|--long) date_format='%I:%M:%S:%p' ; sleep_magic= ;;
@@ -967,8 +1026,8 @@ for arg in $* ; do
             yap_purples
             yap_show_colors
             echo the --acidx option allows for customized color-palettes
-            echo colors would be comma delimited
-            echo using the ANSI color codes
+            echo colors would be comma or space delimited
+            echo using the ANSI color indexes. '(see: frogs)'
             echo --short date format: HH:MM, default ${date_format}
             print_sep '- '
 
@@ -999,11 +1058,12 @@ for arg in $* ; do
         (--acidx=*)
             acidx=( $(
                 echo $arg | sed -e 's/[^0-9]/ /g' | trr
-                ) )
+            ) )
             _yap_pound
             yap_show_colors
             sleep 2
             : # nop the palette
+            color_palette=:
             ;;
 
         (once) run_once=True ;;
@@ -1052,10 +1112,9 @@ sleep_for=7
 sleep_magic=magic
 date_format='%I:%M:%S:%p'
 date_format='%I:%M'
-color_palette=yap_purples
+yap_purples
 clocky=render_clock_4
 start_sleep=3
-$color_palette
 
 set_args ${@}
 
@@ -1075,14 +1134,50 @@ fi
 #----------------------------------------------------------------------#
 # hesitate to give time to maximize the screen.                        #
 #----------------------------------------------------------------------#
+declare -a orig_acidx
+orig_acidx=( $( echo ${acidx[*]} ) )
+
 $CLEAR
 while : ; do
+#----------------------------------------------------------------------#
+# explicitly set color-palette                                         #
+#----------------------------------------------------------------------#
+    acidx=( $( echo ${orig_acidx[*]} ) )
+    _yap_pound
+    _idx=0
+
     $CLEAR
     $clocky
     case $sleep_magic in
         (magic) sleep_magic ;;
-        (*) echo WHT NO LEEP MAGIS? ; exit ;;
+        (*) ;; # for --long format. we refresh every 7 seconds.
     esac
+    init x $_x_init
+#----------------------------------------------------------------------#
+# kinda of like a typewriter carriage return;                          #
+# print our 10 second dots below the time.                             #
+#----------------------------------------------------------------------#
+    (( y = _y_init + 16 ))
+    yap_rainbow_bright
+    (( _idx = RANDOM % pound_pastels ))
+    sleep_for=55
+#----------------------------------------------------------------------#
+# For testing the pulse; uncomment to 'continue':                      #
+#----------------------------------------------------------------------#
+#----------------------------------------------------------------------#
+# pulse ; sleep 1                                                      #
+# pulse ; sleep 1                                                      #
+# pulse ; sleep 1                                                      #
+# pulse ; sleep 1                                                      #
+# pulse ; sleep 1                                                      #
+# sleep 3                                                              #
+# continue                                                             #
+#----------------------------------------------------------------------#
+    while [[ $sleep_for -gt 10 ]]; do
+        (( sleep_for -= 10 ))
+        sleep 10
+        pulse
+    done
     sleep $sleep_for
 done
 

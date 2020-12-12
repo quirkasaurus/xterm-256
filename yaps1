@@ -52,6 +52,9 @@ _yap_pound ; pastels=$FUNCNAME
 function barb
 {
 acidx=( 163 164 165 165 171 177 213 207 201 200 199 205 206 170 169 )
+### too dark:
+acidx=( 231 225 219 213 207 201 200 199 198 197 196 160 124 88 )
+acidx=( 231 225 219 213 207 201 200 199 198 198 197 196 160 124 )
 _yap_pound ; pastels=$FUNCNAME
 }
 
@@ -138,7 +141,7 @@ while [[ $num -lt 97 ]]; do
 done
 ) )
 
-_yap_pound
+_yap_pound ; pastels=$FUNCNAME
 }
 
 
@@ -368,12 +371,12 @@ function yap_yellow # colors
 {
 acidx=( 226 220 214 208 202 196 202 208 214 220 )
 
-# red on bottom, yellow on top
-acidx=( 230 229 228 227 226 220 214 208 202 196 160 124 88 52 )
-
 # yellow on bottom, red on top
 # this one looks better. not sure why.
 acidx=( 52 88 124 160 196 202 208 214 220 226 227 228 229 230 )
+
+# red on bottom, yellow on top
+acidx=( 230 229 228 227 226 220 214 208 202 196 160 124 88 52 )
 
 _yap_pound ; pastels=$FUNCNAME
 }
@@ -507,8 +510,11 @@ echo ========================================================================
 # show me current color scheme.                                        #
 #----------------------------------------------------------------------#
 alias yappy=yap_show_colors
+alias yappo=yap_show_colors2
+
 function yap_show_colors
 {
+echo $pastels
 local num=0
 for idx in ${acidx[*]}; do
     (( num += 1 ))
@@ -523,6 +529,26 @@ for idx in ${acidx[*]}; do
     printf "[30m[48;5;${idx}m %3d [m" $idx
 done
 echo
+for idx in ${acidx[*]}; do
+    printf "[30m[48;5;${idx}m %3.3s [m" " "
+done
+echo
+}
+
+
+function yap_show_colors2
+{
+echo $pastels
+local num=0
+for idx in ${acidx[*]}; do
+    (( num += 1 ))
+    printf "[38;5;${idx}m %3d [m" $num
+    printf "[38;5;${idx}m %3d [m" $idx
+    printf "[30m[48;5;${idx}m %3d [m" $idx
+    echo -n " "
+    printf "[30m[48;5;${idx}m %12.12s [m" " "
+    echo
+done
 }
 
 
@@ -563,7 +589,7 @@ _yap_order=_yap_sequential
 #----------------------------------------------------------------------#
 # next color index in the sequence, or rollover.                       #
 # gosh. could really use a specialized Collections.counter.container   #
-# for such advanced programming.                                       #
+# for such advanced programming: loops.                                #
 #----------------------------------------------------------------------#
 function _yap_next
 {
@@ -618,6 +644,21 @@ export PS1='${HOSTNAME} \! -> '
 export PS1='${HOSTNAME} ${PWD} `date "+%Y-%m-%d %H:%M:%S"` \! -> '
 export PS1='${HOSTNAME} ✴ ✭ ✦ .•°\!°•✴ ✭ ✦. -> '
 clear
+}
+
+
+# convert a comma or space separated list into an instant color-idx-list
+function sling
+{
+#----------------------------------------------------------------------#
+# acidx=( $(                                                           #
+#     echo $* | tr , ' '                                               #
+#     ) )                                                              #
+#----------------------------------------------------------------------#
+acidx=(${*//,/ })
+_yap_pound ; pastels=$FUNCNAME
+yappy
+yappo
 }
 
 
