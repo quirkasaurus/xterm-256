@@ -897,8 +897,6 @@ for number in ${numbers[*]} ; do
                 "   °oOO@@@@@@@@OOo•°     " \
                 "      °ooOO@@Oo•°        " \
                 )
-            width=24
-
             lines=(
                 "         .••••.          " \
                 "     ..oOOO@@@Ooo•.      " \
@@ -915,7 +913,56 @@ for number in ${numbers[*]} ; do
                 "   °oOO@@@@@@@@@OOº°     " \
                 "      °ººO@@@Oº°         " \
                 )
+            lines=(
+	        "                       " \
+                "        .••••.         " \
+                "     .oOOO@@@Ooo•.     " \
+                "   .•oOO•ººº•OO@@Oo.   " \
+                "  .ooOO°      °oO@Oo.  " \
+                " .ooOO         oOO@@o  " \
+                " •oooOO•.....•OOO@@@O. " \
+                " •ooOO@@@@@@@@@@O•@@O: " \
+                "  °º•OO@@@@@@OO•°•@@O: " \
+                "       °°°°°°    •@@O° " \
+                "  .              •@@O° " \
+                "  •.           .oO@Oº  " \
+                "   •@oooooooooooO@Oº°  " \
+                "    °•O@@@@@@@@@OOº°   " \
+                "      °ººO@@@Oº°       " \
+                )
             width=24
+            lines=(
+                "        .•••.           " \
+                "     .oO@@@OOoo•.       " \
+                "   .•o@O•ººº•O@@O•.     " \
+                "  .o@@O°      °oO@Oo.   " \
+                " .o@@O         oO@@@o   " \
+                " •o@@OO•.....•OOO@@@O.  " \
+                " •ooO@@@@@@@@@@O@@@@Oo  " \
+                "  °ºOOO@@@@@@OººOO@@Oo. " \
+                "  .            °OO@@Oo  " \
+                "  •.           •o@@OOº  " \
+                "  •o°.        .oO@@Oº°  " \
+                "  °o@oo.....•oO@@@Oº°   " \
+                "    °oOO@@@@@@@@Oº°     " \
+                "      °ººO@@@@Oº°       " \
+                )
+            lines=(
+                "        .•••.           " \
+                "     .oO@@@OOoo•.       " \
+                "   .•o@O•ººº•O@@O•.     " \
+                "  .o@@O°      °oO@Oo.   " \
+                " .o@@O         oO@@@o   " \
+                " •o@@OO•.....•OOO@@@O•  " \
+                " •ooO@@@@@@@@@@O@@@@O•. " \
+                "  °ºOOO@@@@@@OººOO@@Oo. " \
+                "               °OO@@Oo  " \
+                "               •o@@OOº  " \
+                "              .oO@@Oº   " \
+                "             .oO@@Oº    " \
+                "           .•ooOOº°     " \
+                "      ·••oOO@@º°        " \
+                )
             ;;
 
         (:)
