@@ -16,8 +16,11 @@
 # . • °  º  o O @                                                      #
 # L M H  H  L M M                                                      #
 #----------------------------------------------------------------------#
+
 . more_funx $0
 . yaps1
+
+declare -a numbers
 
 DEBUG=1 ; CLEAR=
 CLEAR=
@@ -25,12 +28,92 @@ CLEAR=
 DEBUG=  ; CLEAR=clear
 
 #----------------------------------------------------------------------#
+# glyph. here is a playground for messing with the dots.               #
+#----------------------------------------------------------------------#
+function glyphs
+{
+for a in @ O o . • º ° @ O o . • º ° @ O o . • º ° @ O o . • º ° ; do echo -n "$a"
+for b in @ O o . • º ° @ O o . • º ° @ O o . • º ° @ O o . • º ° ; do echo -n "$b"
+for f in @ O o . • º ° @ O o . • º ° @ O o . • º ° @ O o . • º ° ; do echo -n "$f"
+done
+done
+done
+return
+
+cat << EOF
+
+@Oo•.•º°@Oo•.•º°@Oo•.•º°@Oo•.•º°@Oo•.•º°
+@Oo•.•º°@Oo•.•º°@Oo•.•º°@Oo•.•º°@Oo•.•º°
+@Oo•.•º°@Oo•.•º°@Oo•.•º°@Oo•.•º°@Oo•.•º°
+@Oo•.•º°@Oo•.•º°@Oo•.•º°@Oo•.•º°@Oo•.•º°
+
+@Oo.
+
+.•º°
+
+@@@@@@@
+@@@@@@@
+@@@@@@@
+@@@@@@@
+@@@@@@@
+@@@@@@@
+OOOOOOO
+OOOOOOO
+OOOOOOO
+OOOOOOO
+OOOOOOO
+OOOOOOO
+ooooooo
+ooooooo
+ooooooo
+ooooooo
+ooooooo
+ooooooo
+ººººººº
+ººººººº
+ººººººº
+ººººººº
+ººººººº
+ººººººº
+•••••••
+•••••••
+•••••••
+•••••••
+•••••••
+•••••••
+°°°°°°°
+°°°°°°°
+°°°°°°°
+°°°°°°°
+°°°°°°°
+°°°°°°°
+.......
+.......
+.......
+.......
+.......
+.......
+
+
+. • °  º  o O @                                                      #
+. • °  º  o O @                                                      #
+. • °  º  o O @                                                      #
+. • °  º  o O @                                                      #
+
+
+EOF
+
+return
+}
+
+
+#----------------------------------------------------------------------#
 # click over the time precisely at X:00                                #
 #----------------------------------------------------------------------#
 function sleep_magic
 {
 tput cup 0 0
-seconds=$( date +%S | sed -e 's/^0//' )
+seconds=$( date -v+3S +%S | sed -e 's/^0//' )
 (( sleep_for = 60 - seconds )) # takes ~3 seconds to draw HH:MM
 
 #----------------------------------------------------------------------#
@@ -82,7 +165,9 @@ init x -4
 init y 3
 
 if [[ $DEMO -eq 1 ]]; then
-    numbers=( 1 2 3 4 5 : 6 7 8 9 0 )
+    if [[ ${#numbers[*]} -eq 0 ]]; then
+        numbers=( 1 2 3 4 5 : 6 7 8 9 0 )
+    fi
 else
     seconds=$( date +%S )
     numbers=( $(
@@ -352,10 +437,27 @@ debug
 centralizationalizer
 
 #----------------------------------------------------------------------#
-# for demo, print our complete set of supported characters             #
+# randomize the demo letters.                                          #
 #----------------------------------------------------------------------#
 if [[ $DEMO -eq 1 ]]; then
-    numbers=( A B M P " " 1 2 3 4 5 : 6 7 8 9 0 )
+    if [[ ${#numbers[*]} -eq 0 ]]; then
+#----------------------------------------------------------------------#
+# for demo, print our complete set of supported characters             #
+#----------------------------------------------------------------------#
+        numbers=( 1 2 3 4 5 : 6 7 8 9 0 )
+        numbers=( A B M P " " 1 2 3 4 5 : 6 7 8 9 0 )
+        numbers=(
+            $( 
+            for x in \
+                " " : \
+                A B M P \
+                1 2 3 4 5 \
+                6 7 8 9 0 ; do
+                echo $RANDOM $x
+            done | sort -rn | fields 2
+            )
+        )
+    fi
 else
 #----------------------------------------------------------------------#
 # otherwise, give us the time in the prescribed format.                #
@@ -363,10 +465,10 @@ else
 # for loop.                                                            #
 #----------------------------------------------------------------------#
     numbers=( $(
-    date -v+3S "+${date_format}" |
-    sed -e 's/^0//' \
-        -e 's/./& /g'
-    ) )
+        date -v+3S "+${date_format}" |
+        sed -e 's/^0//' \
+            -e 's/./& /g'
+        ) )
 fi
 
 for number in ${numbers[*]} ; do
@@ -456,11 +558,11 @@ for number in ${numbers[*]} ; do
                 "          .....          " \
                 "       .oO@O@@OOo•.      " \
                 "     .•oOO@@@@@OOOo•.    " \
-                "    .•oOO@@@••O@@OOO•.   " \
-                "   .•oO@Oo.°  °.oOO@Oo.  " \
-                "  .•oO@Oo•     .•oO@Oo•. " \
-                "  .•oO@@Oo••...•oOO@OOo• " \
-                " .•oOO@@@OOOoooooO@@@OO• " \
+                "    .•oOO@@@ºººO@OOO•.   " \
+                "   .•oO@Oo•    •oOO@Oo.  " \
+                "  .•oO@Oo•      •oO@Oo•. " \
+                "  .•oO@@Oo•....•oOO@OOo• " \
+                " .•oOO@@@OOOOOOOOO@@@OO• " \
                 " .•oOO@@@@@@@@@@@@@@OO°  " \
                 " .•oOO@@@Oo•°°°°°°       " \
                 " .•oOO@@@Oo              " \
@@ -557,20 +659,20 @@ for number in ${numbers[*]} ; do
 
         (1)
             lines=(
-                "       .°O.        " \
-                "      .•O@•        " \
-                "    .•oO@@•        " \
-                "  .•ooO@@@•        " \
-                "     °•o@o.        " \
-                "     °•o@o         " \
-                "     °•o@•         " \
-                "     °•o@•         " \
-                "     °•@@•         " \
-                "     °•@o•         " \
-                "     °•o@•         " \
-                "     °•o@o•        " \
-                "    .•o@@Oo•.      " \
-                " .•ooO@@Ooooo•..   " \
+                "       .°O.      " \
+                "      .•O@•      " \
+                "    .•oO@@•      " \
+                "  .•ooO@@@•      " \
+                "     °•o@o.      " \
+                "     °•o@o       " \
+                "     °•o@•       " \
+                "     °•o@•       " \
+                "     °•@@•       " \
+                "     °•@o•       " \
+                "     °•o@•       " \
+                "     °•o@o•      " \
+                "    .•o@@Oo•.    " \
+                " .•ooO@@Ooooo•.. " \
                 )
             width=19
             ;;
@@ -641,6 +743,22 @@ for number in ${numbers[*]} ; do
                 " .•oOO@@@@OOOOOOOOOOOOO   " \
                 "  °•o@@@@@OOOOO@@@@@O@°   " \
                 )
+            lines=(
+                "      .•oOO@@@@@o•.       " \
+                "    .•O@OºººººO0@@@O•.    " \
+                "   •O@º°       °oO@@@o•.  " \
+                "  •O0º          •oO@@@o•. " \
+                "  °0º           :oO@@@o•• " \
+                "   °           .•oO@@O••  " \
+                "           ..•oO@@@0o•°   " \
+                "       .•oO0@@@0º°°       " \
+                "     .•oO0@@0º°           " \
+                "   .•oO0@@0º              " \
+                "  .•oO0@@0:           .   " \
+                " .•oO0@@@0O•.......••oO   " \
+                " .•oO0@@@@OOOOOOOOO0@@O   " \
+                "  °•oO0@@@OOOOO@@@@@O@º   " \
+                )
             width=26
             ;;
 
@@ -679,14 +797,14 @@ for number in ${numbers[*]} ; do
                 )
             lines=(
                 "        .•••.           " \
-                "    ••oOO@@@Ooo.        " \
+                "    .•oOO@@@Ooo.        " \
                 "  •oOOººººoO@@@Oo.      " \
                 " °º°      °•oO@@@O.     " \
                 " °         .•oO@@@O•    " \
                 "           .•oO@@O•°    " \
-                "        ..•oO@@@o••     " \
-                "   ••oOOOOOOOO@@@@Oo.   " \
-                "        °°°ºOO@@@@@OO.  " \
+                "         .•oO@@@o••     " \
+                "   ••oooOOOOOO@@@@Oo.   " \
+                "         °°ºOO@@@@@OO.  " \
                 "            °OO@@@@@Oo. " \
                 " :.         .OO@@@@@OO: " \
                 " °Oo•......ooO@@@@@OOº° " \
@@ -766,10 +884,26 @@ for number in ${numbers[*]} ; do
                 "  °•OOooooO@@@@@@Oo•°    " \
                 "    °•oOOO@@@OO•°        " \
                 )
+            lines=(
+                "  °•@@OOoooooooooooO@•°  " \
+                "  °•oooOOO@@@@@@@OOOo•   " \
+                "   °•O@•°          °º•   " \
+                "   •OO@•.            °   " \
+                "   °ºOO@@@OOooo.         " \
+                "      °ºººOOOO@@@o•.     " \
+                "             °•oO@@o•.   " \
+                "    .o.        •oO@@o••  " \
+                "  .•Oo•         •oO@@@o• " \
+                " •oO°           •oO@@@o• " \
+                " oO•           •oO@@@o•° " \
+                " °oO°•.......•oO@@@@o•°  " \
+                "  °•OOooooO@@@@@@Oo•°    " \
+                "    °ººOOO@@@OOºº        " \
+                )
             width=25
             ;;
 
-        (6)
+        (C)
             lines=(
                 "           ..•••..        " \
                 "        .•oO@@@@Ooo.      " \
@@ -786,6 +920,9 @@ for number in ${numbers[*]} ; do
                 "   °•oO@@@@@@@@@@@@Ooo•°  " \
                 "      °•oO@@@@@OOoo•°     " \
                 )
+            width=24
+	;;
+        (D)
             lines=(
                 "           ..•••..        " \
                 "        .•o@@@@@Ooo.      " \
@@ -802,7 +939,83 @@ for number in ${numbers[*]} ; do
                 "   °ºOO@@@@@@@@@@@@@OOº°  " \
                 "      °ººO@@@@@OOOºº°     " \
                 )
-            width=26
+            width=24
+	;;
+        (E)
+            lines=(
+                "           ..•••..        " \
+                "        .•o@@@@@Ooo.      " \
+                "     .•o@@O•°°   °°O.     " \
+                "    .•@OO•°         º     " \
+                "   .•@OO•°                " \
+                "  .•@OOO     .••••.       " \
+                "  •o@OOO.  .oO@@@Oo•.     " \
+                " •oO@@OoooO@@@@@@@@@@o•   " \
+                " •oO@@@@@O•°     °oO@Oo•  " \
+                " °o@@@@@Oo        •oO@oo• " \
+                " °oO@@@Ooo•......•oO@@Oo• " \
+                "  °ºOO@@@OOOoooOOO@@@@Oo• " \
+                "   °ºOO@@@@@@@@@@@@@OOº°  " \
+                "      °ººO@@@@@OOOºº°     " \
+                )
+            width=24
+	;;
+        (F)
+            lines=(
+                "                        " \
+                "            ...         " \
+                "        .ooO@@@Oo.      " \
+                "     .oO@@@OºººººOO     " \
+                "   .oO@@OO°             " \
+                "  .oO@@O°               " \
+                "  oO@@O•      ...       " \
+                " .O@@@O.   .oOO@@Ooo.   " \
+                " :O@@@@OoO@@@@@@@@@@Oo  " \
+                " :O@@@@@OOº°°°°°ºO@@@@O " \
+                " °O@@@@@O.        O@@@O " \
+                "  ºO@@@@@Oo.....oO@@@Oº " \
+                "   °OO@@@@OOO@O@@@@Oº°  " \
+                "     °ººO@@@@@OOOº°     " \
+                )
+            width=24
+	;;
+        (G)
+            lines=(
+                "                        " \
+                "           ...          " \
+                "        .oO@@@Oo.       " \
+                "     .oO@@@OººººO•      " \
+                "   .oO@@OO°             " \
+                "  .oO@@O°               " \
+                "  oO@@O•     ....       " \
+                " .O@@OOo.oOO@@@@@@Oo.   " \
+                " .O@@@@@@OOº°°°°°ºO@Oo  " \
+                " oO@@@@OOo•       •O@O• " \
+                " oOO@@@@Oo..     ..O@O° " \
+                " °ºOO@@@@@OOooooO@@OO°  " \
+                "  °ºOO@@@@@@@@@@@OOº°   " \
+                "    °ººOO@@@@@@Oºº      " \
+                )
+            width=24
+		;;
+	(H|6)
+            lines=(
+                "                        " \
+                "            ...         " \
+                "        .oO@@@@Oo.      " \
+                "     .o@@@0º°°°°º0o     " \
+                "   .o0@@O°              " \
+                "  .o0@@o                " \
+                " .O0@@0•     ....       " \
+                " o0@@@0•..o0@@@@@0Oo.   " \
+                " O0@#@@0@@ºº°°°°°ºO0Oo. " \
+                " 0@@##@00°         O0O• " \
+                " º0@#@@00.        .O0O° " \
+                " °00@@@@OOo......oO0O°  " \
+                "  °OO0@@@@@@@@@@@00º°   " \
+                "    °ººO0@@@@@@0ºº°     " \
+                )
+            width=24
             ;;
 
         (7)
@@ -861,20 +1074,20 @@ for number in ${numbers[*]} ; do
                 "     °•o@@@@@OOOo•°    " \
                 )
             lines=(
-                "         .••••.        " \
-                "       •o@@@OOoo•.     " \
-                "     •o@@@OOº°°ºOo•.   " \
-                "    •o@@@Oº°    °Oo•.  " \
-                "   •o@@@Oo•      •Oo•  " \
-                "   °•o@@@Oo•.  .•oOo°  " \
-                "     ••o@@@@oooooOo•°  " \
-                "   •o@@@@@@@@@@@Oo•.   " \
-                "  •oO@@@@OOº°°°°ºOOo•. " \
-                " •oO@@@OOo•      •OOo• " \
-                " •oO@@@@Oo.      .OOo° " \
-                "  •oO@@@@@OOooooOOOo•  " \
-                "   •oO@@@@@@@@@@OOo•°  " \
-                "     °•O@@@@@OOOo•°    " \
+                "         .••••.         " \
+                "       •oO@@OOOo•.      " \
+                "     •oO@@OOº°°ºOO•.    " \
+                "    •oO@@Oº     °OO•.   " \
+                "   •oO@@Oo•      •OO•   " \
+                "   °•oO@@Oo•.  .•oOO°   " \
+                "     ••oO@@OOOOOOO•     " \
+                "   .oOO@@@@@@@@@@@Oo.   " \
+                " .oOO@@@@OOº°°°°°ºO@Oo  " \
+                " oOO@@@OOo•       •O@O• " \
+                " oOO@@@@Oo..     ..O@O° " \
+                " °ºOO@@@@@OOooooO@@OO°  " \
+                "  °ºOO@@@@@@@@@@@OOº°   " \
+                "    °ººOO@@@@@@Oºº      " \
                 )
             width=23
             ;;
@@ -914,55 +1127,38 @@ for number in ${numbers[*]} ; do
                 "      °ººO@@@Oº°         " \
                 )
             lines=(
-	        "                       " \
-                "        .••••.         " \
-                "     .oOOO@@@Ooo•.     " \
-                "   .•oOO•ººº•OO@@Oo.   " \
-                "  .ooOO°      °oO@Oo.  " \
-                " .ooOO         oOO@@o  " \
-                " •oooOO•.....•OOO@@@O. " \
-                " •ooOO@@@@@@@@@@O•@@O: " \
-                "  °º•OO@@@@@@OO•°•@@O: " \
-                "       °°°°°°    •@@O° " \
-                "  .              •@@O° " \
-                "  •.           .oO@Oº  " \
-                "   •@oooooooooooO@Oº°  " \
-                "    °•O@@@@@@@@@OOº°   " \
-                "      °ººO@@@Oº°       " \
+                "        .•••.           " \
+                "     .oO@@@OOoo•.       " \
+                "   .•o@Oº°°°ºO@@O•.     " \
+                "  .o@@O°      °OO@Oo.   " \
+                " .o@@O         oO@@@o   " \
+                " •o@@OO•.....•OOO@@@Oo  " \
+                " •ooO@@@@@@@@@@O@@@@Oo. " \
+                "  °ºOOO@@@@@@OOºOO@@Oo. " \
+                "      °°°°°°°  °OO@@Oo  " \
+                "               •O@@OO•  " \
+                "              .OO@@Oº   " \
+                "             .OO@@Oº    " \
+                "            .OO@@Oº     " \
+                "           .O@@Oº       " \
+                )
+            lines=(
+                "     .•oO@@@@Oo•.       " \
+                "   .•o@Oº°°°ºO@@@O•.    " \
+                "  .o@@O°      °OO@Oo.   " \
+                "  o@@O         oO@@@o.  " \
+                " .o@@O         oO@@@Oo  " \
+                " •o@@OO•.....•OOO@@@Oo° " \
+                " °ooO@@@@@@@@@@O@@@@Oo• " \
+                "  °ºOOO@@@@@@@OºOO@@Oo. " \
+                "      °°°°°°°  °OO@@Oo  " \
+                "               •O@@OO•  " \
+                "              .OO@@Oº   " \
+                "             .OO@@Oº    " \
+                "            .OO@@Oº     " \
+                "           .O@@Oº       " \
                 )
             width=24
-            lines=(
-                "        .•••.           " \
-                "     .oO@@@OOoo•.       " \
-                "   .•o@O•ººº•O@@O•.     " \
-                "  .o@@O°      °oO@Oo.   " \
-                " .o@@O         oO@@@o   " \
-                " •o@@OO•.....•OOO@@@O.  " \
-                " •ooO@@@@@@@@@@O@@@@Oo  " \
-                "  °ºOOO@@@@@@OººOO@@Oo. " \
-                "  .            °OO@@Oo  " \
-                "  •.           •o@@OOº  " \
-                "  •o°.        .oO@@Oº°  " \
-                "  °o@oo.....•oO@@@Oº°   " \
-                "    °oOO@@@@@@@@Oº°     " \
-                "      °ººO@@@@Oº°       " \
-                )
-            lines=(
-                "        .•••.           " \
-                "     .oO@@@OOoo•.       " \
-                "   .•o@O•ººº•O@@O•.     " \
-                "  .o@@O°      °oO@Oo.   " \
-                " .o@@O         oO@@@o   " \
-                " •o@@OO•.....•OOO@@@O•  " \
-                " •ooO@@@@@@@@@@O@@@@O•. " \
-                "  °ºOOO@@@@@@OººOO@@Oo. " \
-                "               °OO@@Oo  " \
-                "               •o@@OOº  " \
-                "              .oO@@Oº   " \
-                "             .oO@@Oº    " \
-                "           .•ooOOº°     " \
-                "      ·••oOO@@º°        " \
-                )
             ;;
 
         (:)
@@ -1057,6 +1253,7 @@ function set_args
 {
 for arg in $* ; do
     case $arg in
+        (-g|--glyphs) glyphs ; exit ;;
         (-d|--debug) DEBUG=1 ;;
         (-n|--no-sleep|--noSleep) start_sleep=0 ;;
         (random) yap_random_colors ;;
@@ -1068,6 +1265,7 @@ for arg in $* ; do
             echo usage:
             echo $zero '[-s|--short|-l|--long]' '[clock-version] [color-palette]'
             echo $zero '[--acidx=42,46,206...]'
+            echo $zero '[--demo=HH:MM] [demo]'
             echo defaults: $clocky $color_palette short
             # roger
             yap_purples
@@ -1116,8 +1314,18 @@ for arg in $* ; do
         (once) run_once=True ;;
         (1|render_clock_1|render_1) clocky=render_clock_1 ;;
         (4|render_clock_4|render_4) clocky=render_clock_4 ;;
+
         (demo) DEMO=1 ; sleep_magic=demo ;;
 
+        # allow user to specify what HH:MM to display
+        (--demo=*)
+            DEMO=1 ; sleep_magic=demo ; 
+            numbers=( $(
+                echo "${arg#--demo}" |
+                    sed -e 's/./& /g'
+                ) )
+            ;;
+    
         #===================
         #----- COLORS ------
         #===================
@@ -1144,6 +1352,7 @@ for arg in $* ; do
         (rainbow_spiral|spiral_rainbow) yap_spiral_rainbow ;;
         (rainbow_full|full_rainbow)     yap_full_rainbow ;;
         (barb) barb ;; # pinks and pinkish reds
+        (yap*) eval $arg ;;
     esac
 done
 return
@@ -1159,7 +1368,10 @@ sleep_for=7
 sleep_magic=magic
 date_format='%I:%M:%S:%p'
 date_format='%I:%M'
-yap_purples
+#----------------------------------------------------------------------#
+# yap_purples                                                          #
+#----------------------------------------------------------------------#
+roger
 clocky=render_clock_4
 start_sleep=3
 
@@ -1184,8 +1396,23 @@ fi
 declare -a orig_acidx
 orig_acidx=( $( echo ${acidx[*]} ) )
 
+#----------------------------------------------------------------------#
+# auto-refresh running clocky.sh                                       #
+#----------------------------------------------------------------------#
+FEXEC=$( which $0 )
+CLOCKSUM=$( sum $FEXEC )
+
 $CLEAR
 while : ; do
+
+#----------------------------------------------------------------------#
+# auto-refresh running clocky.sh                                       #
+#----------------------------------------------------------------------#
+    NEW_CLOCKSUM=$( sum $FEXEC )
+    if [[ $CLOCKSUM != $NEW_CLOCKSUM ]]; then
+        exec $zero $*
+    fi
+
 #----------------------------------------------------------------------#
 # explicitly set color-palette                                         #
 #----------------------------------------------------------------------#
@@ -1205,9 +1432,31 @@ while : ; do
 # print our 10 second dots below the time.                             #
 #----------------------------------------------------------------------#
     (( y = _y_init + 16 ))
+
+#----------------------------------------------------------------------#
+# TOO MUCH GOING ON................ ABORT MISSION                      #
+# the pulse-dots are already in their own color-palette.               #
+# so . . . switching between them all . . . dynamically . . . . ?!     #
+# it will be a while before just hard-coding becomes intolerable.      #
+#----------------------------------------------------------------------#
+# associate another palette here.                                      #
+#----------------------------------------------------------------------#
+#----------------------------------------------------------------------#
+#     echo $pastels > a ; exit                                         #
+#----------------------------------------------------------------------#
+#----------------------------------------------------------------------#
+#     case $pastels in                                                 #
+#         (barb) yap_burple ;;                                         #
+#         (*) yap_rainbow_bright ;;                                    #
+#     esac                                                             #
+#----------------------------------------------------------------------#
+
+#----------------------------------------------------------------------#
+#     yap_burple                                                       #
+#----------------------------------------------------------------------#
     yap_rainbow_bright
+
     (( _idx = RANDOM % pound_pastels ))
-    sleep_for=55
 #----------------------------------------------------------------------#
 # For testing the pulse; uncomment to 'continue':                      #
 #----------------------------------------------------------------------#
@@ -1219,6 +1468,12 @@ while : ; do
 # pulse ; sleep 1                                                      #
 # sleep 3                                                              #
 # continue                                                             #
+#----------------------------------------------------------------------#
+
+#----------------------------------------------------------------------#
+# occasionally, i will see a time repeated annoyingly.                 #
+# i have not yet worked out a solution; although a PREV_TIME != NOW    #
+# solution would probably work, sleeping for 10 seconds per.           #
 #----------------------------------------------------------------------#
     while [[ $sleep_for -gt 10 ]]; do
         (( sleep_for -= 10 ))
