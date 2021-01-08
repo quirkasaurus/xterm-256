@@ -1074,22 +1074,22 @@ for number in ${numbers[*]} ; do
                 "     °•o@@@@@OOOo•°    " \
                 )
             lines=(
-                "         .••••.         " \
-                "       •oO@@OOOo•.      " \
-                "     •oO@@OOº°°ºOO•.    " \
-                "    •oO@@Oº     °OO•.   " \
-                "   •oO@@Oo•      •OO•   " \
-                "   °•oO@@Oo•.  .•oOO°   " \
-                "     ••oO@@OOOOOOO•     " \
-                "   .oOO@@@@@@@@@@@Oo.   " \
-                " .oOO@@@@OOº°°°°°ºO@Oo  " \
-                " oOO@@@OOo•       •O@O• " \
-                " oOO@@@@Oo..     ..O@O° " \
-                " °ºOO@@@@@OOooooO@@OO°  " \
-                "  °ºOO@@@@@@@@@@@OOº°   " \
-                "    °ººOO@@@@@@Oºº      " \
+                "         .••••.          " \
+                "       •oO@@OOOo•.       " \
+                "     •oO@@OOº°°ºOO•.     " \
+                "    •oO@@Oº     °OO•.    " \
+                "   •oO@@Oo•      •OO•    " \
+                "   °•oO@@Oo•.  .•oOO°    " \
+                "     ••oO@@OOOOOOO•      " \
+                "   .oOO@@@@@@@@@@@Oo.    " \
+                " .oOO@@@@OOº°°°°°ºO@Oo   " \
+                " oOO@@@OOo•       •O@O•  " \
+                " oOO@@@@Oo..     ..O@O•  " \
+                " °ºOO@@@@@OOooooO@@OO°   " \
+                "  °ºOO@@@@@@@@@@@OOº°    " \
+                "    °ººOO@@@@@@Oºº       " \
                 )
-            width=23
+            width=24
             ;;
 
         (9)
