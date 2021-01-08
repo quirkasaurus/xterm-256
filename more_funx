@@ -586,19 +586,19 @@ set +xv
 #----------------------------------------------------------------------#
 case ${DEBUG:-off} in
 
-    on|1)
+    (on|1)
         CLEAR=
         PS4='+ FILE: $BASH_SOURCE FUNCTION: $FUNCNAME LINE: ${LINENO}: '
         set -xv
         ;;
 
-    color)
+    (color)
         CLEAR=
         PS4='+ [32m $BASH_SOURCE [33m $FUNCNAME [34m ${LINENO}: [m'
         set -xv
         ;;
 
-    off|0)
+    (off|0)
         set +xv
         CLEAR='tput clear'
         # PS4='PS4 -> '
@@ -772,7 +772,8 @@ case $* in
         else
             FIN=$( cd ; which $0 )
         fi
-        vi $FIN ; exec $FIN ;;
+        vi $FIN ; exec $FIN
+        ;;
 
 #----------------------------------------------------------------------#
 # omnipresent options.                                                 #
@@ -1030,6 +1031,7 @@ if [[ -n $1 ]]; then
     FTMP=/tmp/$zero.$LOGNAME
     FSTATE=$HOME/.state/$zero.state
     FOUT=./$zero.out
+    FLOG=./$zero.log
 fi
 
 # nece
