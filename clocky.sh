@@ -22,9 +22,9 @@
 
 declare -a numbers
 
-DEBUG=1 ; CLEAR=
 CLEAR=
 CLEAR=
+DEBUG=1 ; CLEAR=clear
 DEBUG=  ; CLEAR=clear
 
 #----------------------------------------------------------------------#
@@ -444,15 +444,16 @@ if [[ $DEMO -eq 1 ]]; then
 #----------------------------------------------------------------------#
 # for demo, print our complete set of supported characters             #
 #----------------------------------------------------------------------#
-        numbers=( 1 2 3 4 5 : 6 7 8 9 0 )
-        numbers=( A B M P " " 1 2 3 4 5 : 6 7 8 9 0 )
+        numbers=( 1 2 3 4 5 : 6 7 8 9 0 . )
+        numbers=( A B M P " " 1 2 3 4 5 : 6 7 8 9 0 . )
         numbers=(
             $( 
             for x in \
                 " " : \
                 A B M P \
                 1 2 3 4 5 \
-                6 7 8 9 0 ; do
+                6 7 8 9 0 . \
+		; do
                 echo $RANDOM $x
             done | sort -rn | fields 2
             )
@@ -474,6 +475,26 @@ fi
 for number in ${numbers[*]} ; do
 
     case $number in
+        (.) 
+            lines=(
+                "      "
+                "      "
+                "      "
+                "      "
+                "      "
+                "      "
+                "      "
+                "      "
+                "      "
+                "   .•o@o•.   "
+                "  •o@@O.Oo•  "
+                "  •o@@OOOo°  "
+                "   ºo@@oº°   "
+                "      "
+                )
+            width=13
+	    ;;
+
         (" ") lines=(
                 "      "
                 "      "
@@ -921,7 +942,7 @@ for number in ${numbers[*]} ; do
                 "      °•oO@@@@@OOoo•°     " \
                 )
             width=24
-	;;
+        ;;
         (D)
             lines=(
                 "           ..•••..        " \
@@ -940,7 +961,7 @@ for number in ${numbers[*]} ; do
                 "      °ººO@@@@@OOOºº°     " \
                 )
             width=24
-	;;
+        ;;
         (E)
             lines=(
                 "           ..•••..        " \
@@ -959,7 +980,7 @@ for number in ${numbers[*]} ; do
                 "      °ººO@@@@@OOOºº°     " \
                 )
             width=24
-	;;
+        ;;
         (F)
             lines=(
                 "                        " \
@@ -978,7 +999,7 @@ for number in ${numbers[*]} ; do
                 "     °ººO@@@@@OOOº°     " \
                 )
             width=24
-	;;
+        ;;
         (G)
             lines=(
                 "                        " \
@@ -997,7 +1018,7 @@ for number in ${numbers[*]} ; do
                 "    °ººOO@@@@@@Oºº      " \
                 )
             width=24
-		;;
+        ;;
 	(H|6)
             lines=(
                 "                        " \
@@ -1016,7 +1037,7 @@ for number in ${numbers[*]} ; do
                 "    °ººO0@@@@@@0ºº°     " \
                 )
             width=24
-            ;;
+        ;;
 
         (7)
             lines=(
@@ -1194,6 +1215,22 @@ for number in ${numbers[*]} ; do
                 "" \
                 "" \
                 )
+            lines=(
+                "" \
+                "" \
+                "   .•oo•.   " \
+                "  •oO@@Oo•  " \
+                "  •oO@@Oo°  " \
+                "   ºO@Oº°   " \
+                "            " \
+                "  .•o@o•.   " \
+                " •o@@@OOo•  " \
+                " •O@@@OOO°  " \
+                "  ºO@@Oº°   " \
+                "" \
+                "" \
+                "" \
+                )
             width=12
             ;;
     esac
@@ -1222,19 +1259,43 @@ lines=(
     "" \
     "" \
     "" \
-    "   .•o@o•.   " \
-    "  •oO@@@Oo•  " \
-    "  •oO@@@Oo°  " \
-    "  °ºo@@oº°   " \
+    "   .•o@o•.  " \
+    "  •oO@@@Oo• " \
+    "  •oO@@@Oo° " \
+    "  °ºo@@oº°  " \
     "" \
     "" \
     "" \
     )
 lines=(
-    "   .•o@o•.   " \
-    "  •oO@@@Oo•  " \
-    "  •oO@@@Oo°  " \
-    "  °ºo@@oº°   " \
+    "    .o@o.   " \
+    "   oO#@@Oo  " \
+    "  •OO#@@Oo° " \
+    "   ºO@@Oº°  " \
+    )
+lines=(
+    "   .o@@o.   " \
+    "  oOo@@OOo. " \
+    " °OoO@@@OO. " \
+    "  °ºo@@Oº°  " \
+    )
+lines=(
+    "   .o@@o.   " \
+    "  oOO@@OOo. " \
+    " °oOO@@@OO. " \
+    "  °ºO@@Oº°  " \
+    )
+lines=(
+    "  .•o@o•.   " \
+    " •o@@@OOo•  " \
+    " •O@@@OOO°  " \
+    "  ºO@@Oº°   " \
+    )
+lines=(
+    "   .•o@o•.  " \
+    "  •o@@OOOo• " \
+    "  •o@@OOOo° " \
+    "   ºo@@oº°  " \
     )
 width=12
 
@@ -1253,6 +1314,7 @@ function set_args
 {
 for arg in $* ; do
     case $arg in
+        (*pulse) PULSE_TEST=1 ;;
         (-g|--glyphs) glyphs ; exit ;;
         (-d|--debug) DEBUG=1 ;;
         (-n|--no-sleep|--noSleep) start_sleep=0 ;;
@@ -1368,6 +1430,8 @@ sleep_for=7
 sleep_magic=magic
 date_format='%I:%M:%S:%p'
 date_format='%I:%M'
+PULSE_TEST=0
+
 #----------------------------------------------------------------------#
 # yap_purples                                                          #
 #----------------------------------------------------------------------#
@@ -1426,29 +1490,18 @@ while : ; do
         (magic) sleep_magic ;;
         (*) ;; # for --long format. we refresh every 7 seconds.
     esac
-    init x $_x_init
 #----------------------------------------------------------------------#
 # kinda of like a typewriter carriage return;                          #
 # print our 10 second dots below the time.                             #
 #----------------------------------------------------------------------#
+    init x $_x_init
     (( y = _y_init + 16 ))
 
 #----------------------------------------------------------------------#
+# effort to parameterize the pulse dot colors aborted.                 #
 # TOO MUCH GOING ON................ ABORT MISSION                      #
-# the pulse-dots are already in their own color-palette.               #
-# so . . . switching between them all . . . dynamically . . . . ?!     #
-# it will be a while before just hard-coding becomes intolerable.      #
-#----------------------------------------------------------------------#
-# associate another palette here.                                      #
-#----------------------------------------------------------------------#
-#----------------------------------------------------------------------#
-#     echo $pastels > a ; exit                                         #
-#----------------------------------------------------------------------#
-#----------------------------------------------------------------------#
-#     case $pastels in                                                 #
-#         (barb) yap_burple ;;                                         #
-#         (*) yap_rainbow_bright ;;                                    #
-#     esac                                                             #
+# this also will not work with the way we grep for palettes in help.   #
+# because of the default case syntax.                                  #
 #----------------------------------------------------------------------#
 
 #----------------------------------------------------------------------#
@@ -1457,18 +1510,19 @@ while : ; do
     yap_rainbow_bright
 
     (( _idx = RANDOM % pound_pastels ))
+
 #----------------------------------------------------------------------#
 # For testing the pulse; uncomment to 'continue':                      #
 #----------------------------------------------------------------------#
-#----------------------------------------------------------------------#
-# pulse ; sleep 1                                                      #
-# pulse ; sleep 1                                                      #
-# pulse ; sleep 1                                                      #
-# pulse ; sleep 1                                                      #
-# pulse ; sleep 1                                                      #
-# sleep 3                                                              #
-# continue                                                             #
-#----------------------------------------------------------------------#
+    if [[ $PULSE_TEST -eq 1 ]]; then
+        pulse ; sleep 1
+        pulse ; sleep 1
+        pulse ; sleep 1
+        pulse ; sleep 1
+        pulse ; sleep 1
+        sleep 44
+        continue
+    fi
 
 #----------------------------------------------------------------------#
 # occasionally, i will see a time repeated annoyingly.                 #
