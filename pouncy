@@ -1,0 +1,189 @@
+#!/bin/bash
+#----------------------------------------------------------------------#
+# FILE:    pouncy                                                      #
+# AUTHOR:  Douglas Roberts -- droberts                                 #
+# CREATED: Thu Nov  5 20:25:21 EST 2020                                #
+# PURPOSE: new printc. print text with named colors or numbers.        #
+#                                                                      #
+#----------------------------------------------------------------------#
+
+. more_funx ${0}
+
+# set -xv
+# color chart by name
+white=231
+gray=145
+black=0
+red=196
+orange=214
+yellow=226
+lime=46
+green=34
+seablue=39
+turquoise=37
+aqua=43
+cyan=51
+blue=21
+purple=93
+magenta=201
+pink=213
+
+available_colors=( $( grep '^[a-z_][a-z_]*=[0-9][0-9]*$' $0 ) )
+
+status=False
+
+function is_a_color
+{
+debug
+local color _color
+local input=${1:-NO-COLOR}
+status=False
+
+for color in ${available_colors[*]}; do
+    _color=${color%=*}
+    if [[ $input == $_color ]]; then
+        status=True
+        eval idx=\$$_color
+        return
+    fi
+done
+idx=
+}
+
+
+
+function clean_exit
+{
+echo
+echo usage: $zero '[-nubi] bg,fg text'
+echo usage: $zero '[-nubi] fg text'
+echo where:
+echo option -n means suppress-newlines
+echo option -u means underline
+echo option -b means bold
+echo option -i means italicize
+echo colors can be names or numbers
+echo
+echo see \`frogs\`
+echo
+echo current named colors:
+echo
+
+for color in ${available_colors[*]}; do
+    color_idx=${color##*=}
+    # black hack
+    if [[ $color_idx -eq 0 ]]; then
+        echo -n '[48;5;145m'
+    fi
+    echo "[38;5;${color_idx}m${color}[m"
+done
+echo
+exit 9
+}
+
+
+DEBUG=0
+
+case ${#} in
+    (0) clean_exit ;;
+    (1)
+        case ${1} in
+            (-h|--help) clean_exit ;;
+        esac
+        ;;
+esac
+
+# MAIN
+bg=
+fg=
+no_newline=
+italics=
+underline=
+bold=
+text=
+
+debug
+init
+for arg in "${@}" ; do
+    incr
+
+    case $arg in
+        (-n) no_newline=-n ; continue ;;
+        (-u) underline='[4m' ; continue ;;
+        (-b) bold='[7m' ; continue ;;
+        (-i) italics='[3m' ; continue ;;
+        ([0-9]*,[0-9]*)
+            if [[ -z $fg ]]; then
+                bg=${arg%,*}
+                fg=${arg#*,}
+                continue
+            fi
+            text="${text:+${text} }${arg}"
+            ;;
+
+        ([0-9]*)
+            if [[ -z $fg ]]; then
+                fg=${arg}
+                continue
+            fi
+            text="${text:+${text} }${arg}"
+            ;;
+
+        ([a-z]*,[a-z]*)
+            if [[ -n $fg ]]; then
+                text="${text:+${text} }${arg}"
+                continue
+            fi
+
+            _bg=${arg%,*}
+            _fg=${arg#*,}
+
+            is_a_color $_bg
+            if [[ $status == True ]]; then
+                bg=$idx
+            fi
+
+            is_a_color $_fg
+            if [[ $status == True ]]; then
+                fg=$idx
+            fi
+            ;;
+
+        (*)
+            if [[ -n $fg ]]; then
+                text="${text:+${text} }${arg}"
+                continue
+            fi
+            is_a_color $arg
+            if [[ $status == True ]]; then
+                fg=$idx
+            fi
+            ;;
+    esac
+done
+
+# vecho bg
+# vecho fg
+
+if [[ -n $bg ]]; then
+    colors="[48;5;${bg};38;5;${fg}m"
+elif [[ -n $fg ]]; then
+    colors="[38;5;${fg}m"
+else
+    colors=
+fi
+
+echo ${no_newline} "${bold}${underline}${italics}${colors} ${text} [m"
+
+exit
+
+# tests:
+pouncy red this should be red
+pouncy green,yellow this should be yellow text on green background
+pouncy -n blue,white white on blue and no new line date should be snug: ; date
+pouncy -u magenta,white white on magenta, underlined
+pouncy -b magenta,white white on magenta, but reverse-highlighted
+pouncy -b yellow yellow-background, then reverse-highlighted
+pouncy 21,213 pink on blue background using numbers 21,213 only
+pouncy -i 48 italics bright green-ish using the number 48 only
+
