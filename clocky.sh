@@ -453,7 +453,7 @@ if [[ $DEMO -eq 1 ]]; then
                 A B M P \
                 1 2 3 4 5 \
                 6 7 8 9 0 . \
-		; do
+                ; do
                 echo $RANDOM $x
             done | sort -rn | fields 2
             )
@@ -493,7 +493,7 @@ for number in ${numbers[*]} ; do
                 "      "
                 )
             width=13
-	    ;;
+            ;;
 
         (" ") lines=(
                 "      "
@@ -832,6 +832,22 @@ for number in ${numbers[*]} ; do
                 "  °ºOOOOOOOO@@@@@@OOº°  " \
                 "    °ººOOO@@@@@OOºº°    " \
                 )
+            lines=(
+                "        .•••.           " \
+                "    .•oOO@@@Ooo.        " \
+                "   oOOººººoO@@@Oo.      " \
+                "  Oº      °•oO@@@O.     " \
+                " °         .•oO@@@O•    " \
+                "           .•oO@@O•°    " \
+                "         .•oO@@@o••     " \
+                "   ••oooOOOO@@@@@@Oo.   " \
+                "         °°ºOO@@@@@OO.  " \
+                "            °OO@@@@@Oo. " \
+                " .          .OO@@@@@OO: " \
+                " °Oo•......ooO@@@@@OOO° " \
+                "  °ºOOOOOOOO@@@@@@OOº°  " \
+                "    °ººOOO@@@@@OOºº°    " \
+                )
             width=24
             ;;
 
@@ -1019,7 +1035,7 @@ for number in ${numbers[*]} ; do
                 )
             width=24
         ;;
-	(H|6)
+        (H|6)
             lines=(
                 "                        " \
                 "            ...         " \
@@ -1218,6 +1234,7 @@ for number in ${numbers[*]} ; do
             lines=(
                 "" \
                 "" \
+                "" \
                 "   .•oo•.   " \
                 "  •oO@@Oo•  " \
                 "  •oO@@Oo°  " \
@@ -1227,7 +1244,6 @@ for number in ${numbers[*]} ; do
                 " •o@@@OOo•  " \
                 " •O@@@OOO°  " \
                 "  ºO@@Oº°   " \
-                "" \
                 "" \
                 "" \
                 )
@@ -1312,8 +1328,8 @@ tput cup 0 0
 
 function set_args
 {
-for arg in $* ; do
-    case $arg in
+for arg in "${@}" ; do
+    case "$arg" in
         (*pulse) PULSE_TEST=1 ;;
         (-g|--glyphs) glyphs ; exit ;;
         (-d|--debug) DEBUG=1 ;;
@@ -1363,11 +1379,12 @@ for arg in $* ; do
 # just needs to be a single parameter.                                 #
 #----------------------------------------------------------------------#
         (--acidx=*)
-            acidx=( $(
-                echo $arg | sed -e 's/[^0-9]/ /g' | trr
-            ) )
-            _yap_pound
-            yap_show_colors
+            sling ${arg##*=}
+            # acidx=( $(
+                # echo $arg | sed -e 's/[^0-9]/ /g' | trr
+            # ) )
+            # _yap_pound
+            # yap_show_colors
             sleep 2
             : # nop the palette
             color_palette=:

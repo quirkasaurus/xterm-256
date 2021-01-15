@@ -1,13 +1,16 @@
 
-
-
-seconds=${1:-11}
-date_seconds=-1
-
-while [[ $date_seconds != $seconds ]]; do
-    sleep 1
-    date_seconds=$( date +%S )
-    vecho date_seconds
-
-done
+#----------------------------------------------------------------------#
+# files=$(                                                             #
+#----------------------------------------------------------------------#
+    gs
+    print_sep
+    gs |
+        eg -i '(eg|grep) .*(modified:|deleted:|new.file:)' |
+            sed -e 's/new.file/new.file/' \
+                -e 's/both.modified/both.modified/' |
+        fields 2
+    print_sep
+#----------------------------------------------------------------------#
+#     )                                                                #
+#----------------------------------------------------------------------#
 
