@@ -41,6 +41,7 @@ shopt -s expand_aliases
 
 # greens to blues to purples
 declare -a cool_cat_fgs
+# default
 cool_cat_fgs=(
      40  41  43  44
      45  80 117 153
@@ -125,27 +126,27 @@ while read line ; do
     fi
     idx=${cool_cat_fgs[cool_cat_idx]}
 
-    case ${_g:-48} in
-        48)
-            _gg=38
-#             (( r = RANDOM % 3 ))
-#             (( g = RANDOM % 3 ))
-#             (( b = RANDOM % 3 ))
-            ;;
+#     case ${_g:-38} in
+#         48)
+#             _gg=38
+# #             (( r = RANDOM % 3 ))
+# #             (( g = RANDOM % 3 ))
+# #             (( b = RANDOM % 3 ))
+#             ;;
 
-        38)
-            _gg=48
-#             (( r = ( RANDOM % 3 ) + 3 ))
-#             (( g = ( RANDOM % 3 ) + 3 ))
-#             (( b = ( RANDOM % 3 ) + 3 ))
-            ;;
+#         38)
+#             _gg=48
+# #             (( r = ( RANDOM % 3 ) + 3 ))
+# #             (( g = ( RANDOM % 3 ) + 3 ))
+# #             (( b = ( RANDOM % 3 ) + 3 ))
+#             ;;
 
-        *) echo "$line" ; continue ;;
-    esac
+#         *) echo "$line" ; continue ;;
+#     esac
 
     # (( idx = 16 + b + (g*6) + (r*36) ))
     # echo "[m${idx} [${_gg};5;${idx}m${line}[m"
-    echo "[${_gg};5;${idx}m${line}[m"
+    echo "[${_g};5;${idx}m${line}[m"
     # echo "[${_g};5;${idx}m${line}[m"
 done
 echo -n '[m'

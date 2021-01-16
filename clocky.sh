@@ -372,7 +372,7 @@ for line in "${lines[@]}" ; do
 # debugging status line                                                #
 #----------------------------------------------------------------------#
     if [[ $DEBUG -ne 0 ]]; then
-        tput cup 0 0 ; echo -n y=$y x=$x palette=$color_palette idx=$_idx pond=$pound_pastels
+        tput cup 0 0 ; echo -n y=$y x=$x palette=$color_palette idx=$_idx pond=$pound_acidx
     fi
     tput cup $y $x
     clocky_printc "$line"
@@ -660,7 +660,6 @@ for number in ${numbers[*]} ; do
                 "      °ºO@@@@@@@OOOº°°      " \
                 )
             lines=(
-                "" \
                 "           ..•••.           " \
                 "        .•oO@@@@Oo•.        " \
                 "     .•o@@OOo•° °•Oo•.      " \
@@ -674,6 +673,7 @@ for number in ${numbers[*]} ; do
                 "   °O@@@@@@@@OOOO@@@OOOº°   " \
                 "    °O@@@@@@@@@@@@@OOº°     " \
                 "      °ººO@@@@@@OOºº°       " \
+                "" \
                 )
             width=28
             ;;
@@ -695,7 +695,23 @@ for number in ${numbers[*]} ; do
                 "    .•o@@Oo•.    " \
                 " .•ooO@@Ooooo•.. " \
                 )
-            width=19
+            lines=(
+                "                 " \
+                "       .°O.      " \
+                "      .•O@•      " \
+                "    .•oO@@•      " \
+                "  .•ooO@@@•      " \
+                "     °•o@0.      " \
+                "     °•o@•       " \
+                "     °•@o•       " \
+                "     °•@o•       " \
+                "     °•o@•       " \
+                "     °•o@o•      " \
+                "    .•oOO@o•.    " \
+                " .•ooOOOOo@@o•.. " \
+                "                 " \
+                )
+            width=17
             ;;
 
         (2)
@@ -841,6 +857,22 @@ for number in ${numbers[*]} ; do
                 "           .•oO@@O•°    " \
                 "         .•oO@@@o••     " \
                 "   ••oooOOOO@@@@@@Oo.   " \
+                "         °°ºOO@@@@@OO.  " \
+                "            °OO@@@@@Oo. " \
+                " .          .OO@@@@@OO: " \
+                " °Oo•......ooO@@@@@OOO° " \
+                "  °ºOOOOOOOO@@@@@@OOº°  " \
+                "    °ººOOO@@@@@OOºº°    " \
+                )
+            lines=(
+                "        .•••.           " \
+                "    .•oOO@@@Ooo.        " \
+                "   oOOººººoO@@@Oo.      " \
+                "  Oº      °•oO@@@O.     " \
+                " °         .•oO@@@O•    " \
+                "           .•oO@@O•°    " \
+                "         .•oO@@@o••     " \
+                "     ••oOOOO@@@@@@Oo.   " \
                 "         °°ºOO@@@@@OO.  " \
                 "            °OO@@@@@Oo. " \
                 " .          .OO@@@@@OO: " \
@@ -1035,9 +1067,8 @@ for number in ${numbers[*]} ; do
                 )
             width=24
         ;;
-        (H|6)
+        (6)
             lines=(
-                "                        " \
                 "            ...         " \
                 "        .oO@@@@Oo.      " \
                 "     .o@@@0º°°°°º0o     " \
@@ -1051,6 +1082,7 @@ for number in ${numbers[*]} ; do
                 " °00@@@@OOo......oO0O°  " \
                 "  °OO0@@@@@@@@@@@00º°   " \
                 "    °ººO0@@@@@@0ºº°     " \
+                "                        " \
                 )
             width=24
         ;;
@@ -1363,7 +1395,7 @@ for arg in "${@}" ; do
                 eval $palette
                 printf "%-22s => " ${palette#yap_}
                 init
-                while [[ $num -lt $pound_pastels ]]; do
+                while [[ $num -lt $pound_acidx ]]; do
                     # echo -n "[48;5;${acidx[$num]}m  "
                     printf "[48;5;${acidx[$num]}m[30m%3d " ${acidx[$num]}
                     incr
@@ -1526,7 +1558,7 @@ while : ; do
 #----------------------------------------------------------------------#
     yap_rainbow_bright
 
-    (( _idx = RANDOM % pound_pastels ))
+    (( _idx = RANDOM % pound_acidx ))
 
 #----------------------------------------------------------------------#
 # For testing the pulse; uncomment to 'continue':                      #

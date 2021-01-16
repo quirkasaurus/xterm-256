@@ -7,6 +7,7 @@
 #          cycle through list of background colors.                    #
 #----------------------------------------------------------------------#
 zero=${0}
+set -o allexport
 
 #----------------------------------------------------------------------#
 # initialize state, only if not done yet.                              #
@@ -22,6 +23,19 @@ fi
 #----------------------------------------------------------------------#
 
 #----------------------------------------------------------------------#
+# yikes. a duplicate of the function in more_funx.                     #
+# but these 2 scripts must remain independent to avoid                 #
+# recursive sourcing mistakes.                                         #
+#----------------------------------------------------------------------#
+function pound
+{
+local _nothing
+local var=${1:-_nothing}
+eval pound_${var:-_nothing}=\${\#${var}'[*]}'
+}
+
+
+#----------------------------------------------------------------------#
 # BEGIN COLOR PALETTE SETTINGS FUNCTIONS.                              #
 #----------------------------------------------------------------------#
 
@@ -30,7 +44,11 @@ fi
 #----------------------------------------------------------------------#
 function _yap_pound
 {
-pound_pastels=${#acidx[*]}
+pound acidx
+#----------------------------------------------------------------------#
+# vecho pound_acidx                                                    #
+#----------------------------------------------------------------------#
+return
 }
 
 
@@ -49,7 +67,7 @@ _yap_pound ; pastels=$FUNCNAME
 }
 
 
-function barb
+function barb # colors
 {
 acidx=( 163 164 165 165 171 177 213 207 201 200 199 205 206 170 169 )
 ### too dark:
@@ -73,7 +91,7 @@ acidx=( 219 183 147 153 159 158 157 193 229 223 217 )
 _yap_pound ; pastels=$FUNCNAME
 }
 
-function yap_full_rainbow
+function yap_full_rainbow # colors
 {
 # this first on is the pure full rainbow
 acidx=( 46 47 48 49 50 51 45 39 33 27 21 57 93 129 165 201 200 199 198 197 196 202 208 214 220 226 190 154 118 82 )
@@ -104,7 +122,7 @@ _yap_pound ; pastels=$FUNCNAME
 }
 
 
-function yap_spiral_rainbow
+function yap_spiral_rainbow # colors
 {
 acidx=(
    42 43 44 38 32 26
@@ -622,7 +640,7 @@ _yap_order=_yap_random
 
 function _yap_random
 {
-(( _idx = RANDOM % pound_pastels ))
+(( _idx = RANDOM % pound_acidx ))
 echo ${acidx[$_idx]}
 }
 
@@ -642,7 +660,7 @@ _yap_order=_yap_sequential
 function _yap_next
 {
 (( _idx += 1 ))
-if [[ $_idx -ge $pound_pastels ]]; then
+if [[ $_idx -ge $pound_acidx ]]; then
     _idx=0
 fi
 }
