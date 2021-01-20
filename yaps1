@@ -72,7 +72,7 @@ function barb # colors
 acidx=( 163 164 165 165 171 177 213 207 201 200 199 205 206 170 169 )
 ### too dark:
 acidx=( 231 225 219 213 207 201 200 199 198 197 196 160 124 88 )
-acidx=( 231 225 219 213 207 201 200 199 198 198 197 196 160 124 )
+acidx=( 231 225 219 213 207 207 201 200 199 198 197 196 160 124 )
 _yap_pound ; pastels=$FUNCNAME
 }
 
@@ -102,8 +102,10 @@ acidx=( 46 47 48 49 50 51 45 39 33 27 21 56 57 63 62 93 92 129 165 201 207 206 2
 _yap_pound ; pastels=$FUNCNAME
 }
 
-function yap_rainbow_bright # colors
+
+function yap_rainbow_home
 {
+
 # original bright rainbow. best on black bg.
 
 # Fri Mar 27 09:22:26 EDT 2020
@@ -117,9 +119,33 @@ acidx=( 201 99 33 39 45 48 46 118 226 208 199 )
 acidx=( 201 171 135 99 33 39 45 48 40 118 226 208 196 199 )
 acidx=( 201 171 135 99 33 39 45 48 40 118 226 208 203 199 )
 acidx=( 201 171 135 99 33 39 45 40 48 154 226 208 203 199 )
+acidx=( 201 171 99 33 39 43 46 154 190 226 220 214 208 196 )
 acidx=( 201 171 135 99 33 39 45 48 40 154 226 208 203 199 )
 _yap_pound ; pastels=$FUNCNAME
 }
+
+#----------------------------------------------------------------------#
+# hence, one rainbow for home, and one for work.                       #
+#----------------------------------------------------------------------#
+function yap_rainbow_work
+{
+acidx=( 201 171 99 33 39 43 46 154 190 226 220 214 208 196 )
+_yap_pound ; pastels=$FUNCNAME
+}
+
+
+#----------------------------------------------------------------------#
+# different screens look better with different color sets.             #
+#----------------------------------------------------------------------#
+function yap_rainbow_bright # colors
+{
+if [[ $( hostname ) == umber-hulk ]]; then
+    yap_rainbow_home
+else
+    yap_rainbow_work
+fi
+}
+
 
 
 function yap_spiral_rainbow # colors
@@ -755,6 +781,33 @@ yappo
 }
 
 
+function grab_palettes
+{
+palettes=( $(
+    grep '^function.* \# color' `which yaps1` |
+        fields 2 |
+        sort -u
+        )
+    )
+}
+
+
+function list_palettes
+{
+for palette in ${palettes}; do
+    echo -n "$palette : "
+    eval $palette
+    num=0
+    while [[ $num -lt $pound_acidx ]]; do
+        echo -n "[48;5;${acidx[$num]};30m ${acidx[$num]} [m"
+        (( num += 1 ))
+    done
+    echo
+done
+return
+}
+
+
 # MAIN
 
 _idx=0
@@ -770,8 +823,6 @@ _yap_order=_yap_sequential
 # set default color scheme.                                            #
 # last entry wins.                                                     #
 #----------------------------------------------------------------------#
-yap_rainbow_bright
-
 #----------------------------------------------------------------------#
 # default foreground/background indicator to background                #
 # param >>> previous-setting >>> default-value                         #
@@ -782,6 +833,8 @@ case ${1:-${_g:-fg}} in # default: foreground
     (cream) _g=38 ; yap_cream ;;
     *) _g=${_g:-48} ;; # fall-through, use background
 esac
+
+grab_palettes
 
 #----------------------------------------------------------------------#
 # finally... set the new PS1 environ.                                  #
