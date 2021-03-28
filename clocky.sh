@@ -11,10 +11,13 @@
 #          when the time is done printing, it is closer to accurate.   #
 # NOTES:   height of all characters is 14.                             #
 #                                                                      #
+# how to type the characters:                                          #
+#                                                                      #
 # - a sa sa - s s                                                      #
 #   8 8  )                                                             #
 # . • °  º  o O @                                                      #
 # L M H  H  L M M                                                      #
+#                                                                      #
 #----------------------------------------------------------------------#
 
 . more_funx $0
@@ -22,7 +25,6 @@
 
 declare -a numbers
 
-CLEAR=
 CLEAR=
 DEBUG=1 ; CLEAR=clear
 DEBUG=  ; CLEAR=clear
@@ -234,6 +236,22 @@ case $number in
             "      °ººO@@@@@@OOºº°       " \
             "" \
             )
+        lines=(
+            "           ¸.....¸          " \
+            "        .•ooO@@@Ooo.        " \
+            "     ¸•o@@OOOº°°°ºOo°.      " \
+            "   ¸•o@@@OOº       ºOo•¸    " \
+            "  .o@@@@OO°         ºOo•.   " \
+            " •o@@@@@OO•          ºOo•.  " \
+            " •o@@@@@OO•          •OOo•. " \
+            " •o@@@@@@Oo.        .oOOo•. " \
+            " •o@@@@@@OOo°.¸¸¸.•°oO@Oo•  " \
+            "  •O@@@@@@OOOOOOOOOO@@OOº°  " \
+            "   °O@@@@@@@@OOOO@@@OOOº°   " \
+            "    °O@@@@@@@@@@@@@OOº°     " \
+            "      °ººO@@@@@@OOºº°       " \
+            "" \
+            )
         width=28
         ;;
 
@@ -271,7 +289,7 @@ case $number in
             "                 " \
             )
         lines=(
-            "         .       " \
+            "         :       " \
             "       .°O•      " \
             "      .•O@•      " \
             "    .•oO@@•      " \
@@ -281,10 +299,26 @@ case $number in
             "     °•@o•       " \
             "     °•@o•       " \
             "     °•o@•       " \
+            "     °•o@•       " \
             "     °•o@o•      " \
             "    .•oOO@o•.    " \
             " .•ooOOOOo@@o•.. " \
-            "                 " \
+            )
+        lines=(
+            "         :       " \
+            "        ¸O       " \
+            "      ¸•O@•      " \
+            "    ¸•oO@@•      " \
+            "  .•oOO@@@•      " \
+            "     °:O@º°      " \
+            "     °:O@•       " \
+            "     °:@O•       " \
+            "     .:@O•       " \
+            "     .:O@•       " \
+            "     .:O@•       " \
+            "     .:O@o•      " \
+            "    ¸•oOO@o•¸    " \
+            " .•ooOOOOo@@o•.¸ " \
             )
         width=17
         ;;
@@ -292,35 +326,18 @@ case $number in
     (2)
         lines=(
             "      .•oOO@@@@@o•.       " \
-            "    .•oOOoooO@@@@@@o•.    " \
-            "   .oO•.      .•oO@@@o•.  " \
-            "  •oO•°        .•oO@@Oo•. " \
-            "   o°           •oOO@@o•• " \
-            "   °           .•oO@@o••  " \
-            "           ..•ooO@@Oo•°   " \
-            "      .•ooOO@Oooººº°°     " \
-            "     .•oO@o•°             " \
-            "   .•oO@o•°               " \
-            "  .•oO@o•°            .   " \
-            " ••ooOOoo.          .o.   " \
-            " °•oooOOO@oooooooooooo•   " \
-            "  °•o@@@@@OOOOO@@@@@O@°   " \
-            )
-        width=26
-        lines=(
-            "      .•oOO@@@@@o•.       " \
-            "    .•oOOºº°°°•O@@@o•.    " \
-            "   .oO•°       •oO@@@o•.  " \
-            "  •oO•°         •oO@@Oo•. " \
+            "    .•oOOºº°°°ºO@@@o•.    " \
+            "   .oOº°       °oO@@@o•.  " \
+            "  •oO•°         °oO@@Oo•. " \
             "   o°           •oOO@@o•• " \
             "   °           .•oO@@o••  " \
             "           ..•ooO@@Oo•°   " \
             "       .•ooO@OOºººº°°     " \
-            "     .•oO@o•°             " \
+            "     .•oO@Oº°             " \
             "   .•oO@o•°               " \
-            "  .•oO@o•°            .   " \
-            " ••ooOOoo.          .o•   " \
-            " °•oooOOO@oooooooooooo•   " \
+            "  .•oO@o•             .   " \
+            " ••ooOOOo•.........••oo   " \
+            " °•oooOOO@ooooooooooooo   " \
             "  °•o@@@@@OOOOO@@@@@O@°   " \
             )
         lines=(
@@ -370,6 +387,25 @@ case $number in
             " .•oO0@@@0O•.......••oO   " \
             " .•oO0@@@@OOOOOOOOO0@@O   " \
             "  °•oO0@@@OOOOO@@@@@O@º   " \
+            )
+#----------------------------------------------------------------------#
+#             " °•ooOO@Oo,,¸¸¸¸¸,oOOO•   " \                 #
+#----------------------------------------------------------------------#
+        lines=(
+            "      .•oOO@@@@@o•.       " \
+            "    .•oOOºº°°°ºO@@@o•.    " \
+            "   .oOº°        °O@@@o•   " \
+            "  •oOº           •O@@OO•  " \
+            "   oº           .oOO@@O•  " \
+            "   °           .•oO@@Oº   " \
+            "            ¸,ooO@@Oº°    " \
+            "       .•ooO@OOºº°°       " \
+            "     .•oO@Oºº°            " \
+            "   .•oO@Oº                " \
+            "  .•oO@O°             •   " \
+            " ••ooOOo.           .O•   " \
+            " °•ooOO@Oo..¸¸¸¸..oOOO•   " \
+            "  °ºoOOO@@O@@@@OOO@@@º°   " \
             )
         width=26
         ;;
@@ -440,7 +476,7 @@ case $number in
             "    °ººOOO@@@@@OOºº°    " \
             )
         lines=(
-            "        .•••.           " \
+            "       ¸.....¸          " \
             "    .•oOO@@@Ooo.        " \
             "   oOOººººoO@@@Oo.      " \
             "  Oº      °•oO@@@O.     " \
@@ -451,7 +487,7 @@ case $number in
             "         °°ºOO@@@@@OO.  " \
             "            °OO@@@@@Oo. " \
             " .          .OO@@@@@OO: " \
-            " °Oo•......ooO@@@@@OOO° " \
+            " °Oo•.¸¸¸¸.ooO@@@@@OOO° " \
             "  °ºOOOOOOOO@@@@@@OOº°  " \
             "    °ººOOO@@@@@OOºº°    " \
             )
@@ -474,6 +510,54 @@ case $number in
             "              •o@Oo•    " \
             "            ••oO@@Oo•.  " \
             "         °••ooO@@@Ooo•. " \
+            )
+        lines=(
+            "               ¸oO      " \
+            "              •o@O°     " \
+            "             •O@@O°     " \
+            "           ¸•O@O@O°     " \
+            "         ¸•oO@O°@O      " \
+            "       ¸•oO@Oº°:@O      " \
+            "     ¸•oOO@Oº •:@O•     " \
+            "   ¸•ooO@Oº   .:oOo.¸¸. " \
+            " .•ooOOO@@@@@OOOOOOOOO: " \
+            "              °:OOo°    " \
+            "              •:@Oo•    " \
+            "              •:@Oo•    " \
+            "            ¸.oO@@Oo•   " \
+            "         ¸.:oOO@@@Ooo•. " \
+            )
+        lines=(
+            "                ¸O:     " \
+            "               ¸oO:     " \
+            "              .O@O;°    " \
+            "            ¸o@O@O:•    " \
+            "          ¸oO@º:@O:•    " \
+            "        ¸oO@O° :@O:.    " \
+            "      ¸oOO@O°  :@O:.    " \
+            "    ¸ooO@Oº   .;@O;.¸¸. " \
+            "  .ooOOO@@@@@OOO@OOOO@º " \
+            "              °:@O:°    " \
+            "              •;@O:•    " \
+            "              •:@O:•    " \
+            "            ¸.oO@@Oo•   " \
+            "         ¸.:oOO@@@Ooo•. " \
+            )
+        lines=(
+            "                .0¸     " \
+            "               .OO:     " \
+            "              .O@O;°    " \
+            "            ¸o@O@O:•    " \
+            "          ¸oO@º:@O:•    " \
+            "        ¸oO@O° :@O:.    " \
+            "      .oOO@O°  :@O:.    " \
+            "    .oOO@Oº    ;@O;.¸¸. " \
+            " .oOOOOO@@@@@OOO@OOOO@º " \
+            "              °:@O:°    " \
+            "              •;@O:•    " \
+            "              •:@O:•    " \
+            "            ¸.oO@@Oo.   " \
+            "         ¸.:oOO@@@Ooo•. " \
             )
         width=24
         ;;
@@ -544,9 +628,40 @@ case $number in
             "  °•OOooooO@@@@@@Oo•°    " \
             "    °ººOOO@@@OOºº        " \
             )
+        lines=(
+            "  °•@@OOoooooooooooO@•°  " \
+            "  °•oooOOO@@@@@@@OOOo•   " \
+            "   °•O@•°          °º•   " \
+            "   •OO@•.            °   " \
+            "   °ºOO@@@OOooo.         " \
+            "      °ºººOOOO@@@o•.     " \
+            "             °•oO@@o•.   " \
+            "    .o.        •oO@@o••  " \
+            "  .•Oo•         •oO@@@o• " \
+            " •oO°           •oO@@@o• " \
+            " oO•           •oO@@@o•° " \
+            " °oO°•.......•oO@@@@o•°  " \
+            "  °•OOooooO@@@@@@Oo•°    " \
+            "    °ººOOO@@@OOºº        " \
+            )
+        lines=(
+            "  °•@@OOoooooooooooO@•°  " \
+            "  °•oooOOO@@@@@@@OOOo•   " \
+            "   °:O@º°          °º•   " \
+            "   •OO@o.            °   " \
+            "   °ºOO@@@OOooo.         " \
+            "      °ºººOOOO@@@o•.     " \
+            "              °ºO@@Oo.   " \
+            "    .o.         ºO@@Oo•  " \
+            "  .•OO•         •oO@@@o• " \
+            " •oO°           •oO@@@o• " \
+            " :O(           ¸oO@@@Oº° " \
+            " °OOo•.¸¸¸¸..•oO@@@@Oº°  " \
+            "  °ºOOOoooo@@@@@@OOº°    " \
+            "    °ººOOO@@@OOºº°       " \
+            )
         width=25
         ;;
-
     (C)
         lines=(
             "           ..•••..        " \
@@ -644,17 +759,17 @@ case $number in
     ;;
     (6)
         lines=(
-            "            ...         " \
+            "           ¸...¸        " \
             "        .oO@@@@Oo.      " \
             "     .o@@@0º°°°°º0o     " \
             "   .o0@@O°              " \
             "  .o0@@o                " \
-            " .O0@@0•     ....       " \
+            " .O0@@0•    ¸....¸      " \
             " o0@@@0•..o0@@@@@0Oo.   " \
-            " O0@#@@0@@ºº°°°°°ºO0Oo. " \
-            " 0@@##@00°         O0O• " \
+            " O0@#@@0@@Oº°°°°°ºO0Oo¸ " \
+            " 0@@##@00°        °O0O• " \
             " º0@#@@00.        .O0O° " \
-            " °00@@@@OOo......oO0O°  " \
+            " °00@@@@OOo.¸¸¸¸.oO0O°  " \
             "  °OO0@@@@@@@@@@@00º°   " \
             "    °ººO0@@@@@@0ºº°     " \
             "                        " \
@@ -680,7 +795,6 @@ case $number in
             "   .•ooO@@@Ooo•.      " \
             )
         width=22
-
         lines=(
             "•@@OOooooooooooOO@@@• " \
             ".@@OOO@@@@@@@OOOooo•° " \
@@ -698,6 +812,72 @@ case $number in
             "   .•ooO@@@Ooo•.      " \
             )
         width=22
+        lines=(
+            " @O*º°°°°°°°°°°º*O@@º° " \
+            " *º°           .O@*°   " \
+            " °           .o@°      " \
+            "           .o@°        " \
+            "         .o@°          " \
+            "       ¸o@°            " \
+            "      .o@°             " \
+            "    ¸o@@°              " \
+            "   ¸o@@O               " \
+            "   o@@@O               " \
+            "  .o@@@Oo.             " \
+            "    º@O°               " \
+            "     °)                " \
+            "      °                " \
+            )
+        width=23
+        lines=(
+            " @Oo...¸¸¸¸¸¸..o*O@@º° " \
+            " @O*º°°°°°°°°°°º*O@@º° " \
+            " Oº°           .O@*°   " \
+            " °           .o@°      " \
+            "           .o@°        " \
+            "         .o@°          " \
+            "       ¸o@°            " \
+            "      .o@°             " \
+            "    ¸o@@°              " \
+            "   ¸o@@O               " \
+            "   o@@@O               " \
+            "  .o@@@Oo.             " \
+            "    º@O°               " \
+            "     °{                " \
+            )
+        lines=(
+            " @o.¸¸¸¸¸¸¸¸¸¸¸.oO@@*° " \
+            " OOOºººº*****ºº**O@@º° " \
+            " Oº            .O@*°   " \
+            " º           .o@°      " \
+            " °         .o@°        " \
+            "         .o@°          " \
+            "       ¸o@°            " \
+            "      .o@°             " \
+            "    ¸o@@°              " \
+            "   ¸o@@O               " \
+            "   o@@@O               " \
+            "  .o@@@Oo.             " \
+            "    º@O°               " \
+            "     °{                " \
+            )
+        lines=(
+            " @o.¸¸¸¸¸¸¸¸¸¸¸..oO@@@ " \
+            " OOOºººº***ºº****O@@*° " \
+            " Oº            .O@º°   " \
+            " º           .o@°      " \
+            " °         .o@°        " \
+            "         .o@°          " \
+            "       ¸o@°            " \
+            "      .o@°             " \
+            "    ¸o@@°              " \
+            "   ¸o@@O               " \
+            "   o@@@O¸              " \
+            "  .o@@@Oo.             " \
+            "    º@Oº               " \
+            "     °(                " \
+            )
+        width=23
         ;;
 
     (8)
@@ -729,6 +909,22 @@ case $number in
             " .oOO@@@@OOº°°°°°ºO@Oo   " \
             " oOO@@@OOo•       •O@O•  " \
             " oOO@@@@Oo..     ..O@O•  " \
+            " °ºOO@@@@@OOooooO@@OO°   " \
+            "  °ºOO@@@@@@@@@@@OOº°    " \
+            "    °ººOO@@@@@@Oºº       " \
+            )
+        lines=(
+            "         ¸....¸          " \
+            "       •oO@@OOOo•.       " \
+            "     •oO@@OOº°°ºOO•.     " \
+            "    •oO@@Oº     °OO•.    " \
+            "   °oO@@Oo•      •OO•    " \
+            "   °•oO@@Oo.¸  ¸.oOO°    " \
+            "     ••oO@@OOOOOOO•      " \
+            "   .oOO@@@@@@@@@@@Oo.    " \
+            " .oOO@@@@OOº°°°°°ºO@Oo   " \
+            " oOO@@@OOo•       •O@O•  " \
+            " oOO@@@@Oo.¸     ¸.O@O•  " \
             " °ºOO@@@@@OOooooO@@OO°   " \
             "  °ºOO@@@@@@@@@@@OOº°    " \
             "    °ººOO@@@@@@Oºº       " \
@@ -881,7 +1077,7 @@ while : ; do
         render_character
     done
     tput cup 0 0
-    sleep 1
+    sleep 3
     (( minutes += 1 ))
     if [[ $minutes -ge 60 ]]; then
         minutes=0
@@ -911,8 +1107,12 @@ return
 
 cat << EOF
 
-@Oo•.•º°@Oo•.•º°@Oo•.•º°@Oo•.•º°@Oo•.•º°
-@Oo•.•º°@Oo•.•º°@Oo•.•º°@Oo•.•º°@Oo•.•º°
+¸,.•° oO0º @*
+
+Z,.88 oO00 28
+S  AA  S A AS
+C   S
+
 @Oo•.•º°@Oo•.•º°@Oo•.•º°@Oo•.•º°@Oo•.•º°
 @Oo•.•º°@Oo•.•º°@Oo•.•º°@Oo•.•º°@Oo•.•º°
 
@@ -921,57 +1121,15 @@ cat << EOF
 .•º°
 
 @@@@@@@
-@@@@@@@
-@@@@@@@
-@@@@@@@
-@@@@@@@
-@@@@@@@
-OOOOOOO
-OOOOOOO
-OOOOOOO
-OOOOOOO
-OOOOOOO
 OOOOOOO
 ooooooo
-ooooooo
-ooooooo
-ooooooo
-ooooooo
-ooooooo
 ººººººº
-ººººººº
-ººººººº
-ººººººº
-ººººººº
-ººººººº
-•••••••
-•••••••
-•••••••
-•••••••
-•••••••
-•••••••
 °°°°°°°
-°°°°°°°
-°°°°°°°
-°°°°°°°
-°°°°°°°
-°°°°°°°
-.......
-.......
-.......
-.......
-.......
+•••••••
 .......
 
-
 . • °  º  o O @                                                      #
-. • °  º  o O @                                                      #
-. • °  º  o O @                                                      #
-. • °  º  o O @                                                      #
-
-
 EOF
-
 return
 }
 
@@ -982,8 +1140,11 @@ return
 function sleep_magic
 {
 tput cup 0 0
+#----------------------------------------------------------------------#
+# takes ~3 seconds to draw HH:MM                                       #
+#----------------------------------------------------------------------#
 seconds=$( date -v+3S +%S | sed -e 's/^0//' )
-(( sleep_for = 60 - seconds )) # takes ~3 seconds to draw HH:MM
+(( sleep_for = 60 - seconds ))
 
 #----------------------------------------------------------------------#
 # avoid flashing around 55-05 seconds                                  #
@@ -996,18 +1157,22 @@ fi
 #----------------------------------------------------------------------#
 }
 
+
 #~.,_,.~*"`"*~.,_,.~*"`"*~.,_,.~*"`"*~.,_,.~*"`"*~.,_,.~*"`"*~.,_,.~*"`" 
 #~.,_,.~*"`"*~.,_,.~*"`"*~.,_,.~*"`"*~.,_,.~*"`"*~.,_,.~*"`"*~.,_,.~*"`" 
 #~.,_,.~*"`"*~.,_,.~*"`"*~.,_,.~*"`"*~.,_,.~*"`"*~.,_,.~*"`"*~.,_,.~*"`" 
 #----------------------------------------------------------------------#
 # print a single line of our big font characters.                      #
 #----------------------------------------------------------------------#
-function clocky_printc
+function render_printc
 {
 local _line="${@}"
 
 if [[ $DARK_MODE -eq 1 ]]; then
-    _line="${@//[.•°ºoO0:@#]/_}"
+#----------------------------------------------------------------------#
+#     _line="${@//[.•°ºoO0:@#]/_}"                                     #
+#----------------------------------------------------------------------#
+    _line="${@//[^ ]/_}"
 fi
 
 #----------------------------------------------------------------------#
@@ -1250,7 +1415,7 @@ for line in "${lines[@]}" ; do
         tput cup 0 0 ; echo -n y=$y x=$x palette=$color_palette idx=$_idx pond=$pound_acidx
     fi
     tput cup $y $x
-    clocky_printc "$line"
+    render_printc "$line"
     incr y
 done
 incr x $width
@@ -1444,7 +1609,8 @@ function set_args
 for arg in "${@}" ; do
 
     case "$arg" in
-        (-d|--dark) DARK_MODE=1 ;;
+        (-v|--version) _version=1 ;;
+        (-d|--dark*) DARK_MODE=1 ;;
         (--tiktok=*) tiktok=${arg#--tiktok=} ;;
         (*pulse) PULSE_TEST=1 ;;
         (-g|--glyphs) glyphs ; exit ;;
@@ -1454,40 +1620,38 @@ for arg in "${@}" ; do
         (-l|--long) date_format='%I:%M:%S:%p' ; sleep_magic= ;;
         (-s|--short) sleep_magic=magic ; date_format='%I:%M' ;;
         (-h|--help)
-            $CLEAR
-            cat << EOF
-usage:
-$zero '[-s|--short|-l|--long]' '[clock-version] [color-palette]'
-$zero '[--acidx=42,46,206...]'
-$zero '[--dark] [--tiktok=99:99]'
-$zero '[--demo=HH:MM] [demo]'
-defaults: $clocky $color_palette short
-$( yap_purples )
-$( yap_show_colors )
-the --acidx option allows for customized color-palettes
-colors would be comma or space delimited
-using the ANSI color indexes. '(see: frogs)'
---short date format: HH:MM, default ${date_format}
-EOF
+            pouncy turquoise usage:
+            pouncy -n lime "$zero "
+            pouncy purple '[-s|--short|-l|--long]' '[clock-version] [color-palette]'
+            pouncy -n lime "$zero "
+            pouncy purple '[--acidx=42,46,206...]'
+            pouncy -n lime "$zero "
+            pouncy purple '[--dark] [--tiktok=99:99]'
+            pouncy -n lime "$zero "
+            pouncy purple '[--demo=HH:MM] [demo]'
+            pouncy cyan "$zero defaults:"
+            pouncy -n lime "short date format: "
+            pouncy purple ${date_format}
+            pouncy -n lime "render_char: "
+            pouncy purple $render $color_palette
             print_sep '- '
+            eval $color_palette
+            yap_show_colors
+            pouncy lime the --acidx option allows for customized color-palettes
+            pouncy lime like so: --acidx=90,91,92,93,99,98,105,104,111,116,114,112
+            pouncy lime '(for colors to indexes conversion, run: frogs)'
 
-            for palette in `
-                echo barb roger roger2 bloop blook
-                grep '(.*).*yap.*;;' $0 |
-                    grep -v grep |
-                    fields 2
-                `; do
-                eval $palette
-                printf "%-22s => " ${palette#yap_}
-                init
-                while [[ $num -lt $pound_acidx ]]; do
-                    # echo -n "[48;5;${acidx[$num]}m  "
-                    printf "[48;5;${acidx[$num]}m[30m%3d " ${acidx[$num]}
-                    incr
-                done
-                echo "[m"
-                echo
-            done
+#----------------------------------------------------------------------#
+# now for the tricky business of displaying a dynamic list of palettes #
+#----------------------------------------------------------------------#
+            echo -n 'see color palettes? y/n '
+            answer=$( quickread.exe )
+            echo $answer
+            case $answer in
+                (n) echo ; echo quitting ; exit ;;
+            esac
+            print_sep '- '
+            yap_palettes
             exit
             ;;
     
@@ -1502,14 +1666,13 @@ EOF
             # ) )
             # _yap_pound
             # yap_show_colors
-            sleep 2
             : # nop the palette
-            color_palette=:
+            palette=true
             ;;
 
         (once) run_once=True ;;
-        (1|render_clock_1|render_1) clocky=render_clock_1 ;;
-        (4|render_clock_4|render_4) clocky=render_clock_4 ;;
+        (1|render_clock_1|render_1) render=render_clock_1 ;;
+        (4|render_clock_4|render_4) render=render_clock_4 ;;
 
         (demo) DEMO=1 ; sleep_magic=demo ;;
 
@@ -1527,15 +1690,23 @@ EOF
         #===================
         (*)
         found_it=0
-        for palette in ${palettes}; do
+        grab_palettes
+        for palette in ${palettes[*]}; do
             if [[ $arg == $palette ]]; then
                 found_it=1
                 eval $arg
+                palette=$arg
+                break
+            fi
+            if [[ yap_$arg == $palette ]]; then
+                found_it=1
+                eval yap_$arg
+                palette=yap_$arg
                 break
             fi
         done
         if [[ $found_it -eq 0 ]]; then
-            echo unknown argument: $arg 
+            echo unknown argument: $arg ; exit 9
         fi
         ;;
 #----------------------------------------------------------------------#
@@ -1582,37 +1753,41 @@ return
 
 
 #----------------------------------------------------------------------#
-# MAIN                                                                 #
 # defaults.                                                            #
+# MAIN                                                                 #
 #----------------------------------------------------------------------#
-title clocky $*
+title clocky.sh $*
 sleep_for=7
 sleep_magic=magic
 date_format='%I:%M:%S:%p'
 date_format='%I:%M'
 PULSE_TEST=0
+_version=0
+render=render_clock_4
+start_sleep=3
 
 #----------------------------------------------------------------------#
 # yap_purples                                                          #
 #----------------------------------------------------------------------#
-roger
-clocky=render_clock_4
-start_sleep=3
+# yap_greens
+# barb
+# roger
+yap_gcw
 
 set_args "${@}"
 
 if [[ $DEMO -eq 1 ]]; then
     $CLEAR
-    $clocky
+    $render
     exit
 fi
 
-if [[ -n $start_sleep ]]; then
-    echo
-    echo sleeping a bit. please maximize the screen.
-    echo
-    sleep ${start_sleep}
-fi
+# if [[ -n $start_sleep ]]; then
+#     echo
+#     echo sleeping a bit. please maximize the screen.
+#     echo
+#     sleep ${start_sleep}
+# fi
 
 #----------------------------------------------------------------------#
 # hesitate to give time to maximize the screen.                        #
@@ -1623,18 +1798,37 @@ orig_acidx=( $( echo ${acidx[*]} ) )
 #----------------------------------------------------------------------#
 # auto-refresh running clocky.sh                                       #
 #----------------------------------------------------------------------#
-FEXEC=$( which $0 )
-CLOCKSUM=$( sum $FEXEC )
+FCLOCKY=$HOME/Dropbox/bin/clocky.sh
+CLOCKYSUM=$( sum $FCLOCKY | fields 1 )
+
+# vecho _version
+# vecho CLOCKYSUM
+# exit
 
 $CLEAR
+_print_sum=1
 while : ; do
 
 #----------------------------------------------------------------------#
 # auto-refresh running clocky.sh                                       #
+# utilizing hard-coding again.                                         #
 #----------------------------------------------------------------------#
-    NEW_CLOCKSUM=$( sum $FEXEC )
-    if [[ $CLOCKSUM != $NEW_CLOCKSUM ]]; then
-        exec $zero $*
+    NEW_CLOCKYSUM=$( sum $FCLOCKY | fields 1 )
+    if [[ $CLOCKYSUM != $NEW_CLOCKYSUM || $_version -eq 1 ]]; then
+        numbers=$( echo $NEW_CLOCKYSUM | sed -e 's/./& /g' )
+#         acidx=( 42 43 44 45 46 47 48 )
+#         _idx=0
+#         pound_acidx=${#acidx[*]}
+        sling 42 43 44 45 46 47 48
+        $CLEAR
+        centralizationalizer
+        for number in ${numbers}; do
+            set_lines
+            render_character
+        done
+        tput cup 0 0
+        sleep 30
+        exec $FCLOCKY $*
     fi
 
 #----------------------------------------------------------------------#
@@ -1644,12 +1838,12 @@ while : ; do
     _yap_pound
     _idx=0
 
+#----------------------------------------------------------------------#
+# RENDER PRINT THE TIME!!                                              #
+#----------------------------------------------------------------------#
     $CLEAR
-    $clocky
-    case $sleep_magic in
-        (magic) sleep_magic ;;
-        (*) ;; # for --long format. we refresh every 7 seconds.
-    esac
+    $render
+
 #----------------------------------------------------------------------#
 # kinda of like a typewriter carriage return;                          #
 # print our 10 second dots below the time.                             #
@@ -1658,8 +1852,35 @@ while : ; do
     (( y = _y_init + 16 ))
 
 #----------------------------------------------------------------------#
+# put some dots out there at the start, if need be.                    #
+# how to account for the 3 second head-start of the rendering.         #
+#----------------------------------------------------------------------#
+#     tens=$( date +%S | cut -c1 )                                     #
+#     bnum=0                                                           #
+#     while [[ $bnum -lt $tens ]]; do                                  #
+#         pulse                                                        #
+#         (( bnum += 1 ))                                              #
+# must re-check the time because of how long                           #
+# it takes to draw a pulse dot.                                        #
+#         tens=$( date +%S | cut -c1 )                                 #
+#         if [[ $tens -eq 0 ]]; then                                   #
+#             break                                                    #
+#         fi                                                           #
+#     done                                                             #
+#----------------------------------------------------------------------#
+
+#----------------------------------------------------------------------#
+# figure out how long we need to wait until we draw the time again.    #
+#----------------------------------------------------------------------#
+    case $sleep_magic in
+        (magic) sleep_magic ;;
+        (*) ;; # for --long format. we refresh every 7 seconds.
+    esac
+
+#----------------------------------------------------------------------#
 # effort to parameterize the pulse dot colors aborted.                 #
-# TOO MUCH GOING ON................ ABORT MISSION                      #
+# TOO MUCH GOING ON................ ABORT MISSION!                     #
+# all the yaps1 functions rely on global fgs and _idx.                 #
 # this also will not work with the way we grep for palettes in help.   #
 # because of the default case syntax.                                  #
 #----------------------------------------------------------------------#
@@ -1696,4 +1917,5 @@ while : ; do
     done
     sleep $sleep_for
 done
+
 

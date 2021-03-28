@@ -6,13 +6,13 @@
 # PURPOSE: yet another prompt setting script.                          #
 #          cycle through list of background colors.                    #
 #----------------------------------------------------------------------#
-zero=${0}
 set -o allexport
 
 #----------------------------------------------------------------------#
 # initialize state, only if not done yet.                              #
 #----------------------------------------------------------------------#
 FPS1=~/.state/.yaps1
+declare -a palettes
 if [[ ! -f $FPS1 ]]; then
     echo _idx=0 > $FPS1 2>/dev/null
 fi
@@ -26,6 +26,9 @@ fi
 # yikes. a duplicate of the function in more_funx.                     #
 # but these 2 scripts must remain independent to avoid                 #
 # recursive sourcing mistakes.                                         #
+#- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+# this function takes the place of this awful bash syntax:             #
+# ${#var[*]} to mean "how many elements in this array?"                #
 #----------------------------------------------------------------------#
 function pound
 {
@@ -63,7 +66,7 @@ function yap_pastels4 # colors
 acidx=(
     159 123 87 51 50 86 122 158 121 85 49
     )
-_yap_pound ; pastels=$FUNCNAME
+_yap_pound ; palette=$FUNCNAME ; _idx=0
 }
 
 
@@ -73,7 +76,7 @@ acidx=( 163 164 165 165 171 177 213 207 201 200 199 205 206 170 169 )
 ### too dark:
 acidx=( 231 225 219 213 207 201 200 199 198 197 196 160 124 88 )
 acidx=( 231 225 219 213 207 207 201 200 199 198 197 196 160 124 )
-_yap_pound ; pastels=$FUNCNAME
+_yap_pound ; palette=$FUNCNAME ; _idx=0
 }
 
 #----------------------------------------------------------------------#
@@ -83,12 +86,21 @@ alias yap_rainbow_light=yap_rainbow
 alias yap_rainbow_pastel=yap_rainbow
 
 
+function yap_bmw # colors
+# blue-magenta-white
+{
+acidx=( 225 219 213 207 201 165 129  93  57  21  20  19  18  17 )
+_yap_pound ; palette=bmw ; _idx=0
+}
+
+
+
 function yap_rainbow # colors
 {
 # no rhyme or reason mathematically... just eyeballs.
 # 218 removed because too similar to 217
 acidx=( 219 183 147 153 159 158 157 193 229 223 217 )
-_yap_pound ; pastels=$FUNCNAME
+_yap_pound ; palette=$FUNCNAME ; _idx=0
 }
 
 function yap_full_rainbow # colors
@@ -99,7 +111,7 @@ acidx=( 46 47 48 49 50 51 45 39 33 27 21 57 93 129 165 201 200 199 198 197 196 2
 # this one adds a few more colors so that clocky.sh
 acidx=( 46 47 48 49 50 51 45 39 33 27 21 56 57 63 62 93 92 129 165 201 207 206 200 199 198 197 196 202 208 214 220 226 190 154 118 82 )
 
-_yap_pound ; pastels=$FUNCNAME
+_yap_pound ; palette=$FUNCNAME ; _idx=0
 }
 
 
@@ -121,7 +133,7 @@ acidx=( 201 171 135 99 33 39 45 48 40 118 226 208 203 199 )
 acidx=( 201 171 135 99 33 39 45 40 48 154 226 208 203 199 )
 acidx=( 201 171 99 33 39 43 46 154 190 226 220 214 208 196 )
 acidx=( 201 171 135 99 33 39 45 48 40 154 226 208 203 199 )
-_yap_pound ; pastels=$FUNCNAME
+_yap_pound ; palette=$FUNCNAME ; _idx=0
 }
 
 #----------------------------------------------------------------------#
@@ -130,7 +142,7 @@ _yap_pound ; pastels=$FUNCNAME
 function yap_rainbow_work
 {
 acidx=( 201 171 99 33 39 43 46 154 190 226 220 214 208 196 )
-_yap_pound ; pastels=$FUNCNAME
+_yap_pound ; palette=$FUNCNAME ; _idx=0
 }
 
 
@@ -166,7 +178,7 @@ acidx=(
   211 217 216 210 204 205
   206 212 218 224 223 222
   )
-_yap_pound ; pastels=$FUNCNAME
+_yap_pound ; palette=$FUNCNAME ; _idx=0
 }
 
 
@@ -178,14 +190,17 @@ function yap_random_colors # colors
 #----------------------------------------------------------------------#
 acidx=( $(
 num=0
-while [[ $num -lt 97 ]]; do
+while [[ $num -lt 98 ]]; do
     (( num += 1 ))
-    (( x = RANDOM % 97 ))
-    echo -n " $x"
+    (( r = RANDOM % 6 ))
+    (( g = RANDOM % 6 ))
+    (( b = RANDOM % 6 ))
+    (( idx = 16 + ( r * 36 ) + ( g * 6 ) + b ))
+    echo -n " $idx"
 done
 ) )
 
-_yap_pound ; pastels=$FUNCNAME
+_yap_pound ; palette=$FUNCNAME ; _idx=0
 }
 
 
@@ -205,7 +220,7 @@ acidx=( 231 194 ) # white green
 (( b = RANDOM % 3 + 3 ))
 (( idx = (36 * r) + (6 * g) + b + 16 ))
 acidx=( 231 $idx ) # white random-pastel
-_yap_pound ; pastels=$FUNCNAME
+_yap_pound ; palette=$FUNCNAME ; _idx=0
 }
 
 
@@ -218,7 +233,7 @@ acidx=(
     158 159 219 223 224
     225 229 251 252 253
     ) 
-_yap_pound ; pastels=$FUNCNAME
+_yap_pound ; palette=$FUNCNAME ; _idx=0
 }
 
 function yap_pastels2 # colors
@@ -232,7 +247,7 @@ acidx=(
      218 219 223 224 225
      229 230 231
      )
-_yap_pound ; pastels=$FUNCNAME
+_yap_pound ; palette=$FUNCNAME ; _idx=0
 }
 
 function yap_pastels3 # colors
@@ -246,7 +261,7 @@ acidx=(
     194 195 218 219 223
     224 225 229 230 231
     )
-_yap_pound ; pastels=$FUNCNAME
+_yap_pound ; palette=$FUNCNAME ; _idx=0
 }
 
 
@@ -287,7 +302,7 @@ case ${1:-${HOSTNAME:-work}} in
         acidx=( 17 53 52 58 22 23 59 ) ;;
 esac
 
-_yap_pound ; pastels=$FUNCNAME
+_yap_pound ; palette=$FUNCNAME ; _idx=0
 # force foreground
 _g=38
 # clear any background setting
@@ -311,7 +326,7 @@ case ${HOSTNAME:-work} in
         ;;
 esac
 
-_yap_pound ; pastels=$FUNCNAME
+_yap_pound ; palette=$FUNCNAME ; _idx=0
 # force foreground
 _g=38
 # clear any background setting
@@ -322,30 +337,41 @@ _g=38
 function roger # colors
 {
 acidx=(
-    46 41 36 31 26
-    21 27 33 39 69
-    63 57 56 55
-    
-    91 92 93 99 105
-    115 79 43 
+    46 41 36
+    27 33 31
+    26 21 39
+    69 63 57
+    56 55 91
+    92 93 99
+    105 115 79
+    43 
 )
 acidx=( 201 171 135 99 33 39 45 48 40 )
 #         1   2   3   4  5  6  7  8  9 10 11 12 13  14
 acidx=( 207 201 171 135 99 93 57 33 39 44 42 46 82 118 )
-_yap_pound ; pastels=$FUNCNAME
+#----------------------------------------------------------------------#
+# Sun Mar 28 17:05:22 EDT 2021                                         #
+#----------------------------------------------------------------------#
+acidx=( 213 201 164 129 93 57 21 27 33 39 45 43 48 46 )
+_yap_pound ; palette=$FUNCNAME ; _idx=0
 }
 
 
 function roger2 # colors
 {
+#----------------------------------------------------------------------#
+#     218 212 206 200 # line 2                                         #
+#----------------------------------------------------------------------#
+#     129 135 141 153 159 # line 5                                     #
+#----------------------------------------------------------------------#
 acidx=(
     201 207 213 219
-    218 212 206 200
+    218 212     200
 
     164 170 176 182
     183 177 171 165
 
-    129 135 141 153 159
+        135 141 153 159
         158 157 156 155 154
         148 149 150 151 152
     146 140 134 128
@@ -368,7 +394,7 @@ acidx=(
     57  93 129 165 ### for circular effect, some repeats.
 
     )
-_yap_pound ; pastels=$FUNCNAME
+_yap_pound ; palette=$FUNCNAME ; _idx=0
 }
 
 
@@ -384,38 +410,39 @@ for (( x=0; x < 10; x++ )); do
     (( idx = ( r * 36 ) + ( g * 6 ) + b + 16 ))
     acidx[x]=$idx
 done
-_yap_pound ; pastels=$FUNCNAME
+_yap_pound ; palette=$FUNCNAME ; _idx=0
 }
 
 
-function blook
+function blook # colors
 # blue to cyan
 {
 acidx=( 17 18 19 20 21 27 33 39 45 51 87 123 159 195 )
-_yap_pound ; pastels=$FUNCNAME
+acidx=( 195 159 123 87 51 45 39 33 27 21 20 19 18 17 )
+_yap_pound ; palette=$FUNCNAME ; _idx=0
 }
 
-function bloop
+function bloop # colors
 # blue to purple
 {
 # blue to purple
 acidx=( 17 18 19 20 21 57 93 129 165 201 207 213 219 225 )
-_yap_pound ; pastels=$FUNCNAME
+_yap_pound ; palette=$FUNCNAME ; _idx=0
 }
 
 
-function yap_gcw
+function yap_gcw # colors
 {
 acidx=( 28 34 40 46 47 48 49 50 51 87 123 159 195 231 )
 acidx=( 231 195 159 123 87 51 50 49 48 47 46 40 34 28 )
-_yap_pound ; pastels=$FUNCNAME
+_yap_pound ; palette=$FUNCNAME ; _idx=0
 }
 
 
 function yap_greens # colors
 {
 acidx=( 230 229 228 227 226 190 154 118 82 46 40 34 28 22 )
-_yap_pound ; pastels=$FUNCNAME
+_yap_pound ; palette=$FUNCNAME ; _idx=0
 }
 
 
@@ -430,35 +457,43 @@ acidx=( 52 88 124 160 196 202 208 214 220 226 227 228 229 230 )
 # red on bottom, yellow on top
 acidx=( 230 229 228 227 226 220 214 208 202 196 160 124 88 52 )
 
-_yap_pound ; pastels=$FUNCNAME
+_yap_pound ; palette=$FUNCNAME ; _idx=0
 }
 
 function yap_blue # colors
 {
 acidx=( 21 27 33 39 45 )
 acidx=( 20 21 27 26 32 33 38 39 45 81 75 74 68 69 63 62 )
-_yap_pound ; pastels=$FUNCNAME
+_yap_pound ; palette=$FUNCNAME ; _idx=0
 }
 
 
 function yap_blues2 # colors
 {
 acidx=( 81  117  159  123  87  51  45 )
-_yap_pound ; pastels=$FUNCNAME
+_yap_pound ; palette=$FUNCNAME ; _idx=0
 }
 
 
-function yap_burple
+function yap_burple # colors
 {
 # colors to go with barb palette
 acidx=(
     231 225 219 213 207
     201 165 164 128 129
-       93 92 57 56 57
-     92 93 129 128 164
-  165 201 207 213 219 225
+     93  92  57  56  57
+     92  93 129 128 164
+    165 201 207 213 219
+    225
 )
-_yap_pound ; pastels=$FUNCNAME
+acidx=(
+    225 219 213 207 201
+    165 164 128 129  93
+     92  57  56  57  92
+    129 128 164 165 201
+    207 213 219
+)
+_yap_pound ; palette=$FUNCNAME ; _idx=0
 }
 
 
@@ -484,7 +519,7 @@ acidx=(
     )
 
 acidx=( 231 225 219 213 207 201 165 164 128 129 93 92 57 56 )
-_yap_pound ; pastels=$FUNCNAME
+_yap_pound ; palette=$FUNCNAME ; _idx=0
 }
 
 #----------------------------------------------------------------------#
@@ -554,7 +589,7 @@ esac
 #----------------------------------------------------------------------#
 # make a palette cyclical by adding the reversed list to itself.       #
 #----------------------------------------------------------------------#
-function booyah
+function booyah # colors. not really. but just to remind me it exists.
 {
 
 local _acidx
@@ -565,12 +600,12 @@ _acidx=( ${acidx[*]} )
 
 acidx=( $( (
     echo ${_acidx[*]} | trr ;
-    echo ${_acidx[*]} | trr | nl | sed -n '2,$p' | sort -rn | fields 2
+    echo ${_acidx[*]} | trr | nl | sort -rn | sed -n '2,$p' | fields 2
     ) | uniq
     )
     )
 
-_yap_pound ; pastels=${pastels}_booyah
+_yap_pound ; palette=${palette}_booyah ; _idx=0
 
 return
 }
@@ -585,14 +620,16 @@ return
 #----------------------------------------------------------------------#
 function yap_show
 {
-grep ^function.yap `which yaps1` |
+#----------------------------------------------------------------------#
+# Too bad about the hard-coding. Must protect against cyclic problems. #
+#----------------------------------------------------------------------#
+egrep '^function(.yap|.*#.color)' $HOME/Dropbox/bin/yaps1 |
     awk '{print $2}' |
-    sort
+    sort -u
 echo ========================================================================
 echo ORDER=$_yap_order
-echo COLORS=$pastels
+echo PALETTE=$palette
 echo ========================================================================
-echo yap_show_colors ::
 yap_show_colors
 echo ========================================================================
 }
@@ -602,11 +639,17 @@ echo ========================================================================
 # show me current color scheme.                                        #
 #----------------------------------------------------------------------#
 alias yappy=yap_show_colors
-alias yappo=yap_show_colors2
+alias yippy=yap_show_colors2
+alias yappo='yappy ; yippy'
+
 
 function yap_show_colors
 {
-echo $pastels
+#----------------------------------------------------------------------#
+# prints a horizontal bar.                                             #
+#----------------------------------------------------------------------#
+
+pouncy white $palette
 local num=0
 for idx in ${acidx[*]}; do
     (( num += 1 ))
@@ -630,7 +673,10 @@ echo
 
 function yap_show_colors2
 {
-echo $pastels
+#----------------------------------------------------------------------#
+# prints a vertical bar.                                               #
+#----------------------------------------------------------------------#
+pouncy white $palette
 local num=0
 for idx in ${acidx[*]}; do
     (( num += 1 ))
@@ -733,25 +779,81 @@ echo ${acidx[$_idx]}
 #----------------------------------------------------------------------#
 # change the command prompt, PS1, to cycle through background colors.  #
 #----------------------------------------------------------------------#
-HOSTNAME=$( hostname )
-HOSTNAME='salp-shark'
+#----------------------------------------------------------------------#
+# HOSTNAME=$( hostname )                                               #
+#----------------------------------------------------------------------#
+#----------------------------------------------------------------------#
+# case $HOSTNAME in                                                    #
+#     (umber-hulk) ;;                                                  #
+#     (*) HOSTNAME='salp-shark' ;;                                     #
+# esac                                                                 #
+#----------------------------------------------------------------------#
+
+# Useful: 
+# 
+# \!     the history number of this command 
+# \e     an ASCII escape character (033) 
+# 
+# Useful, not used: 
+#    
+# \j    the number of jobs currently managed by the shell 
+# \n    newline 
+# 
+# \r    carriage return 
+# \s    the name of the shell, the basename of $0 (the portion following the final slash) 
+# 
+#   
+# \D{format} the format is passed to strftime(3) and the 
+#       result is inserted into the prompt  string;  an  empty format 
+#       results in a locale-specific time representation.
+#       The braces are required 
+# 
+# \d    the date in "Weekday Month Date" format (e.g., "Tue May 26") 
+# 
+# \w    the current working directory, with $HOME abbreviated with a tilde 
+# 
+# \t    the current time in 24-hour HH:MM:SS format 
+# \T    the current time in 12-hour HH:MM:SS format 
+# \@    the current time in 12-hour am/pm format 
+# \A    the current time in 24-hour HH:MM format 
+# 
+# \\    a backslash 
+# \#    the command number of this command ??? 
+# 
+# \u    the username of the current user 
+# \v    the version of bash (e.g., 2.00) 
+# \V    the release of bash, version + patch level (e.g., 2.00.0) 
+# \W    the basename of the current working directory, with $HOME abbreviated with a tilde 
+# \nnn  the character corresponding to the octal number nnn 
+# 
+# # this was used in the ubuntu prompt to set the terminal title. 
+# # see exec: `title` for a bash implementation. 
+# 
+# \[    begin a sequence of non-printing characters,
+        which could be used to embed a terminal control sequence into the prompt 
+# \]    end a sequence of non-printing characters 
+# 
+# Not Useful:
+# 
+# \$    if the effective UID is 0, a #, otherwise a $ 
+# \a    an ASCII bell character (07) 
+# \l    the basename of the shells terminal device name 
+# 
+#----------------------------------------------------------------------
+
 
 function yap_on
 {
 export YAP=on
-# export PS1='[${_g};5;`$_yap_order`m${HOSTNAME}✴ • ✭ . ✦ °\!. ✴ ° ✭ • ✦ -> '
-export PS1='[${_g};5;`$_yap_order`m${HOSTNAME} ✴✭✦•- \! -•✦✭✴ -> '
-export PS1='[${_g};5;`$_yap_order`m${HOSTNAME} ✶✭✦▲ \! ▲✦✭✶ -> '
-export PS1='[${_g};5;`$_yap_order`m${HOSTNAME} ✶✭✦ \! ✦✭✶ -> '
 #----------------------------------------------------------------------#
+# export PS1='[${_g};5;`$_yap_order`m${HOSTNAME}✴ • ✭ . ✦ °\!. ✴ ° ✭ • ✦ -> ' #
 # export PS1='[${_g};5;`$_yap_order`m${HOSTNAME} \! -> [m '          #
+# export PS1='[${_g};5;`$_yap_order`m${HOSTNAME} ✴✭✦•- \! -•✦✭✴ -> ' #
+# export PS1='[${_g};5;`$_yap_order`m${HOSTNAME} ✶✭✦▲ \! ▲✦✭✶ -> ' #
+# export PS1='[${_g};5;`$_yap_order`m${HOSTNAME} ✶✭✦ \! ✦✭✶ -> ' #
 #----------------------------------------------------------------------#
-}
+export PS1='------------------------------------------------------------------------\n\@ \# \n\h ✶✭✦ \! ✦✭✶ \$ [${_g};5;`$_yap_order`m'
 
-
-function yap_colors
-{
-grep '^function .*# color' $( which $zero ) | fields 2 | sort
 }
 
 
@@ -762,7 +864,7 @@ export PS1='${HOSTNAME} \! -> '
 export PS1='${HOSTNAME} ${PWD} `date "+%Y-%m-%d %H:%M:%S"` \! -> '
 export PS1='${HOSTNAME} ✴ ✭ ✦ .•°\!°•✴ ✭ ✦. -> '
 export PS1='${HOSTNAME} ✴ ✴ ✭ ✦ .•°\!°• ✴ ✴ ✭ ✦. -> '
-clear
+echo
 }
 
 
@@ -775,33 +877,56 @@ function sling
 #     ) )                                                              #
 #----------------------------------------------------------------------#
 acidx=(${*//,/ })
-_yap_pound ; pastels=$FUNCNAME
+_yap_pound ; palette=$FUNCNAME ; _idx=0
+echo
+yippy
+echo
 yappy
-yappo
 }
 
 
 function grab_palettes
 {
-palettes=( $(
-    grep '^function.* \# color' `which yaps1` |
-        fields 2 |
-        sort -u
-        )
+palettes=$(
+grep '^function.* \# color' $HOME/Dropbox/bin/yaps1 |
+    awk '{print $2}' |
+    sort -u
     )
 }
 
 
-function list_palettes
+function yap_palettes
 {
-for palette in ${palettes}; do
-    echo -n "$palette : "
+local num anum
+
+palettes=$( 
+    grep '^function.* \# color' $HOME/Dropbox/bin/yaps1 |
+        awk '{print $2}' |
+        sort -u
+    )
+#----------------------------------------------------------------------#
+# this was a nightmare. hard-coding is fine.                           #
+#----------------------------------------------------------------------#
+for palette in ${palettes[*]} ; do
+    pouncy white $palette
     eval $palette
     num=0
+    anum=0
     while [[ $num -lt $pound_acidx ]]; do
-        echo -n "[48;5;${acidx[$num]};30m ${acidx[$num]} [m"
+        printf "[48;5;${acidx[$num]};30m%3d [m" ${acidx[$num]}
         (( num += 1 ))
+        (( anum += 1 ))
+        if [[ $anum -ge 14 ]]; then
+            echo "[m"
+            anum=0
+        fi
     done
+#----------------------------------------------------------------------#
+# double-space between palettes                                        #
+#----------------------------------------------------------------------#
+    if [[ $anum != 0 ]]; then
+         echo "[m"
+    fi
     echo
 done
 return
@@ -834,10 +959,9 @@ case ${1:-${_g:-fg}} in # default: foreground
     *) _g=${_g:-48} ;; # fall-through, use background
 esac
 
-grab_palettes
-
 #----------------------------------------------------------------------#
 # finally... set the new PS1 environ.                                  #
 #----------------------------------------------------------------------#
+yap_rainbow_bright
 yap_on
 
