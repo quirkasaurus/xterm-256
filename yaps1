@@ -863,7 +863,7 @@ export YAP=off
 export PS1='${HOSTNAME} \! -> '
 export PS1='${HOSTNAME} ${PWD} `date "+%Y-%m-%d %H:%M:%S"` \! -> '
 export PS1='${HOSTNAME} ✴ ✭ ✦ .•°\!°•✴ ✭ ✦. -> '
-export PS1='${HOSTNAME} ✴ ✴ ✭ ✦ .•°\!°• ✴ ✴ ✭ ✦. -> '
+export PS1='${HOSTNAME} ✴✴✭✦.•°\!°•✴✴✭✦. -> '
 echo
 }
 
