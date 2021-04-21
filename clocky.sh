@@ -2037,7 +2037,7 @@ return
 #----------------------------------------------------------------------#
 # HANDS OFF!                                                           #
 #----------------------------------------------------------------------#
-function set_lines
+function set_lines_original
 {
 case $number in
     (.) 
@@ -2821,6 +2821,48 @@ return
 
 cat << EOF
 
+      ¸.¸
+     oO@Oo  
+     O@@@O 
+     ºOOº°
+
+     .o@@o. 
+    •O@@@@O•
+    •O@@@@O•
+     °º@@º°
+
+
+     .o@@o. 
+    •O@@@@O•
+    •O@@@@O•
+     °º@@º°
+
+
+      o@@o  
+     O@@@@O
+     O@@@@O
+      º@@º 
+
+     ¸.oO@@Oo.¸
+   ¸oO@@@@@@@OOo¸
+  .OO@@@@@@@@@@OO.
+  OOO@@@@@@@@@@OOO
+  OOO@@@@@@@@@@OOO
+  ºOO@@@@@@@@@@OOº
+   °OO@@@@@@@OOO°
+     °ºOO@@OOº°
+
+
+      ¸.oO@@@@@Oo.¸
+    ¸oO@@Oº°  °ºO@@Oo¸
+  ¸oO@@Oº°      °ºO@@Oo¸
+ ¸OOO@@O°        °O@@OOO¸
+ OOO@@@O          O@@@OOO
+ OOO@@@O¸        ¸O@@@OOO
+ °OOO@@Oo.¸    ¸.oO@@OOO°
+   ºOOO@@@OoooOO@@@OOOº     
+      °ººO@@@@@@Oºº°     
+
 ¸,.•° oO0º @*
 
 Z,.88 oO00 28
@@ -3232,7 +3274,7 @@ for number in ${numbers[*]} ; do
     $SET_LINES_FUNC
 #----------------------------------------------------------------------#
 #     case $font in                                                    #
-#         (original) set_lines ;; ## original                          #
+#         (original) set_lines_original ;; ## original                          #
 #         (gothic) set_lines_gothic ;;                                 #
 #         (oOo) set_lines_oOo ;;                                       #
 #     esac                                                             #
@@ -3333,14 +3375,14 @@ for arg in "${@}" ; do
 
     case "$arg" in
         (-o|--oOo) font=oOo ; SET_LINES_FUNC=set_lines_oOo ;;
-        (-O|--orig*) font=original ; SET_LINES_FUNC=set_lines ;;
+        (-O|--orig*) font=original ; SET_LINES_FUNC=set_lines_original ;;
         (-g|--gothic) font=gothic ; SET_LINES_FUNC=set_lines_gothic ;;
 
         (-v|--version) _version=1 ;;
         (-d|--dark*) DARK_MODE=1 ;;
         (--tiktok=*) tiktok=${arg#--tiktok=} ;;
         (*pulse) PULSE_TEST=1 ;;
-        (-g|--glyphs) glyphs ; exit ;;
+        (-g|--glyph*) glyphs ; exit ;;
         (-d|--debug) DEBUG=1 ;;
         (-n|--no-sleep|--noSleep) start_sleep=0 ;;
         (random) yap_random_colors ;;

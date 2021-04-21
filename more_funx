@@ -36,6 +36,7 @@ set -o allexport
 DEBUG=1
 color_idx=-1
 DEBUG=0
+DLOG=$HOME/d.log
 declare -a _fgs
 shopt -s expand_aliases
 
@@ -62,7 +63,7 @@ __line__='eval echo "[32m $BASH_SOURCE [33m $FUNCNAME [35m $LINENO: [m"'
 
 function grab_state
 {
-. $FSTATE
+eval $( cat $FSTATE /dev/null )
 }
 
 
@@ -217,7 +218,6 @@ case $# in
             ([0-9]*) vi_opt="+${_x}" ;;
             (*) vi_opt="+/${_x}" ;;
         esac
-        
         finput=$2
         ;;
     (*) echo no idea what you are trying to do with $* ; return ;;
@@ -227,16 +227,26 @@ esac
 # if not a good path, is it an executable?                             #
 #----------------------------------------------------------------------#
 for FIN in $finput `which $finput`; do
-    if [[ -f $FIN ]]; then
-        # necessary. otherwise the blank vi_opt shows up as a file in vi
-        # :-P
-        if [[ -n $vi_opt ]]; then
-            exec /usr/bin/vi "$vi_opt" $FIN
-        else
-            exec /usr/bin/vi $FIN
-        fi
+    if [[ -z $FIN ]]; then
+        continue
+    fi
+    if [[ ! -f $FIN ]]; then
+        continue
+    fi
+    ftype=$( file $FIN | cut -d: -f2 )
+    case $ftype in
+        (*Mac*executable*) continue ;;
+        (directory) continue ;;
+    esac
+    # necessary. otherwise the blank vi_opt shows up as a file in vi
+    # :-P
+    if [[ -n $vi_opt ]]; then
+        exec /usr/bin/vi $vi_opt $FIN
+    else
+        exec /usr/bin/vi $FIN
     fi
 done
+return
 }
 
 
@@ -244,6 +254,8 @@ function pause
 {
 stty erase 
 echo -n "Press <RETURN> to continue "
+read nothing
+return
 quickread.exe
 }
 
@@ -369,7 +381,7 @@ function stock_quickread
 {
 _use_quick=1
 stock_read $*
-vecho answer
+vecho $1
 }
 
 
@@ -460,6 +472,8 @@ zero=${1:-${0:-default}}
 zero=${zero##*/}
 zero=${zero%.sh}
 zero=${zero%.py}
+export zero
+echo "zero=${zero}" > ~/.state/more_funx.state
 }
 
 #----------------------------------------------------------------------#
@@ -594,13 +608,21 @@ case ${DEBUG:-off} in
 
     (color)
         CLEAR=
-        PS4='+ [32m $BASH_SOURCE [33m $FUNCNAME [34m ${LINENO}: [m'
+        PS4='\
+\[\e[36m\]\
+\[\e[3m\]+PS4 \
+\[\e[32m\]FILE: \
+\[\e[35m\]${BASH_SOURCE##*/} \
+\[\e[32m\]FUNCTION: \
+\[\e[35m\]${FUNCTION:-main-shell} \
+\[\e[32m\]LINE: \
+\[\e[35m\]${LINENO} \
+\[\e[0m\] '
         set -xv
         ;;
 
     (off|0)
         set +xv
-        CLEAR='tput clear'
         # PS4='PS4 -> '
         ;;
 
@@ -728,6 +750,7 @@ echo "    (n) notes"
 echo "    (u) urls"
 echo "    (y) yoga-schedule"
 echo "    (r) return"
+echo "    (t) timmy"
 echo "    (q) quit"
 echo "    (=) quit"
 echo "    (/) help"
@@ -746,6 +769,10 @@ case $* in
 # store something in the memory buffer real quick.                     #
 #----------------------------------------------------------------------#
     (@) vi ~/Dropbox/:-D ;;
+    (t) stock_read input_for_timmy
+        timmy $input_for_timmy
+        pause
+        ;;
 
     (D) # toggle debug node
         case ${DEBUG:-1} in
@@ -778,7 +805,6 @@ case $* in
 #----------------------------------------------------------------------#
 # omnipresent options.                                                 #
 #----------------------------------------------------------------------#
-    (m) git.menu ;;
     (n) notes ${TOPIC:-${zero}} ;;
     (u) urls ${TOPIC:-${zero}} ;;
     (y) yoga ;;
@@ -848,8 +874,12 @@ RB_fgs=(
 
 function rainbow_me
 {
-DEBUG=color
-debug
+#----------------------------------------------------------------------#
+# DEBUG=color                                                          #
+#----------------------------------------------------------------------#
+#----------------------------------------------------------------------#
+# debug                                                                #
+#----------------------------------------------------------------------#
 local x fg
 for x in x x ; do
 for fg in ${RB_fgs[*]}; do
@@ -870,13 +900,16 @@ echo -n "[m"
 }
 
 
+#----------------------------------------------------------------------#
+# this function takes the place of this awful bash syntax:             #
+# ${#var[*]} to mean "how many elements in this array?"                #
+#----------------------------------------------------------------------#
 function pound
 {
 local _nothing
 local var=${1:-_nothing}
 eval pound_${var:-_nothing}=\${\#${var}'[*]}'
 }
-
 
 #----------------------------------------------------------------------#
 # create a variable named <INPUT-VARIABLE-NAME>_pound                  #
@@ -1023,6 +1056,11 @@ function pirate
 echo "[38;5;200m[48;5;92m${*}[m"
 }
 
+function teelog
+{
+echo "$*" | tee -a $FLOG
+}
+
 #----------------------------------------------------------------------#
 # very useful, so just call if given the parameter.                    #
 #----------------------------------------------------------------------#
@@ -1030,8 +1068,13 @@ if [[ -n $1 ]]; then
     zero $1
     FTMP=/tmp/$zero.$LOGNAME
     FSTATE=$HOME/.state/$zero.state
+    touch $FSTATE
+#----------------------------------------------------------------------#
+#     . $FSTATE   sorry do not feel like debugging every single script i ever wrote #
+#----------------------------------------------------------------------#
     FOUT=./$zero.out
-    FLOG=./$zero.log
+    FLOG=$DLOG/$zero.log
+    TOPIC=$zero
 fi
 
 # nece

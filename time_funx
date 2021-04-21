@@ -1,0 +1,87 @@
+#!/bin/bash
+#----------------------------------------------------------------------#
+# FILE:    time_funx                                                   #
+# AUTHOR:  Douglas Roberts -- droberts                                 #
+# CREATED: Sun Apr 18 12:03:46 EDT 2021                                #
+# PURPOSE: collection of time date conversion functions.               #
+#                                                                      #
+#----------------------------------------------------------------------#
+
+
+function ip_to_epox
+{
+_ip=${1:-$(ctip)}
+
+declare -a octets
+octets=( ${_ip//./ } )
+
+epox=$(
+    float -d " \
+        ( ${octets[0]} x 256 x 256 x 256 ) + \
+        ( ${octets[1]} x 256 x 256       ) + \
+        ( ${octets[2]} x 256             ) + \
+        ( ${octets[3]}                   ) + \
+        0 "
+    )
+return
+}
+
+
+function timmy_print_all
+{
+echo
+
+(
+pouncy -n blue,yellow IP:
+pouncy info $_ip
+
+pouncy -n blue,yellow UNIX-EPOX:
+pouncy info ${epox}
+
+pouncy -n blue,yellow TIME:
+pouncy info `date -r ${epox} +%Y%m%d-%H%M%S`
+
+pouncy -n blue,yellow UDT:
+pouncy info `TZ=UTC date -r ${epox} +%Y%m%d-%H%M%S`
+) | line_up -1
+echo
+
+pouncy -n red,yellow TIME:
+pouncy red,white `date -r ${epox} '+%a %b %e %r %Z %Y'`
+(
+pouncy -n purple,cyan UDT:
+pouncy info2 `TZ=UTC date -r ${epox} '+%a %b %e %r %Z %Y'`
+
+pouncy -n purple,cyan TIME-MIL:
+pouncy info2 `date -r ${epox} '+%a %b %e %H:%M:%S -- %Z %Y'`
+
+pouncy -n purple,cyan UDT_MIL:
+pouncy info2 `TZ=UTC date -r ${epox} '+%a %b %e %H:%M:%S -- %Z %Y'`
+) | line_up -1
+echo
+
+(
+pouncy -n green,yellow "JENX-QU:  "
+#----------------------------------------------------------------------#
+# Apr 16, 2021 11:14 PM UTC                                            #
+#----------------------------------------------------------------------#
+pouncy green,white `TZ=UTC date -r ${epox} '+%b %e, %Y %r %Z'`
+
+#----------------------------------------------------------------------#
+# Apr 18, 2021 3:28:12 PM                                              #
+#----------------------------------------------------------------------#
+pouncy -n green,yellow JENX-STAT:
+pouncy -n green,white `TZ=UTC date -r ${epox} '+%b %e, %Y %r'`
+pouncy green,white "  "
+
+pouncy -n green,yellow "VLABS-UI: "
+#----------------------------------------------------------------------#
+# 2021-04-16T11:00:43Z                                                 #
+#----------------------------------------------------------------------#
+pouncy -n green,white `TZ=UTC date -r ${epox} '+%Y-%m-%dT%H:%M:%SZ'`
+pouncy green,white "      "
+
+)
+return
+}
+
