@@ -10,7 +10,7 @@
 
 check=$( which quickread.exe )
 if [[ -z $check ]]; then
-    cat << EOF
+    cat << EOF | xargs -I {} echo "[38;5;15;48;5;93m" {} "[m"
 
 "quickread.exe" is not in your path.
 you must:
@@ -28,8 +28,9 @@ remove any references to descriptions.
 much easier to just compile pause.exe...
 
 EOF
-    exit 9
+    exit
 fi
+
 
 
 set -o allexport
@@ -308,6 +309,7 @@ if [[ $_use_quick -eq 1 ]]; then
 #----------------------------------------------------------------------#
 # grab the value                                                       #
 #----------------------------------------------------------------------#
+    echo current value of $_var_name is $_value
     echo -n "$_prompt "
     _answer=$( quickread.exe )
     echo $_answer
@@ -473,7 +475,9 @@ zero=${zero##*/}
 zero=${zero%.sh}
 zero=${zero%.py}
 export zero
-echo "zero=${zero}" > ~/.state/more_funx.state
+#----------------------------------------------------------------------#
+# echo "zero=${zero}" > ~/.state/more_funx.state                       #
+#----------------------------------------------------------------------#
 }
 
 #----------------------------------------------------------------------#
@@ -758,6 +762,7 @@ echo "    (!) bash"
 return
 }
 
+
 #----------------------------------------------------------------------#
 # boilerplate menu options method.                                     #
 #----------------------------------------------------------------------#
@@ -769,16 +774,10 @@ case $* in
 # store something in the memory buffer real quick.                     #
 #----------------------------------------------------------------------#
     (@) vi ~/Dropbox/:-D ;;
+
     (t) stock_read input_for_timmy
         timmy $input_for_timmy
         pause
-        ;;
-
-    (D) # toggle debug node
-        case ${DEBUG:-1} in
-            (1) DEBUG=0 ; echo debug is on ; pause ;;
-            (*) DEBUG=1 ; echo debug is off ; pause ;;
-        esac
         ;;
 
 #----------------------------------------------------------------------#
@@ -807,6 +806,13 @@ case $* in
 #----------------------------------------------------------------------#
     (n) notes ${TOPIC:-${zero}} ;;
     (u) urls ${TOPIC:-${zero}} ;;
+    (D) # toggle debug node
+        case ${DEBUG:-1} in
+            (1) DEBUG=0 ; echo debug is on ; pause ;;
+            (*) DEBUG=1 ; echo debug is off ; pause ;;
+        esac
+        ;;
+
     (y) yoga ;;
     (r) return ;;
     (q|=) # exit
@@ -997,9 +1003,9 @@ function vacho
 if [[ $# -eq 2 ]]; then
     shift
     echo -n "${1}=( "
-    eval echo -n ${1}='( ${'$1'[@]} )'
+    eval echo -n ${1}='( ${'$1'[*]} )'
 else
-    eval echo -n '${'$1'[@]}'
+    eval echo -n '${'$1'[*]}'
 fi
 echo
 return
@@ -1067,7 +1073,7 @@ echo "$*" | tee -a $FLOG
 if [[ -n $1 ]]; then
     zero $1
     FTMP=/tmp/$zero.$LOGNAME
-    FSTATE=$HOME/.state/$zero.state
+    FSTATE=$HOME/.pogo/$zero.pogo
     touch $FSTATE
 #----------------------------------------------------------------------#
 #     . $FSTATE   sorry do not feel like debugging every single script i ever wrote #

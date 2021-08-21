@@ -1,0 +1,17 @@
+
+
+
+
+grep function colors.env more_funx  |
+   tr : ' ' |
+while read file x method ; do
+
+    echo "${method}	${file}	/^function ${method}/"
+
+done
+
+
+
+method_name TAB file TAB pattern
+
+

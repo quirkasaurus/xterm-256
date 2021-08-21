@@ -8,29 +8,69 @@
 #----------------------------------------------------------------------#
 
 . more_funx ${0}
+/bin/rm $FSTATE
 
 # set -xv
 # color chart by name
-white=231
-gray=145
-black=0
-red=196
-orange=214
-yellow=226
-lime=46
-green=34
-seablue=39
-turquoise=37
 aqua=43
-cyan=51
+black=0
 blue=21
-purple=93
+brown=94
+cyan=51
+gray=145
+green=34
+hotpink=198
+lime=46
 magenta=201
+orange=214
 pink=213
+purple=93
+red=196
+seablue=39
+strawberry=205
+turquoise=37
+white=231
+yellow=226
 
 available_colors=( $( grep '^[a-z_][a-z_]*=[0-9][0-9]*$' $0 ) )
 
 status=False
+
+
+function run_tests
+{
+# tests:
+echo -n "[m"
+pouncy red              this should be red
+pouncy green,yellow     this should be yellow text on green background
+pouncy -n blue,white    white on blue and no new line date should be snug: ; date
+pouncy -u white,magenta magenta on white and underlined
+pouncy -b yellow        yellow-foreground and reverse-highlighted
+pouncy -b purple,cyan   cyan on purple and reverse-highlighted
+pouncy 21,213           pink on blue background using numbers 21,213
+pouncy -i 48            bright-green with italics using the number 48
+echo
+pouncy -e purple,aqua   no terminus character
+echo " so this line, even without pouncy, should be highlighted "
+echo "[m and this one not highlighted. "
+echo
+pouncy info  info - - - white on blue
+pouncy info2  info - - - white on purple
+pouncy info3  info - - - white on green
+pouncy info4  info - - - white on strawberry
+pouncy error error - - - yellow on red
+pouncy fail  fail - - - pink on purple
+pouncy pass  pass - - - yellow on green
+pouncy warn  warn - - - blue on orange
+pouncy warn2  warn2 - - - blue on pink
+pouncy warn3  warn3 - - - blue on hotpink
+pouncy warn4  warn4 - - - purple on pink
+pouncy warn5  warn5 - - - purple on hotpink
+pouncy super-info frogs: yellow on purple, white on blue
+pouncy super-info2 frogs: green on yellow, yellow on green
+return
+}
+
 
 function is_a_color
 {
@@ -55,30 +95,50 @@ idx=
 function clean_exit
 {
 echo
-echo usage: $zero '[-nubi] bg,fg text'
-echo usage: $zero '[-nubi] fg text'
+echo usage: $zero '[-nudebi] bg,fg text'
+echo usage: $zero '[-nudebi] fg text'
 echo where:
 echo option -n means suppress-newlines
 echo option -u means underline
+echo option -d means run the debugging tests
+echo option -e means do not end the specified colors
+echo
 echo option -b means bold
 echo option -i means italicize
-echo colors can be names or numbers
 echo
-echo see \`frogs\`
+echo colors can be names or numbers or one of these levels:
+for log_level in info info2 info3 info4 fail pass warn warn2 warn3 \
+    woo-hoo error ; do
+    echo -n "pouncy $log_level : "
+    pouncy $log_level $log_level
+done
+echo -n "pouncy super-info : "
+pouncy super-info super-info value
+echo -n "pouncy super-info2 : "
+pouncy super-info2 '[i]' 'super-info2'
 echo
-echo current named colors:
+echo current colors by name:
 echo
 
 for color in ${available_colors[*]}; do
     color_idx=${color##*=}
     # black hack
     if [[ $color_idx -eq 0 ]]; then
-        echo -n '[48;5;145m'
+        echo -n '[48;5;145;1m'
     fi
     echo "[38;5;${color_idx}m${color}[m"
 done
 echo
 exit 9
+}
+
+
+function blippo
+{
+if [[ -n $fg ]]; then
+    text="${text:+${text} }${arg}"
+    continue
+fi
 }
 
 
@@ -101,6 +161,8 @@ italics=
 underline=
 bold=
 text=
+TERMINUS='[m'
+super_info=
 
 debug
 init
@@ -108,32 +170,65 @@ for arg in "${@}" ; do
     incr
 
     case $arg in
-        (-n) no_newline=-n ; continue ;;
-        (-u) underline='[4m' ; continue ;;
-        (-b) bold='[7m' ; continue ;;
-        (-i) italics='[3m' ; continue ;;
+        (woo-hoo)
+            blippo
+            italics='[3m'
+            eval bg=$purple
+            eval fg=$hotpink
+            ;;
+        (super-info2)
+            shift
+            col=$1
+            shift
+            val="$*"
+            echo -n "[38;5;${yellow};48;5;${purple}m ${col%:}: "
+            echo "[38;5;${white};48;5;${blue};3m $val [m"
+            exit
+            ;;
+        (super-info)
+            shift
+            val="$*"
+            echo -n "[38;5;36;48;5;226m [i] "
+            echo "[38;5;226;48;5;36m $val [m"
+            exit
+            ;;
+        (-n) no_newline=-n ;;
+        (-u) underline='[4m' ;;
+        (-d) run_tests ; exit ;;
+        (-e) TERMINUS= ;;
+
+        (-b) bold='[1m' ;;
+        (-i) italics='[3m' ;;
+
+        (info)  blippo ; eval bg=$blue       ; eval fg=$white  ;;
+        (info2) blippo ; eval bg=$purple     ; eval fg=$white  ;;
+        (info3) blippo ; eval bg=30          ; eval fg=$white  ;;
+        (info4) blippo ; eval bg=$strawberry ; eval fg=$white  ;;
+        (error) blippo ; eval bg=$red        ; eval fg=$yellow ;  italics='[3m' ;;
+        (fail)  blippo ; eval bg=$red        ; eval fg=$white  ;  italics='[3m' ;;
+        (pass)  blippo ; eval bg=$green      ; eval fg=$yellow ;;
+        (warn)  blippo ; eval bg=$orange     ; eval fg=$black  ;  italics='[3m' ;;
+#----------------------------------------------------------------------#
+#         (warn2) blippo ; eval bg=$pink       ; eval fg=$red    ;  italics='[3m' ;; #
+#----------------------------------------------------------------------#
+        (warn2) blippo ; eval bg=$pink   ; eval fg=$blue   ;  italics='[3m' ; bold='[1m' ;;
+        (warn3) blippo ; eval bg=$hotpink   ; eval fg=$blue   ;  italics='[3m' ; bold='[1m' ;;
+        (warn4) blippo ; eval bg=$pink   ; eval fg=$purple   ;  italics='[3m' ; bold='[1m' ;;
+        (warn5) blippo ; eval bg=$hotpink   ; eval fg=$purple   ;  italics='[3m' ; bold='[1m' ;;
+
         ([0-9]*,[0-9]*)
-            if [[ -z $fg ]]; then
-                bg=${arg%,*}
-                fg=${arg#*,}
-                continue
-            fi
-            text="${text:+${text} }${arg}"
+            blippo;
+            bg=${arg%,*}
+            fg=${arg#*,}
             ;;
 
         ([0-9]*)
-            if [[ -z $fg ]]; then
-                fg=${arg}
-                continue
-            fi
-            text="${text:+${text} }${arg}"
+            blippo;
+            fg=${arg}
             ;;
 
         ([a-z]*,[a-z]*)
-            if [[ -n $fg ]]; then
-                text="${text:+${text} }${arg}"
-                continue
-            fi
+            blippo;
 
             _bg=${arg%,*}
             _fg=${arg#*,}
@@ -150,10 +245,8 @@ for arg in "${@}" ; do
             ;;
 
         (*)
-            if [[ -n $fg ]]; then
-                text="${text:+${text} }${arg}"
-                continue
-            fi
+            blippo;
+
             is_a_color $arg
             if [[ $status == True ]]; then
                 fg=$idx
@@ -173,17 +266,5 @@ else
     colors=
 fi
 
-echo ${no_newline} "${bold}${underline}${italics}${colors} ${text} [m"
-
-exit
-
-# tests:
-pouncy red this should be red
-pouncy green,yellow this should be yellow text on green background
-pouncy -n blue,white white on blue and no new line date should be snug: ; date
-pouncy -u magenta,white white on magenta, underlined
-pouncy -b magenta,white white on magenta, but reverse-highlighted
-pouncy -b yellow yellow-background, then reverse-highlighted
-pouncy 21,213 pink on blue background using numbers 21,213 only
-pouncy -i 48 italics bright green-ish using the number 48 only
+echo ${no_newline} "${bold}${underline}${italics}${colors}${text} $TERMINUS"
 

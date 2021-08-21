@@ -1,0 +1,4 @@
+
+clam14 -n &
+clocky.sh &
+

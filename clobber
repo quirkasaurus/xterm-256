@@ -1,0 +1,38 @@
+
+#----------------------------------------------------------------------#
+# FILE:    clobber                                                     #
+# AUTHOR:  Douglas Roberts -- droberts                                 #
+# CREATED: Sat Jan  9 09:56:29 EST 2021                                #
+# PURPOSE: grab the files that are truly generic and git push them.    #
+#                                                                      #
+#----------------------------------------------------------------------#
+
+
+
+
+. ~/Dropbox/bin/more_funx
+
+for file in more_funx clocky.sh yaps1 ; do
+
+    print_sep oslo
+    pouncy bue,white checking file: $file
+    diff $file $HOME/Dropbox/bin
+    if [[ $? -ne 0 ]]; then
+        echo
+        stock_quickread copy_over
+
+        case $copy_over in
+            (y) echo copying over . . .
+                cp $HOME/Dropbox/bin/$file .
+                ;;
+            (*) pouncy purple,cyan not copy over: $file
+            ;;
+        esac
+    else
+        pouncy green,yellow no differences for $file
+    fi
+
+done
+
+
+

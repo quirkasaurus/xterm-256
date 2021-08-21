@@ -1,23 +1,23 @@
 
 #----------------------------------------------------------------------#
-# FILE:    clam15 - drawing perfect color patterns                     #
-#                   color indexes displayed                            #
-#                                                                      #
+# FILE:    clam14 - drawing perfect color patterns                     #
 # AUTHOR:  Douglas Roberts -- droberts                                 #
 # CREATED: Sun Sep 15 09:51:05 EDT 2019                                #
 # PURPOSE: color changes in sync with N E W S directions. kinda.       #
 #          which RGB is randomized, but the brightness rises or        #
 #          falls in concert with the direction.                        #
 #          the glyph can go in 8 directions,                           #
-#          which doesn't lend itself well to a 3 color scheme.         #
-#          there's only 2 directions for overlap, but, if you          #
+#          which does not lend itself well to a 3 color scheme.        #
+#          there are only 2 directions for overlap, but, if you        #
 #          fade 2 colors at once, you hit black or white too often.    #
-#          no information appears on the screen.                       #
-#                                                                      #
+#          no other information appears on the screen.                 #
+# STATUS:  ★ ★ ★ ★ ★  my current favorite.                             #
 #----------------------------------------------------------------------#
 
 csc_x=0
 csc_y=0
+
+# modulo-ish for which color-idx chart column we are printing
 csc_cloopty=2
 
 #----------------------------------------------------------------------#
@@ -53,7 +53,8 @@ return
 
 function set_csc_x
 {
-# keep it to just 2 columns on the right
+# keep the color-idx-chart to just 2 columns
+# on the right side of the window
 case $csc_cloopty in
     1) csc_cloopty=2 ;;
     2) csc_cloopty=1 ;;
@@ -125,11 +126,25 @@ while [[ $_x -eq 0 && $_y -eq 0 ]]; do
     (( _y = ( RANDOM % 3 ) - 1 ))
 done
 
+
 #----------------------------------------------------------------------#
 # if not going N or S, go 2 squares left or right.                     #
 #----------------------------------------------------------------------#
 if [[ $_y -eq 0 ]]; then
     (( _x = _x * 2 ))
+fi
+
+#----------------------------------------------------------------------#
+# determine direction for color fade.                                  #
+#----------------------------------------------------------------------#
+if [[ $_x -lt 0 ]]; then
+    # get brighter
+    fade_direction=1
+elif [[ $_x -eq 0 && $_y -eq 1 ]]; then
+    fade_direction=1
+else
+    # get darker
+    fade_direction=-1
 fi
 
 #----------------------------------------------------------------------#
@@ -159,82 +174,31 @@ if [[ $xpos -ge $COLUMNS ]]; then
 fi
 
 previous_color_idx=$color_idx
-#----------------------------------------------------------------------#
-# determine direction for color fade.                                  #
-#----------------------------------------------------------------------#
-case ${_x}${_y} in
-
-#----------------------------------------------------------------------#
-# move the color map in these directions:                              #
-#- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
-#     W Y R        W Y G    |W M B|    W M R   W C G   W C B           #
-#     M @ K        C @ K    |C @ K|    C @ Y   M @ Y   M @ C           #
-#     B C G        B M R    |G Y R|    B K G   B K R   R K G           #
-#----------------------------------------------------------------------#
-
-    -11)  incr r ; incr g ; incr b ;; # white
-     01)  incr r ; decr g ; incr b ;; # magenta
-     11)  decr r ; decr g ; incr b ;; # blue
-
-    -20)  decr r ; incr g ; incr b ;; # cyan
-     00)                           ;; # nop
-     20)  decr r ; decr r ; decr b ;; # black
-
-    -1-1) decr r ; incr g ; decr b ;; # green
-     0-1) incr r ; incr g ; decr b ;; # yellow
-     1-1) incr r ; decr g ; decr b ;; # red
-
-#----------------------------------------------------------------------#
-#                                                                      #
-# -11       01        11                                               #
-# -20       @@        20                                               #
-# -1-1      0-1       1-1                                              #
-#                                                                      #
-#----------------------------------------------------------------------#
-    *) tput cup $LINES 0
-       echo programming error:
-       echo _x=$_x ; echo _y=$_y ; exit 9 ;;
-esac
-
-#----------------------------------------------------------------------#
-# do some color bounds checking.                                       #
-#----------------------------------------------------------------------#
-for color in r g b ; do
-    eval rgb=\$$color
-    if [[ $rgb -gt 5 ]]; then
-        rgb=5
-    elif [[ $rgb -lt 0 ]]; then
-        rgb=0
-    fi
-    eval ${color}=$rgb
-done
-
-#----------------------------------------------------------------------#
-# ... and compute the index                                            #
-#----------------------------------------------------------------------#
-(( color_idx = ( r * 36 ) + ( g * 6 ) + b + 16 ))
+bump_fade
 
 #----------------------------------------------------------------------#
 # go to next spot and print the character                              #
 #----------------------------------------------------------------------#
 tput cup $ypos $xpos
-
 #----------------------------------------------------------------------#
 # echo -n "[${_g};5;${color_idx}m@ [m"                               #
 # echo -n "[${_g};5;${color_idx}m [m"                               #
 #----------------------------------------------------------------------#
 echo -n "[${_g};5;${color_idx}m${_ball} [m"
-clam14_show_color # uses color_idx
+
+if [[ $show_display == true ]]; then
+    clam14_show_color
+fi
 
 if [[ $color_idx -gt 231 || $color_idx -lt 16 ]]; then
     tput cup 0 $COLUMNS
     echo
     echo algorithm problems:
     echo current color_idx:
-    print_color_info ; echo
+    print_color_info
     color_idx=$previous_color_idx
     echo previous color_idx:
-    print_color_info ; echo
+    print_color_info
     print_sep =
     exit 9
 fi
@@ -259,9 +223,6 @@ csc_y=0 ### y-axis-for-color-chart-to-start-at must be reset.
 #----------------------------------------------------------------------#
 tput cup 0 0
 compute_char_max
-#----------------------------------------------------------------------#
-# grab_colors_reduced_set $perma_color                                 #
-#----------------------------------------------------------------------#
 
 #----------------------------------------------------------------------#
 # MAIN WHILE LOOP                                                      #
@@ -299,39 +260,50 @@ done
 # pick a color scheme or not . . .                                     #
 #----------------------------------------------------------------------#
 . clam14_test
+show_display=true
 
-case $1 in
-    -h|--help)
-        echo $0 '[color_idx|color_pattern_name] [bg|fg|38|48]'
-        exit
-        ;;
+for arg in $* ; do
+    case $1 in
+        (-n) show_display=false ;;
 
-#----------------------------------------------------------------------#
-# test color fading                                                    #
-#----------------------------------------------------------------------#
-    -t)
-        color_idx=${1:-201}
-        test_bump_fading
-        exit
-        ;;
-
-    -T)
-        . clam14_test
-        test_bump_fade_direction
-        exit
-        ;;
-esac
+    #----------------------------------------------------------------------#
+    # test color fading                                                    #
+    #----------------------------------------------------------------------#
+        (-t)
+            color_idx=${1:-201}
+            test_bump_fading
+            exit
+            ;;
+    
+    #----------------------------------------------------------------------#
+    # test direction setting (NEWS, NW/NE/SW/SE) effecting color fade      #
+    #----------------------------------------------------------------------#
+        (-T)
+            . clam14_test
+            test_bump_fade_direction
+            exit
+            ;;
 
 #----------------------------------------------------------------------#
 # deal with foreground/background coloring                             #
 #----------------------------------------------------------------------#
-case ${2:-not-set} in
-    48|f|fg|fore*) _g=48 ;; # for light terminals
-    38|b|bg|back*) _g=38 ;; # for dark terminals
-    *) _g=38 ;; # guess
-esac
+        (48|f|fg|fore*) _g=48 ;; # for light terminals
+        (38|b|bg|back*) _g=38 ;; # for dark terminals
+
+        (-h|--help|*)
+            echo usage: $0 '[-n] [-T] [-t]'
+            echo where:
+            cat << EOF
+-n means suppress printing of color-index-chart
+-T test the color fade + direction feature
+-t test the color fade only
+(algorithm is called "bump")
+EOF
+            exit
+            ;;
+    esac
+done
     
-perma_color=$1
 . colors.env
 . yaps1
 
@@ -340,5 +312,19 @@ _g=38 # for dark terminals
 _g=${2:-$_g}
 
 (( color_idx = ( RANDOM % (256 - 232 )) + 16 ))
+_ball=•
+_ball=⚬
+_ball=☀
+_ball=☁
+_ball=★
+_ball=☆
+_ball=☼
+_ball=☽
+_ball=☾
+_ball=♦
+_ball=' '
+_ball=⚈
+_ball=@
+_ball=⬤ 
 loopty_loop
 
