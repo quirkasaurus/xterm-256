@@ -62,6 +62,17 @@ __line__='eval echo "[32m $BASH_SOURCE [33m $FUNCNAME [35m $LINENO: [m"'
 
 
 
+function is_file
+{
+test -f $1
+}
+
+function is_dir
+{
+test -d $1
+}
+
+
 function grab_state
 {
 eval $( cat $FSTATE /dev/null )
