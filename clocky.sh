@@ -20,14 +20,27 @@
 #                                                                      #
 #----------------------------------------------------------------------#
 
-. more_funx $0
+pouncy warn I GOT CALLED AGAIN `date`
+
+
+function debug
+{
+if [[ $DEBUG -eq 1 ]]; then
+    set +xv
+fi
+}
+
+
+#----------------------------------------------------------------------#
+# . more_funx $0                                                       #
+#----------------------------------------------------------------------#
 . yaps1
 
 declare -a numbers
 
-CLEAR=
 DEBUG=1 ; CLEAR=clear
 DEBUG=  ; CLEAR=clear
+CLEAR='echo "[H[2J"'
 
 function set_lines_gothic
 {
@@ -252,6 +265,22 @@ case $number in
             "      °ººO@@@@@@OOºº°     " \
             "" \
             )
+        lines=(
+            "           ¸.....¸        " \
+            "  °•.¸¸¸.•oOOººººOo.      " \
+            " °°•.¸•o@OOº   ,; °O.     " \
+            "   ¸•o@@@Oº    ;:  °O¸    " \
+            "  .o@@@@Oº     ;:   °O.   " \
+            " •o@@@@Oº   •  ;:,,,.OO.  " \
+            " •o@@@@OO  •*• ;:°°°°OO•  " \
+            " •o@@@@Oo   •  ;:   .OO   " \
+            " •o@@@@Oo.     ;:   .OO   " \
+            "  •o@@@@Oo.    ;•  .OOº   " \
+            "   °O@@@@Ooo...;:oOOOº°   " \
+            "    °O@@@@@@@@@@@@OOº°    " \
+            "      °ººO@@@@@@OOºº°     " \
+            "" \
+            )
         width=26
         ;;
 
@@ -325,15 +354,15 @@ case $number in
             "        ¸O       " \
             "      ¸•O@ •     " \
             "    ¸•oO@@ •     " \
-            "  .•oOO@@@ •     " \
-            "     °:|Hº °     " \
-            "     °:|Hº •     " \
-            "     °:|Hº •     " \
-            "     .:|Hº •     " \
-            "     .:|Hº •     " \
-            "     .:|Hº •     " \
-            "     .:|Ho •     " \
-            "    ¸•:|H@o•¸    " \
+            "  .•oOO@o@ •     " \
+            "     °:@oº .     " \
+            "     °:@oº .     " \
+            "     °:@oº .     " \
+            "     .:@oº .     " \
+            "     .:@oº .     " \
+            "     .:@oº .     " \
+            "     .:@oo .     " \
+            "    ¸•:@o@o•¸    " \
             " .•ooOOOOo@@o•.¸ " \
             )
         width=17
@@ -894,6 +923,23 @@ case $number in
             "   ºO@@@OOº            " \
             )
         width=23
+        lines=(
+            " @O*º°°°°°°°°°°º*O@@º° " \
+            " *º°           .O@*°   " \
+            " °           .o@°      " \
+            "           .o@°        " \
+            "         .o@°          " \
+            "       ¸o@°            " \
+            "      .o@°             " \
+            "    ¸o@@°              " \
+            "   ¸o@@O               " \
+            "   o@@@O               " \
+            "  .o@@@Oo.             " \
+            "    º@O°               " \
+            "     °)                " \
+            "      °                " \
+            )
+        width=23
         ;;
 
     (8)
@@ -1104,12 +1150,12 @@ case $number in
             "      "
             "      "
             "      "
-            "      "
+            "             "
             "   .•o@o•.   "
-            "  •o@@O.Oo•  "
-            "  •o@@OOOo°  "
-            "   ºo@@oº°   "
-            "      "
+            "  •oO@@OOo•  "
+            "  •oO@OOOo°  "
+            "   ºO@@Oº°   "
+            "             "
             )
         width=13
         ;;
@@ -1350,7 +1396,7 @@ case $number in
             "      ¸oO   " \
             "    ¸oO@O   " \
             "   ¸oO@@o   " \
-            "   oO@@Oº   " \
+            "  .oO@@Oº   " \
             "   °ºO@O    " \
             "    °O@O    " \
             "    °o@O    " \
@@ -1483,22 +1529,6 @@ case $number in
             "    °ººOOO@@OOºº°    " \
             )
         lines=(
-            "     ¸.oOOO@OOo.        " \
-            "   .OOO*º°°°º*O@Oo.     " \
-            "   @@º        °O@Oo.    " \
-            "  °@°         ¸O@OO°    " \
-            "   °         ¸o@Oº°     " \
-            "           ¸o@@Oº       " \
-            "         •oO@@@Oo.      " \
-            "           °ººO@OOOo.   " \
-            "               °OO@OO.  " \
-            "  ¸            .OO@OOO  " \
-            "  @o¸        ¸.oO@@OOº  " \
-            "  :@@OooooooOOO@@@OOº   " \
-            "  °ºOOOOOOOOO@@OOOº°    " \
-            "    °ººOOO@@OOºº°       " \
-            )
-        lines=(
             "       ¸.....¸        " \
             "    .•oOO@@@Ooo.      " \
             "   oOOººººOO@@@Oo.    " \
@@ -1514,7 +1544,39 @@ case $number in
             "  °º@@OOOOOO@@@@OOº°  " \
             "    °ººOOO@@@OOºº°    " \
             )
-        width=22
+        lines=(
+            "    ¸.ooO@@@Ooo.       " \
+            "   oOOººººOO@@@Oo.     " \
+            "  Oº       ºOO@@@O.    " \
+            " °          •OO@@@O    " \
+            "            .OO@@Oº    " \
+            "         ¸.oO@@@O•     " \
+            "     ••oOOOO@@@@@Oo.   " \
+            "         °°ºOO@@@@OO.  " \
+            "            °ºO@@@@OO. " \
+            "              O@@@@OO: " \
+            " .           .oO@@@OO: " \
+            " °Oo..¸¸¸¸..oO@@@@OOO  " \
+            "  °ºOOOOOOOO@@@@@OOº°  " \
+            "    °ººOOO@@@@OOºº°    " \
+            )
+        lines=(
+            "     ¸.oOOO@OOo.¸      " \
+            "   .OOO*º°°°º*O@Oo¸    " \
+            "   @@º        °O@OO    " \
+            "  °@°         ¸O@OO    " \
+            "   °         ¸o@Oº°    " \
+            "           ¸o@@Oº      " \
+            "         •oO@@@Oo.¸    " \
+            "           °ººO@OOOo.  " \
+            "               °OO@OO. " \
+            "                OO@@OO " \
+            "  @o¸         ¸oO@@OOº " \
+            "  O@Oo..¸¸¸..oO@@@OOº  " \
+            "   ºOOOOOOOOO@@OOOº°   " \
+            "    °ººOOO@@OOºº°      " \
+            )
+        width=23
         ;;
 
     (4)
@@ -1574,13 +1636,13 @@ case $number in
             "          ¸oO@º:@O@     " \
             "        ¸oO@O° :@O@     " \
             "      .oOO@O°  :@O@     " \
-            "    .oOO@Oº    ;@O@...  " \
-            " .oOOOOO@@@@@OOO@OOOOO  " \
+            "    .oOO@Oº    ;@O@..   " \
+            " .oOOOOO@@@@@OOO@OOOO   " \
             "               :@O@     " \
             "               ;@O@     " \
             "               :@O@     " \
-            "             .oO@@@Oo.  " \
-            "           .oOO@@@@Ooo. " \
+            "              .O@@@o    " \
+            "           .oOO@@@@OO.  " \
             )
         width=24
         ;;
@@ -1814,6 +1876,38 @@ case $number in
             "    °ººO0@@@@@@0ºº°     " \
             "                        " \
             )
+        lines=(
+            "           ¸...¸        " \
+            "        .oO@@@@Oo.      " \
+            "     .o@@@0º°°°°º0o     " \
+            "   .o0@@O°              " \
+            "  .o0@@o                " \
+            " .O0@@0•    ¸....¸      " \
+            " o0@@@0•¸¸o0@@@@@0Oo.   " \
+            " O0@#@@0@@@º°°°°°ºO0O.  " \
+            " 0@@##@00°        °O0O  " \
+            " º0@#@@00.        .O0O  " \
+            " °00@@@@OOo.¸¸¸¸.oO0Oº  " \
+            "  °OO0@@@@@@@@@@@00º°   " \
+            "    °ºOO0@@@@@@0Oº°     " \
+            "       °°ºººººº°        " \
+            )
+        lines=(
+            "           ¸...¸        " \
+            "        .oOO@@OOo.      " \
+            "     .oO@O0º°°°°º0o     " \
+            "   .o0@OO°              " \
+            "  .o0@Oo                " \
+            " .O0@@0•    ¸....¸      " \
+            " o0@@O0•¸¸o0@@@@@0Oo.   " \
+            " O0@@OOOO@Oº°°°°°ºO@O.  " \
+            " 0OO@@O@0°        °O@O  " \
+            " º0OO@@O0.        .O@O  " \
+            " °00OO@@OOo.¸¸¸¸.oO@Oº  " \
+            "  °OO0OO@@@@@@@@@00º°   " \
+            "    °ºOOO@@@@O0OOº°     " \
+            "       °°ºººººº°        " \
+            )
         width=24
     ;;
 
@@ -1835,23 +1929,6 @@ case $number in
             "   .•ooO@@@Ooo•.      " \
             )
         width=22
-        lines=(
-            " @O*º°°°°°°°°°°º*O@@º° " \
-            " *º°           .O@*°   " \
-            " °           .o@°      " \
-            "           .o@°        " \
-            "         .o@°          " \
-            "       ¸o@°            " \
-            "      .o@°             " \
-            "    ¸o@@°              " \
-            "   ¸o@@O               " \
-            "   o@@@O               " \
-            "  .o@@@Oo.             " \
-            "    º@O°               " \
-            "     °)                " \
-            "      °                " \
-            )
-        width=23
         lines=(
             " @Oo...¸¸¸¸¸¸..o*O@@º° " \
             " @O*º°°°°°°°°°°º*O@@º° " \
@@ -2956,9 +3033,9 @@ _yap_next
 #----------------------------------------------------------------------#
 function render_clock_1
 {
-init
-init x -4
-init y 3
+num=0
+x=-4
+y=3
 
 if [[ $DEMO -eq 1 ]]; then
     if [[ ${#numbers[*]} -eq 0 ]]; then
@@ -2973,9 +3050,9 @@ else
 fi
 
 for number in ${numbers[*]} ; do
-    init y 3
-    incr
-    incr x 7
+    y=3
+    (( num += 1 ))
+    (( x += 7 ))
 
 #----------------------------------------------------------------------#
 # if zero, do not print 1st number.                                    #
@@ -2997,7 +3074,7 @@ for number in ${numbers[*]} ; do
                 ; do
                 tput cup $y $x
                 echo -n "$line"
-                incr y
+                (( y += 1 ))
             done
             ;;
         (2)
@@ -3010,7 +3087,7 @@ for number in ${numbers[*]} ; do
                 ; do
                 tput cup $y $x
                 echo -n "$line"
-                incr y
+                (( y += 1 ))
             done
             ;;
         (3)
@@ -3023,7 +3100,7 @@ for number in ${numbers[*]} ; do
                 ; do
                 tput cup $y $x
                 echo -n "$line"
-                incr y
+                (( y += 1 ))
             done
             ;;
         (4)
@@ -3036,7 +3113,7 @@ for number in ${numbers[*]} ; do
                 ; do
                 tput cup $y $x
                 echo -n "$line"
-                incr y
+                (( y += 1 ))
             done
             ;;
         (5)
@@ -3049,7 +3126,7 @@ for number in ${numbers[*]} ; do
                 ; do
                 tput cup $y $x
                 echo -n "$line"
-                incr y
+                (( y += 1 ))
             done
             ;;
         (6)
@@ -3062,7 +3139,7 @@ for number in ${numbers[*]} ; do
                 ; do
                 tput cup $y $x
                 echo -n "$line"
-                incr y
+                (( y += 1 ))
             done
             ;;
         (7)
@@ -3075,7 +3152,7 @@ for number in ${numbers[*]} ; do
                 ; do
                 tput cup $y $x
                 echo -n "$line"
-                incr y
+                (( y += 1 ))
             done
             ;;
         (8)
@@ -3088,7 +3165,7 @@ for number in ${numbers[*]} ; do
                 ; do
                 tput cup $y $x
                 echo -n "$line"
-                incr y
+                (( y += 1 ))
             done
             ;;
         (9)
@@ -3101,7 +3178,7 @@ for number in ${numbers[*]} ; do
                 ; do
                 tput cup $y $x
                 echo -n "$line"
-                incr y
+                (( y += 1 ))
             done
             ;;
         (0)
@@ -3114,7 +3191,7 @@ for number in ${numbers[*]} ; do
                 ; do
                 tput cup $y $x
                 echo -n "$line"
-                incr y
+                (( y += 1 ))
             done
             ;;
         (:)
@@ -3127,7 +3204,7 @@ for number in ${numbers[*]} ; do
                 ; do
                 tput cup $y $x
                 echo -n "$line"
-                incr y
+                (( y += 1 ))
             done
             decr x 2
             ;;
@@ -3146,11 +3223,10 @@ local x_check
 (( x_check = x + width ))
 
 (( _cols = COLUMNS + 0 ))
-(( _lins = LINES + 0 ))
 
 if [[ $x_check -gt $_cols ]]; then
     x=3
-    incr _close_to_the_edge
+    (( _close_to_the_edge += 1 ))
 #----------------------------------------------------------------------#
 # debugging info jic.                                                  #
 #----------------------------------------------------------------------#
@@ -3172,9 +3248,9 @@ for line in "${lines[@]}" ; do
     fi
     tput cup $y $x
     render_printc "$line"
-    incr y
+    (( y += 1 ))
 done
-incr x $width
+(( x += $width ))
 }
 
 
@@ -3185,14 +3261,14 @@ incr x $width
 function centralizationalizer
 {
 debug
-init
-init _close_to_the_edge
+num=0
+_close_to_the_edge=0
 
 #----------------------------------------------------------------------#
 # compute starting point for long version                              #
 #----------------------------------------------------------------------#
-init _x_init 3
-init _y_init 3
+_x_init=3
+_y_init=3
 
 #----------------------------------------------------------------------#
 # compute middle of screen for short version.                          #
@@ -3214,8 +3290,8 @@ case $sleep_magic in
         (( _y_init -= up_and_over ))
         ;;
 esac
-init x $_x_init
-init y $_y_init
+x=$_x_init
+y=$_y_init
 
 return
 }
@@ -3274,7 +3350,7 @@ for number in ${numbers[*]} ; do
     $SET_LINES_FUNC
 #----------------------------------------------------------------------#
 #     case $font in                                                    #
-#         (original) set_lines_original ;; ## original                          #
+#         (original) set_lines_original ;; ## original                 #
 #         (gothic) set_lines_gothic ;;                                 #
 #         (oOo) set_lines_oOo ;;                                       #
 #     esac                                                             #
@@ -3285,7 +3361,7 @@ done
 #----------------------------------------------------------------------#
 # if we reach the edge, start on the next line, leaving a blank line.  #
 #----------------------------------------------------------------------#
-incr _close_to_the_edge
+_close_to_the_edge=0
 (( y = ( _close_to_the_edge * 16 ) + _y_init ))
 (( yy = y + 2 ))
 tput cup $yy 0
@@ -3343,6 +3419,12 @@ lines=(
     "  •o@@OOOo° " \
     "   ºo@@oº°  " \
     )
+lines=(
+    "   ¸.ooo.¸  " \
+    "  •oO@OOOo• " \
+    "  •oO@OOOo° " \
+    "   ºO@@Oº°  " \
+    )
 width=12
 
 render_character
@@ -3361,9 +3443,9 @@ function set_args
 #----------------------------------------------------------------------#
 # args parsing sanity check.                                           #
 #----------------------------------------------------------------------#
-# init                                                                 #
+# num=0                                                                #
 # for arg in "${@}" ; do                                               #
-#     incr                                                             #
+#     (( num += 1 ))                                                   #
 #     pouncy -in purple,lime "$num "                                   #
 #     pouncy lime,purple " $arg "                                      #
 #     continue                                                         #
@@ -3411,6 +3493,7 @@ for arg in "${@}" ; do
             pouncy lime '(for colors to indexes conversion, run: frogs)'
             pouncy cyan '[-o|--OO] (rounded font style)'
             pouncy cyan '[-g|--gothic] (gothic font style)'
+            pouncy -i yellow sling is the dynamic yaps1 method for acidx
 
 #----------------------------------------------------------------------#
 # now for the tricky business of displaying a dynamic list of palettes #
@@ -3604,7 +3687,7 @@ while : ; do
 #----------------------------------------------------------------------#
 # explicitly set color-palette                                         #
 #----------------------------------------------------------------------#
-    acidx=( $( echo ${orig_acidx[*]} ) )
+    acidx=( ${orig_acidx[*]} )
     _yap_pound
     _idx=0
 
@@ -3618,8 +3701,8 @@ while : ; do
 # kinda of like a typewriter carriage return;                          #
 # print our 10 second dots below the time.                             #
 #----------------------------------------------------------------------#
-    init x $_x_init
-    (( y = _y_init + 16 ))
+    x=$_x_init
+    (( y += 16 ))
 
 #----------------------------------------------------------------------#
 # put some dots out there at the start, if need be.                    #
@@ -3675,6 +3758,10 @@ while : ; do
         continue
     fi
 
+    (( _close_to_the_edge += 1 ))
+#----------------------------------------------------------------------#
+#     (( y = ( _close_to_the_edge * 16 ) + _y_init ))                  #
+#----------------------------------------------------------------------#
 #----------------------------------------------------------------------#
 # occasionally, i will see a time repeated annoyingly.                 #
 # i have not yet worked out a solution; although a PREV_TIME != NOW    #
