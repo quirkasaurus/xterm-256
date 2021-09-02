@@ -20,27 +20,14 @@
 #                                                                      #
 #----------------------------------------------------------------------#
 
-pouncy warn I GOT CALLED AGAIN `date`
-
-
-function debug
-{
-if [[ $DEBUG -eq 1 ]]; then
-    set +xv
-fi
-}
-
-
-#----------------------------------------------------------------------#
-# . more_funx $0                                                       #
-#----------------------------------------------------------------------#
+. more_funx $0
 . yaps1
 
 declare -a numbers
 
+CLEAR=
 DEBUG=1 ; CLEAR=clear
 DEBUG=  ; CLEAR=clear
-CLEAR='echo "[H[2J"'
 
 function set_lines_gothic
 {
@@ -3033,9 +3020,9 @@ _yap_next
 #----------------------------------------------------------------------#
 function render_clock_1
 {
-num=0
-x=-4
-y=3
+init
+init x -4
+init y 3
 
 if [[ $DEMO -eq 1 ]]; then
     if [[ ${#numbers[*]} -eq 0 ]]; then
@@ -3050,9 +3037,9 @@ else
 fi
 
 for number in ${numbers[*]} ; do
-    y=3
-    (( num += 1 ))
-    (( x += 7 ))
+    init y 3
+    incr
+    incr x 7
 
 #----------------------------------------------------------------------#
 # if zero, do not print 1st number.                                    #
@@ -3074,7 +3061,7 @@ for number in ${numbers[*]} ; do
                 ; do
                 tput cup $y $x
                 echo -n "$line"
-                (( y += 1 ))
+                incr y
             done
             ;;
         (2)
@@ -3087,7 +3074,7 @@ for number in ${numbers[*]} ; do
                 ; do
                 tput cup $y $x
                 echo -n "$line"
-                (( y += 1 ))
+                incr y
             done
             ;;
         (3)
@@ -3100,7 +3087,7 @@ for number in ${numbers[*]} ; do
                 ; do
                 tput cup $y $x
                 echo -n "$line"
-                (( y += 1 ))
+                incr y
             done
             ;;
         (4)
@@ -3113,7 +3100,7 @@ for number in ${numbers[*]} ; do
                 ; do
                 tput cup $y $x
                 echo -n "$line"
-                (( y += 1 ))
+                incr y
             done
             ;;
         (5)
@@ -3126,7 +3113,7 @@ for number in ${numbers[*]} ; do
                 ; do
                 tput cup $y $x
                 echo -n "$line"
-                (( y += 1 ))
+                incr y
             done
             ;;
         (6)
@@ -3139,7 +3126,7 @@ for number in ${numbers[*]} ; do
                 ; do
                 tput cup $y $x
                 echo -n "$line"
-                (( y += 1 ))
+                incr y
             done
             ;;
         (7)
@@ -3152,7 +3139,7 @@ for number in ${numbers[*]} ; do
                 ; do
                 tput cup $y $x
                 echo -n "$line"
-                (( y += 1 ))
+                incr y
             done
             ;;
         (8)
@@ -3165,7 +3152,7 @@ for number in ${numbers[*]} ; do
                 ; do
                 tput cup $y $x
                 echo -n "$line"
-                (( y += 1 ))
+                incr y
             done
             ;;
         (9)
@@ -3178,7 +3165,7 @@ for number in ${numbers[*]} ; do
                 ; do
                 tput cup $y $x
                 echo -n "$line"
-                (( y += 1 ))
+                incr y
             done
             ;;
         (0)
@@ -3191,7 +3178,7 @@ for number in ${numbers[*]} ; do
                 ; do
                 tput cup $y $x
                 echo -n "$line"
-                (( y += 1 ))
+                incr y
             done
             ;;
         (:)
@@ -3204,7 +3191,7 @@ for number in ${numbers[*]} ; do
                 ; do
                 tput cup $y $x
                 echo -n "$line"
-                (( y += 1 ))
+                incr y
             done
             decr x 2
             ;;
@@ -3226,7 +3213,7 @@ local x_check
 
 if [[ $x_check -gt $_cols ]]; then
     x=3
-    (( _close_to_the_edge += 1 ))
+    incr _close_to_the_edge
 #----------------------------------------------------------------------#
 # debugging info jic.                                                  #
 #----------------------------------------------------------------------#
@@ -3248,9 +3235,9 @@ for line in "${lines[@]}" ; do
     fi
     tput cup $y $x
     render_printc "$line"
-    (( y += 1 ))
+    incr y
 done
-(( x += $width ))
+incr x $width
 }
 
 
@@ -3261,14 +3248,14 @@ done
 function centralizationalizer
 {
 debug
-num=0
-_close_to_the_edge=0
+init
+init _close_to_the_edge
 
 #----------------------------------------------------------------------#
 # compute starting point for long version                              #
 #----------------------------------------------------------------------#
-_x_init=3
-_y_init=3
+init _x_init 3
+init _y_init 3
 
 #----------------------------------------------------------------------#
 # compute middle of screen for short version.                          #
@@ -3290,8 +3277,8 @@ case $sleep_magic in
         (( _y_init -= up_and_over ))
         ;;
 esac
-x=$_x_init
-y=$_y_init
+init x $_x_init
+init y $_y_init
 
 return
 }
@@ -3361,7 +3348,7 @@ done
 #----------------------------------------------------------------------#
 # if we reach the edge, start on the next line, leaving a blank line.  #
 #----------------------------------------------------------------------#
-_close_to_the_edge=0
+incr _close_to_the_edge
 (( y = ( _close_to_the_edge * 16 ) + _y_init ))
 (( yy = y + 2 ))
 tput cup $yy 0
@@ -3443,9 +3430,9 @@ function set_args
 #----------------------------------------------------------------------#
 # args parsing sanity check.                                           #
 #----------------------------------------------------------------------#
-# num=0                                                                #
+# init                                                                 #
 # for arg in "${@}" ; do                                               #
-#     (( num += 1 ))                                                   #
+#     incr                                                             #
 #     pouncy -in purple,lime "$num "                                   #
 #     pouncy lime,purple " $arg "                                      #
 #     continue                                                         #
@@ -3687,7 +3674,7 @@ while : ; do
 #----------------------------------------------------------------------#
 # explicitly set color-palette                                         #
 #----------------------------------------------------------------------#
-    acidx=( ${orig_acidx[*]} )
+    acidx=( $( echo ${orig_acidx[*]} ) )
     _yap_pound
     _idx=0
 
@@ -3701,8 +3688,8 @@ while : ; do
 # kinda of like a typewriter carriage return;                          #
 # print our 10 second dots below the time.                             #
 #----------------------------------------------------------------------#
-    x=$_x_init
-    (( y += 16 ))
+    init x $_x_init
+    (( y = _y_init + 16 ))
 
 #----------------------------------------------------------------------#
 # put some dots out there at the start, if need be.                    #
@@ -3758,10 +3745,6 @@ while : ; do
         continue
     fi
 
-    (( _close_to_the_edge += 1 ))
-#----------------------------------------------------------------------#
-#     (( y = ( _close_to_the_edge * 16 ) + _y_init ))                  #
-#----------------------------------------------------------------------#
 #----------------------------------------------------------------------#
 # occasionally, i will see a time repeated annoyingly.                 #
 # i have not yet worked out a solution; although a PREV_TIME != NOW    #
